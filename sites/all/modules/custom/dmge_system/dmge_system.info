@@ -1,0 +1,6 @@
+name = DMGE System
+description = "Provides the DMGE system as a module."
+package = DMGE
+core = 7.x
+configure = admin/config/administration/dmge
+dependencies[] = system (>7.10)

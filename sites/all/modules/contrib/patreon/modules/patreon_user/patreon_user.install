@@ -1,0 +1,41 @@
+<?php
+
+/**
+ * @file
+ * Install functions for Patreon.
+ */
+
+/**
+ * Implements hook_install().
+ */
+function patreon_user_install() {
+  patreon_user_create_user_fields();
+  patreon_user_create_role();
+  drupal_set_message(t('<p>You must now update your Patreon application settings at <a href="@oauth">the Patreon website</a> to add @endpoint as a valid endpoint. If you do not, users will not be able to log in via Patreon.</p>', array(
+    '@oauth' => PATREON_REGISTER_OAUTH_URL,
+    '@endpoint' => patreon_user_get_callback_url(),
+  )));
+}
+
+/**
+ * Implements hook_uninstall().
+ */
+function patreon_user_uninstall() {
+  if (field_info_field('field_user_patreon_id')) {
+    field_delete_field('field_user_patreon_id');
+  }
+  if (field_info_field('field_user_patreon_token')) {
+    field_delete_field('field_user_patreon_token');
+  }
+  if (user_role_load_by_name('patreon_user')) {
+    user_role_delete('patreon_user');
+  }
+  if (user_role_load_by_name('deleted_patreon_user')) {
+    user_role_delete('deleted_patreon_user');
+  }
+
+  // Delete set variables.
+  db_delete('variable')
+    ->condition('name', 'patreon_user_%', 'LIKE')
+    ->execute();
+}

@@ -1,0 +1,34 @@
+<?php
+/**
+ * @file
+ * Test case(s) for the Image Style Selector module.
+ */
+
+/**
+ * Tests the functionality of the Image Style Selector module.
+ */
+class ImageStyleSelectorFunctionalTest extends DrupalWebTestCase {
+  /**
+   * Provide the informationi to display to the SimpleTest system.
+   *
+   * @return string[]
+   *   An associative array with the information for SimpleTest to show.
+   */
+  public static function getInfo() {
+    return array(
+      'name' => 'Image Style Selector functional tests',
+      'description' => 'Ensure that the Image Style Selector field functions properly.',
+      'group' => 'Image Style Selector',
+    );
+  }
+
+  /**
+   * Configure the Drupal test enviornment.
+   *
+   * @see DrupalWebTestCase::setUp()
+   */
+  public function setUp() {
+    // Enable the Image Style Selector module.
+    parrent::setUp('iss');
+  }
+}

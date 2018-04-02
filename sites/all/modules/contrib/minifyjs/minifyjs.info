@@ -1,0 +1,12 @@
+name = Minify JS
+description = Allows an administrator to minify any javascript file in Drupal and use that version rather than the original.
+package = "Performance and scalability"
+core = 7.x
+
+configure = admin/config/development/performance/js
+; Information added by Drupal.org packaging script on 2017-07-27
+version = "7.x-1.4"
+core = "7.x"
+project = "minifyjs"
+datestamp = "1501170544"
+

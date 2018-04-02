@@ -1,0 +1,59 @@
+<?php
+
+/**
+ * @file
+ * Render an administrative menu as a dropdown menu at the top of the window.
+ */
+
+/**
+ * Implements hook_permission().
+ */
+function dmge_system_permission() {
+  return array(
+    'access dmge' => array(
+      'title' => t('Access the DMGE'),
+      'description' => t('Use the DMGE.'),
+    ),
+    'configure dmge' => array(
+      'title' => t('Configure the DMGE'),
+      'description' => t('Administrate the DMGE.'),
+    ),
+  );
+}
+
+/**
+ * Implements hook_theme().
+ */
+function dmge_system_theme() {
+  return array(
+    'dmge_system_main' => array(
+      'variables' => NULL,
+    ),
+  );
+}
+
+/**
+ * Implements hook_menu().
+ */
+function dmge_system_menu() {
+  // Module settings.
+  $items['system'] = array(
+    'title' => 'DMGE',
+    'description' => 'Adjust DMGE settings.',
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('dmge_system_theme_settings'),
+    'access arguments' => array('configure dmge'),
+  );
+  $items['admin/config/administration/dmge_system'] = array(
+    'title' => 'DMGE',
+    'description' => 'Adjust DMGE settings.',
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('dmge_system_theme_settings'),
+    'access arguments' => array('configure dmge'),
+  );
+  return $items;
+}
+
+function dmge_system_theme_settings() {
+  return "hello world";
+}

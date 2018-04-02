@@ -1,0 +1,33 @@
+diff --git a/imageblock.admin.inc b/imageblock.admin.inc
+index d4cbafa..40bf26c 100644
+--- a/imageblock.admin.inc
++++ b/imageblock.admin.inc
+@@ -46,8 +46,9 @@ function imageblock_admin_settings_form_validate($form, &$form_state) {
+  * @see imageblock_add_block_form_submit()
+  * @ingroup forms
+  */
+-function imageblock_add_block_form() {
++function imageblock_add_block_form($form, &$form_state) {
+   module_load_include('inc', 'block', 'block.admin');
++  form_load_include($form_state, 'inc', 'block', 'block.admin');
+   $form = array();
+   $form = block_admin_configure($form, $form_state, 'imageblock', NULL);
+   $form['#validate'][] = 'block_add_block_form_validate';
+@@ -151,7 +152,7 @@ function imageblock_custom_block_delete_submit($form, &$form_state) {
+     file_usage_delete($file, 'imageblock', 'imageblock', $form_state['values']['bid']);
+     file_delete($file);
+   }
+-  
++
+   db_delete('imageblock')
+     ->condition('bid', $form_state['values']['bid'])
+     ->execute();
+@@ -163,7 +164,7 @@ function imageblock_custom_block_delete_submit($form, &$form_state) {
+     ->condition('module', 'imageblock')
+     ->condition('delta', $form_state['values']['bid'])
+     ->execute();
+-  
++
+   drupal_set_message(t('The image block %name has been removed.', array('%name' => $form_state['values']['info'])));
+   cache_clear_all();
+   $form_state['redirect'] = 'admin/structure/block';

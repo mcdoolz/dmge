@@ -1,0 +1,208 @@
+<?php
+
+/**
+ * @file
+ * Module altering node functionality for use with Patreon API.
+ */
+
+/**
+ * Implements hook_help().
+ */
+function patreon_nodes_help($path, $arg) {
+  switch ($path) {
+    case 'admin/help#patreon_nodes':
+      return t('<p>The Patreon Nodes module alters node behaviour when linked with user accounts on the <a href="@patreon_url">Patreon</a> service using <a href="@patreon_download_url">their API</a>.</p>', array(
+        '@patreon_url' => PATREON_URL,
+        '@patreon_download_url' => PATREON_DOWNLOAD_URL,
+      ));
+  }
+}
+
+/**
+ * Implements hook_form_BASE_FORM_ID_alter().
+ */
+function patreon_nodes_form_node_type_form_alter(&$form, $form_state) {
+  if (isset($form['type'])) {
+    $form['patreon'] = array(
+      '#title' => t('Patreon'),
+      '#type' => 'fieldset',
+      '#collapsible' => TRUE,
+      '#collapsed' => TRUE,
+      '#group' => 'additional_settings',
+      '#weight' => 10,
+      '#attached' => array(
+        'js' => array(drupal_get_path('module', 'patreon_nodes') . '/js/node-type-form.js'),
+      ),
+    );
+    $form['patreon']['patreon_nodes'] = array(
+      '#type' => 'checkbox',
+      '#title' => t('Enable Patreon functionality'),
+      '#description' => t('Allows view access to be restricted by role.'),
+      '#weight' => 0,
+      '#default_value' => variable_get('patreon_nodes_' . $form['#node_type']->type, FALSE),
+      '#attributes' => array(
+        'data-enabled-description' => t('Enabled'),
+        'data-disabled-description' => t('Disabled'),
+      ),
+    );
+  }
+}
+
+/**
+ * Implements hook_permission().
+ */
+function patreon_nodes_permission() {
+  $return = array(
+    'view all patreon nodes' => array(
+      'title' => t('View all Patreon nodes'),
+      'description' => t('Allow user to view all Patreon enabled node types'),
+    ),
+  );
+
+  foreach (patreon_nodes_types() as $type => $name) {
+    $return['view ' . $type . ' patreon nodes'] = array(
+      'title' => t('View :type patreon nodes', array(':type' => $name)),
+      'description' => t('Allow user to view all :type nodes', array(':type' => $name)),
+    );
+  }
+
+  return $return;
+}
+
+/**
+ * Return all content type enabled with Patreon.
+ *
+ * @return array
+ *   An array of node type names.
+ */
+function patreon_nodes_types() {
+  $types = &drupal_static(__FUNCTION__, NULL);
+  if (!isset($types)) {
+    $types = array();
+    foreach (node_type_get_names() as $type => $name) {
+      if (variable_get('patreon_nodes_' . $type, FALSE)) {
+        $types[$type] = $name;
+      }
+    }
+  }
+  return $types;
+}
+
+/**
+ * Is a given node type controlled by Pateon.
+ *
+ * @param string $type
+ *   The node type.
+ *
+ * @return bool
+ *   Whether is controlled by Patreon or not.
+ */
+function patreon_nodes_is_type($type) {
+  return (bool) variable_get('patreon_nodes_' . $type, 0);
+}
+
+/**
+ * Implements hook_node_access().
+ */
+function patreon_nodes_node_access($node, $op, $account) {
+  $type = is_string($node) ? $node : $node->type;
+
+  if (patreon_nodes_is_type($type)) {
+    if ($op == 'view') {
+      if (user_access('view all patreon nodes', $account) || (user_access('view ' . $type . ' patreon nodes', $account))) {
+        if (!$node->status && !(user_access('view own unpublished content') && ($account->uid == $node->uid))) {
+          return NODE_ACCESS_DENY;
+        }
+        return NODE_ACCESS_ALLOW;
+      }
+      if (!count(module_implements('node_grants'))) {
+        return NODE_ACCESS_DENY;
+      }
+    }
+  }
+
+  return NODE_ACCESS_IGNORE;
+}
+
+/**
+ * Implements hook_node_access_records().
+ */
+function patreon_nodes_node_access_records($node) {
+  if (!count(module_implements('node_grants'))) {
+    return array();
+  }
+
+  $grants = array();
+
+  if (patreon_nodes_is_type($node->type)) {
+    $grants[] = array(
+      'realm' => 'all',
+      'gid' => 0,
+      'grant_view' => 0,
+      'grant_update' => 0,
+      'grant_delete' => 0,
+      'priority' => 0,
+    );
+  }
+
+  return $grants;
+}
+
+/**
+ * Implements hook_query_TAG_alter().
+ */
+function patreon_nodes_query_node_access_alter(QueryAlterableInterface $query) {
+  global $user;
+  // Read meta-data from query, if provided.
+  if (!$account = $query->getMetaData('account')) {
+    $account = $user;
+  }
+  if (!$op = $query->getMetaData('op')) {
+    $op = 'view';
+  }
+
+  // If $account can bypass node access, or there are no node access modules,
+  // or the operation is 'view' and the $account has a global view grant (i.e.,
+  // a view grant for node ID 0), we don't need to alter the query.
+  if (user_access('bypass node access', $account) || user_access('view all patreon nodes', $account)) {
+    return;
+  }
+
+  // If viewing the node, deny access if the type is a configured type
+  // and no node grants allow access.
+  if ($op == 'view') {
+    $tables = $query->getTables();
+    // @see _node_query_node_access_alter().
+    $node_table_alias = FALSE;
+    foreach ($tables as $alias => $table) {
+      if ($table['table'] == 'node') {
+        $node_table_alias = $alias;
+        break;
+      }
+    }
+
+    if (!$node_table_alias) {
+      // If the query has 'node_access' meta tag, we can assume that there
+      // should be a nid field.
+      $query->join('node', 'n', 'n.nid = ' . key($tables) . '.nid');
+      $node_table_alias = 'n';
+    }
+
+    if ($node_table_alias) {
+      $alias = $node_table_alias;
+
+      foreach (patreon_nodes_types() as $type => $name) {
+        if (user_access('view ' . $type . ' patreon nodes', $account)) {
+          // User can view any of these nodes, don't worry about altering
+          // the query.
+          continue;
+        }
+        if (!count(module_implements('node_grants'))) {
+          // User doesn't have access permissions on this type,
+          // Set a condition that prevents this type from being seen.
+          $query->condition("$alias.type", $type, '<>');
+        }
+      }
+    }
+  }
+}

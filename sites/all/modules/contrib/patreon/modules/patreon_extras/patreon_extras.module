@@ -1,0 +1,177 @@
+<?php
+
+/**
+ * @file
+ * Extra functionality to link a Drupal site with Patreon.
+ */
+
+/**
+ * Implements hook_help().
+ */
+function patreon_extras_help($path, $arg) {
+  switch ($path) {
+    case 'admin/help#patreon_extras':
+      return t('<p>Patreon Extras provides additional data from the <a href="@patreon_url">Patreon</a> service using <a href="@patreon_download_url">their API</a>.</p>', array(
+        '@patreon_url' => PATREON_URL,
+        '@patreon_download_url' => PATREON_DOWNLOAD_URL,
+      ));
+  }
+}
+
+/**
+ * Implements hook_block_info().
+ */
+function patreon_extras_block_info() {
+  $blocks['patreon_extras_become'] = array(
+    'info' => t('Patreon Become a Patron link block'),
+    'cache' => DRUPAL_CACHE_PER_ROLE,
+  );
+
+  return $blocks;
+}
+
+/**
+ * Implements hook_block_view().
+ */
+function patreon_extras_block_view($delta = '') {
+  $block = array();
+  switch ($delta) {
+    case 'patreon_extras_become':
+      if ($account = patreon_fetch_user()) {
+        $block['subject'] = NULL;
+        $block['content'] = '<a href="https://www.patreon.com/bePatron?u=' . $account['id'] . '" data-patreon-widget-type="become-patron-button">Become a patron</a><script async src="https://c6.patreon.com/becomePatronButton.bundle.js"></script>';
+      }
+
+      break;
+  }
+
+  return $block;
+}
+
+/**
+ * Implements hook_cron().
+ */
+function patreon_extras_cron() {
+  $last_run = variable_get('patreon_extras_pledge_data_last_update', time());
+  $now = time();
+
+  // Only update data daily.
+  if ($now - $last_run > 86400) {
+    patreon_extras_update_pledge_data();
+  }
+}
+
+/**
+ * Helper to collect data about pledges from Patreon.
+ */
+function patreon_extras_update_pledge_data() {
+  if ($campaign = patreon_fetch_campaign_and_patrons()) {
+    if (isset($campaign[0]['id']) && $id = $campaign[0]['id']) {
+      $cursor = NULL;
+      $count = 0;
+      $amount = 0;
+      $all_data = array();
+      while (TRUE) {
+        $pledges_response = patreon_fetch_page_of_pledges($id, 25, $cursor);
+
+        // Get all the users in an easy-to-lookup way.
+        $user_data = array();
+
+        if ($pledges_response) {
+          foreach ($pledges_response['included'] as $included_data) {
+            if ($included_data['type'] == 'user') {
+              $user_data[$included_data['id']] = $included_data;
+            }
+          }
+          // Loop over the pledges to get e.g. their amount and user name.
+          foreach ($pledges_response['data'] as $pledge_data) {
+            $pledge_amount = $pledge_data['attributes']['amount_cents'];
+            $patron_id = $pledge_data['relationships']['patron']['data']['id'];
+            $patron_full_name = $user_data[$patron_id]['attributes']['full_name'];
+            $count++;
+            $amount += $pledge_amount;
+            $all_data[$patron_id] = array(
+              'name' => $patron_full_name,
+              'amount' => $pledge_amount,
+              'campaign' => $id,
+            );
+          }
+        }
+
+        // Get the link to the next page of pledges.
+        $next_link = ($pledges_response && isset($pledges_response['links']['next'])) ? $pledges_response['links']['next'] : NULL;
+        if (!$next_link) {
+
+          // If there's no next page, we're done!
+          break;
+        }
+
+        // Otherwise, parse out the cursor param.
+        $next_query_params = explode("?", $next_link)[1];
+        parse_str($next_query_params, $parsed_next_query_params);
+        $cursor = $parsed_next_query_params['page']['cursor'];
+      }
+
+      variable_set('patreon_extras_all_pledge_data', $all_data);
+      variable_set('patreon_extras_pledge_count', $count);
+      variable_set('patreon_extras_pledge_amount', $amount);
+    }
+  }
+
+  variable_set('patreon_extras_pledge_data_last_update', time());
+}
+
+/**
+ * Implements hook_token_info().
+ */
+function patreon_extras_token_info() {
+  $info['pledge_count'] = array(
+    'name' => t('Pledge Count'),
+    'description' => t('The number of pledges currently made.'),
+  );
+  $info['pledge_amount'] = array(
+    'name' => t('Pledge Amount'),
+    'description' => t('The current amount of pledges in $USD'),
+  );
+  return array(
+    'types' => array(
+      'patreon' => array(
+        'name' => t('Patreon'),
+        'description' => t('Tokens related to Patreon data.'),
+      ),
+    ),
+    'tokens' => array(
+      'patreon' => $info,
+    ),
+  );
+}
+
+/**
+ * Implements hook_tokens().
+ */
+function patreon_extras_tokens($type, $tokens, array $data = array(), array $options = array()) {
+  $replacements = array();
+  $sanitize = !empty($options['sanitize']);
+  if ($type == 'patreon') {
+    foreach ($tokens as $name => $original) {
+      switch ($name) {
+        case 'pledge_count':
+          $replacements[$original] = variable_get('patreon_extras_pledge_count', 0);
+          break;
+
+        case 'pledge_amount':
+          $stored = variable_get('patreon_extras_pledge_amount', 0);
+          $replacements[$original] = ($stored == 0) ? '$0.00' : '$' . $stored / 100;
+          break;
+
+      }
+    }
+
+    if ($sanitize) {
+      foreach ($replacements as $token => $value) {
+        $replacements[$token] = filter_xss($value);
+      }
+    }
+  }
+  return $replacements;
+}

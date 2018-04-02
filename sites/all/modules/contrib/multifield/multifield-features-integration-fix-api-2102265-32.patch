@@ -1,0 +1,17 @@
+diff --git a/multifield.install b/multifield.install
+index 5513431..2e02fdb 100644
+--- a/multifield.install
++++ b/multifield.install
+@@ -43,6 +43,12 @@ function multifield_schema() {
+       'primary key' => 'mfid',
+       'identifier' => 'multifield',
+       'default hook' => 'multifield_default_multifield',
++      'api' => array(
++        'owner' => 'multifield',
++        'api' => 'multifield',
++        'minimum_version' => 1,
++        'current_version' => 1,
++       ),
+       'cache defaults' => TRUE,
+       'load callback' => 'multifield_load',
+       'load all callback' => 'multifield_load_all',

@@ -1,0 +1,72 @@
+<?php
+// $Id: nodeownership.install,v 1.0 2011/01/26 $
+
+/**
+ * @file
+ * Module install functions for the Nodeownership module.
+ */
+
+/**
+ * Implements hook_uninstall().
+ */
+function nodeownership_uninstall() {
+  variable_del('node_types');
+  variable_del('user_claim_subject');
+  variable_del('user_claim_body');
+  variable_del('admin_approve_accept_subject');
+  variable_del('admin_approve_accept_body');
+  variable_del('admin_approve_decline_subject');
+  variable_del('admin_approve_decline_body');
+}
+/**
+ * Implements hook_schema().
+ */
+function nodeownership_schema() {
+  $schema['nodeownership'] = array(
+    'description' => 'A table containing information of nodeownership details.',
+    'fields' => array(
+      'uid' => array(
+        'type' => 'int',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+        'default' => 0,
+        'description' => 'The primary identifier for a user.',
+      ),
+      'nid' => array(
+        'type' => 'int',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+        'default' => 0,
+        'description' => 'The identifier for a node.',
+      ),
+      'contact' => array(
+        'type' => 'varchar',
+        'length' => 255,
+        'not null' => TRUE,
+        'default' => '',
+      ),
+      'notes' => array(
+        'type' => 'varchar',
+        'length' => 255,
+        'not null' => TRUE,
+        'default' => '',
+      ),
+      'status' => array(
+        'type' => 'int',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+        'default' => 0,
+        'description' => 'The status of nodeownership.',
+      ),
+      'timestamp' => array(
+        'type' => 'int',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+        'default' => 0,
+        'description' => 'The timestamp of claiming time.',
+      ),
+    ),
+    'primary key' => array('uid', 'nid'),
+  );
+  return $schema;
+}

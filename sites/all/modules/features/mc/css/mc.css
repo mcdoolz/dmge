@@ -1,0 +1,439 @@
+/* line 5, ../../../../../../../../../../var/lib/gems/2.3.0/gems/compass-core-1.0.3/stylesheets/compass/reset/_utilities.scss */
+html, body, div, span, applet, object, iframe,
+h1, h2, h3, h4, h5, h6, p, blockquote, pre,
+a, abbr, acronym, address, big, cite, code,
+del, dfn, em, img, ins, kbd, q, s, samp,
+small, strike, strong, sub, sup, tt, var,
+b, u, i, center,
+dl, dt, dd, ol, ul, li,
+fieldset, form, label, legend,
+table, caption, tbody, tfoot, thead, tr, th, td,
+article, aside, canvas, details, embed,
+figure, figcaption, footer, header, hgroup,
+menu, nav, output, ruby, section, summary,
+time, mark, audio, video {
+  margin: 0;
+  padding: 0;
+  border: 0;
+  font: inherit;
+  font-size: 100%;
+  vertical-align: baseline;
+}
+
+/* line 22, ../../../../../../../../../../var/lib/gems/2.3.0/gems/compass-core-1.0.3/stylesheets/compass/reset/_utilities.scss */
+html {
+  line-height: 1;
+}
+
+/* line 24, ../../../../../../../../../../var/lib/gems/2.3.0/gems/compass-core-1.0.3/stylesheets/compass/reset/_utilities.scss */
+ol, ul {
+  list-style: none;
+}
+
+/* line 26, ../../../../../../../../../../var/lib/gems/2.3.0/gems/compass-core-1.0.3/stylesheets/compass/reset/_utilities.scss */
+table {
+  border-collapse: collapse;
+  border-spacing: 0;
+}
+
+/* line 28, ../../../../../../../../../../var/lib/gems/2.3.0/gems/compass-core-1.0.3/stylesheets/compass/reset/_utilities.scss */
+caption, th, td {
+  text-align: left;
+  font-weight: normal;
+  vertical-align: middle;
+}
+
+/* line 30, ../../../../../../../../../../var/lib/gems/2.3.0/gems/compass-core-1.0.3/stylesheets/compass/reset/_utilities.scss */
+q, blockquote {
+  quotes: none;
+}
+/* line 103, ../../../../../../../../../../var/lib/gems/2.3.0/gems/compass-core-1.0.3/stylesheets/compass/reset/_utilities.scss */
+q:before, q:after, blockquote:before, blockquote:after {
+  content: "";
+  content: none;
+}
+
+/* line 32, ../../../../../../../../../../var/lib/gems/2.3.0/gems/compass-core-1.0.3/stylesheets/compass/reset/_utilities.scss */
+a img {
+  border: none;
+}
+
+/* line 116, ../../../../../../../../../../var/lib/gems/2.3.0/gems/compass-core-1.0.3/stylesheets/compass/reset/_utilities.scss */
+article, aside, details, figcaption, figure, footer, header, hgroup, main, menu, nav, section, summary {
+  display: block;
+}
+
+/* line 18, ../sass/mc.sass */
+.captcha, .captcha.form-wrapper {
+  padding: 0;
+  margin: 0 0 10px;
+  border: none;
+  text-align: center;
+}
+/* line 23, ../sass/mc.sass */
+.captcha .g-recaptcha, .captcha.form-wrapper .g-recaptcha {
+  text-align: center;
+}
+/* line 25, ../sass/mc.sass */
+.captcha .g-recaptcha > div, .captcha.form-wrapper .g-recaptcha > div {
+  margin: 0 auto;
+}
+/* line 27, ../sass/mc.sass */
+.captcha legend, .captcha.form-wrapper legend {
+  display: none;
+}
+
+/* line 45, ../sass/mc.sass */
+.view table.views-table {
+  width: 100%;
+}
+/* line 47, ../sass/mc.sass */
+.view table.views-table th, .view table.views-table td {
+  padding: 10px;
+  text-align: center;
+}
+/* line 50, ../sass/mc.sass */
+.view table.views-table th > a, .view table.views-table td > a {
+  padding: 10px;
+  display: block;
+}
+
+/* line 54, ../sass/mc.sass */
+.content-slider-wrapper {
+  overflow: hidden;
+  position: relative;
+  width: 100%;
+  height: 820px;
+  z-index: 10;
+}
+/* line 60, ../sass/mc.sass */
+.content-slider-wrapper .content-slider {
+  width: 100%;
+  height: 820px;
+  margin-top: -22px;
+}
+/* line 64, ../sass/mc.sass */
+.content-slider-wrapper .content-slider .content-slide {
+  width: 100%;
+  height: 820px;
+  color: white;
+  background-repeat: no-repeat;
+  background-size: cover;
+}
+/* line 36, ../sass/mc.sass */
+.content-slider-wrapper .content-slider .content-slide .field-link a, .content-slider-wrapper .content-slider .content-slide .field-link a:link, .content-slider-wrapper .content-slider .content-slide .field-link a:visited {
+  background: darkgreen;
+  color: white;
+  border: none;
+  padding: 10px;
+}
+/* line 41, ../sass/mc.sass */
+.content-slider-wrapper .content-slider .content-slide .field-link a:hover {
+  background: green;
+}
+/* line 73, ../sass/mc.sass */
+.content-slider-wrapper .content-slider .content-slide .content-slide-wrapper {
+  max-width: 1259px;
+  margin: 0 auto;
+  height: 820px;
+}
+/* line 77, ../sass/mc.sass */
+.content-slider-wrapper .content-slider .content-slide .content-slide-wrapper img {
+  height: auto !important;
+}
+/* line 79, ../sass/mc.sass */
+.content-slider-wrapper .content-slider .content-slide .content-slide-wrapper .content-slide-inner-wrapper {
+  width: 90%;
+  height: auto;
+  position: relative;
+  margin: 0 auto;
+  top: 50%;
+  -moz-transform: translateY(-50%);
+  -ms-transform: translateY(-50%);
+  -webkit-transform: translateY(-50%);
+  transform: translateY(-50%);
+  text-align: center;
+}
+/* line 87, ../sass/mc.sass */
+.content-slider-wrapper .content-slider .content-slide .content-slide-wrapper .content-slide-inner-wrapper .field-copy {
+  padding: 10px;
+  background: rgba(0, 0, 0, 0.33);
+}
+
+/* line 92, ../sass/mc.sass */
+.block-wrapper .block-title {
+  font-size: 40px;
+  font-weight: normal;
+  color: grey;
+  padding-top: 60px;
+  padding-bottom: 80px;
+  text-align: center;
+}
+/* line 99, ../sass/mc.sass */
+.block-wrapper .block-title:after {
+  border-top: 1px solid grey;
+  margin-top: 40px;
+  width: 100px;
+  margin: 0 auto;
+  clear: both;
+  display: block;
+  content: " ";
+  position: relative;
+  top: 40px;
+}
+
+/* line 110, ../sass/mc.sass */
+.sxs {
+  padding-bottom: 40px;
+  padding-top: 60px;
+  margin-bottom: 40px;
+  color: white;
+}
+/* line 116, ../sass/mc.sass */
+.sxs .sxs-title {
+  margin: 0;
+  padding: 0;
+  font-size: 3em;
+  line-height: normal;
+  text-align: left;
+  font-style: italic;
+  padding-bottom: 40px;
+  margin-bottom: 30px;
+  text-align: center;
+  width: 100%;
+}
+/* line 127, ../sass/mc.sass */
+.sxs .sxs-title:after {
+  border-top: 1px solid green;
+  width: 100px;
+  margin: 0 auto;
+  clear: both;
+  display: block;
+  content: " ";
+  position: relative;
+  top: 40px;
+}
+@media all and (max-width: 959px) {
+  /* line 116, ../sass/mc.sass */
+  .sxs .sxs-title {
+    font-size: 2em;
+  }
+}
+@media all and (max-width: 639px) {
+  /* line 116, ../sass/mc.sass */
+  .sxs .sxs-title {
+    font-size: 1.25em;
+  }
+}
+/* line 140, ../sass/mc.sass */
+.sxs .sxs-copy {
+  font-size: 1.5em;
+}
+@media all and (max-width: 959px) {
+  /* line 140, ../sass/mc.sass */
+  .sxs .sxs-copy {
+    font-size: 1.2em;
+  }
+}
+@media all and (max-width: 639px) {
+  /* line 140, ../sass/mc.sass */
+  .sxs .sxs-copy {
+    font-size: 1em;
+  }
+}
+/* line 146, ../sass/mc.sass */
+.sxs .sxs-inner-wrapper {
+  width: 40%;
+  padding: 20px;
+  margin: 0;
+  color: white;
+  text-shadow: 0 1px 2px black;
+  background: rgba(0, 0, 0, 0.33);
+}
+/* line 153, ../sass/mc.sass */
+.sxs .sxs-inner-wrapper:after {
+  clear: both;
+  display: table;
+  content: " ";
+}
+/* line 156, ../sass/mc.sass */
+.sxs.sxs-right .sxs-inner-wrapper {
+  margin: 0 10% 0 0;
+  float: right;
+  clear: right;
+}
+/* line 161, ../sass/mc.sass */
+.sxs.sxs-left .sxs-inner-wrapper {
+  margin: 0 0 0 10%;
+  float: left;
+  clear: left;
+}
+/* line 165, ../sass/mc.sass */
+.sxs.sxs-left, .sxs.sxs-right {
+  clear: both;
+  display: table;
+  content: " ";
+}
+@media all and (max-width: 639px) {
+  /* line 169, ../sass/mc.sass */
+  .sxs.sxs-left .sxs-inner-wrapper, .sxs.sxs-right .sxs-inner-wrapper {
+    width: 80%;
+    margin: 0 auto;
+    float: none;
+    clear: both;
+  }
+}
+
+/* line 176, ../sass/mc.sass */
+.ctas-wrapper {
+  position: relative;
+  margin: 0 0 40px;
+  padding: 0;
+}
+/* line 180, ../sass/mc.sass */
+.ctas-wrapper .ctas-title {
+  width: 100%;
+  clear: both;
+  text-align: center;
+  font-size: 40px;
+  font-style: italic;
+  margin-bottom: 80px;
+}
+/* line 187, ../sass/mc.sass */
+.ctas-wrapper .ctas-title:after {
+  border-top: 1px solid green;
+  margin-top: 40px;
+  width: 100px;
+  margin: 0 auto;
+  clear: both;
+  display: block;
+  content: " ";
+  position: relative;
+  top: 40px;
+}
+/* line 197, ../sass/mc.sass */
+.ctas-wrapper .ctas-inner-wrapper {
+  max-width: 1259px;
+  width: 100%;
+  text-align: center;
+  margin: 0 auto;
+  white-space: wrap;
+  display: flex;
+  flex-flow: row;
+  flex-wrap: wrap;
+  justify-content: space-around;
+}
+/* line 209, ../sass/mc.sass */
+.ctas-wrapper .ctas-link a, .ctas-wrapper .ctas-link a:link, .ctas-wrapper .ctas-link a:visited {
+  display: block;
+  text-align: center;
+  color: white;
+}
+/* line 36, ../sass/mc.sass */
+.ctas-wrapper .ctas-link a, .ctas-wrapper .ctas-link a:link, .ctas-wrapper .ctas-link a:visited, .ctas-wrapper .ctas-link a:link, .ctas-wrapper .ctas-link a:link:link, .ctas-wrapper .ctas-link a:link:visited, .ctas-wrapper .ctas-link a:visited, .ctas-wrapper .ctas-link a:visited:link, .ctas-wrapper .ctas-link a:visited:visited {
+  background: darkgreen;
+  color: white;
+  border: none;
+  padding: 10px;
+}
+/* line 41, ../sass/mc.sass */
+.ctas-wrapper .ctas-link a:hover, .ctas-wrapper .ctas-link a:link:hover, .ctas-wrapper .ctas-link a:visited:hover {
+  background: green;
+}
+/* line 214, ../sass/mc.sass */
+.ctas-wrapper .cta {
+  text-align: center;
+  padding: 10px 20px;
+  width: 17.5%;
+}
+@media all and (max-width: 959px) {
+  /* line 214, ../sass/mc.sass */
+  .ctas-wrapper .cta {
+    width: 40%;
+  }
+}
+@media all and (max-width: 639px) {
+  /* line 214, ../sass/mc.sass */
+  .ctas-wrapper .cta {
+    width: 100%;
+  }
+}
+/* line 223, ../sass/mc.sass */
+.ctas-wrapper .cta:last-child {
+  margin-right: 0;
+}
+/* line 225, ../sass/mc.sass */
+.ctas-wrapper .cta .cta-image {
+  overflow: hidden;
+  margin: 0 auto 25px;
+}
+/* line 228, ../sass/mc.sass */
+.ctas-wrapper .cta .cta-image img {
+  height: 160px;
+  width: auto;
+  display: block;
+  margin: 0 auto;
+}
+/* line 233, ../sass/mc.sass */
+.ctas-wrapper .cta .cta-copy {
+  margin: 0 0 10px;
+}
+/* line 235, ../sass/mc.sass */
+.ctas-wrapper .cta .cta-title {
+  margin: 0 0 10px;
+  line-height: 30px;
+  font-size: 30px;
+}
+@media all and (max-width: 639px) {
+  /* line 235, ../sass/mc.sass */
+  .ctas-wrapper .cta .cta-title {
+    font-size: 20px;
+  }
+}
+/* line 241, ../sass/mc.sass */
+.ctas-wrapper .cta .cta-link {
+  display: block;
+}
+/* line 36, ../sass/mc.sass */
+.ctas-wrapper .cta .cta-link, .ctas-wrapper .cta .cta-link:link, .ctas-wrapper .cta .cta-link:visited {
+  background: darkgreen;
+  color: white;
+  border: none;
+  padding: 10px;
+}
+/* line 41, ../sass/mc.sass */
+.ctas-wrapper .cta .cta-link:hover {
+  background: green;
+}
+
+/* line 245, ../sass/mc.sass */
+.image-wrapper {
+  padding-bottom: 90px;
+  padding-top: 110px;
+  color: white;
+  margin: 0 0 50px;
+}
+/* line 250, ../sass/mc.sass */
+.image-wrapper:after {
+  clear: both;
+  display: table;
+  content: " ";
+}
+/* line 252, ../sass/mc.sass */
+.image-wrapper .image-copy-wrapper {
+  width: 70%;
+  margin: 0 auto;
+  font-size: 30px;
+  line-height: 30px;
+  color: white;
+  padding: 10px;
+  background: rgba(64, 64, 64, 0.6);
+}
+/* line 260, ../sass/mc.sass */
+.image-wrapper .image-copy-wrapper a {
+  color: white;
+}
+/* line 262, ../sass/mc.sass */
+.image-wrapper .image-copy-wrapper a:hover {
+  color: darkgreen;
+}

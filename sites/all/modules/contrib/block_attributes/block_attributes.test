@@ -1,0 +1,697 @@
+<?php
+
+/**
+ * @file
+ * Test the Block Attributes module.
+ */
+
+/**
+ * Provides common functionality for the Block Attributes test classes.
+ */
+class BlockAttributesTestCase extends DrupalWebTestCase {
+
+  /**
+   * User object to perform site browsing.
+   *
+   * @var object
+   */
+  protected $privilegedUser;
+
+  /**
+   * Machine name of the module providing the block coupled with delta.
+   *
+   * @var string
+   */
+  protected $module = 'system';
+
+  /**
+   * Block delta as provided by its module.
+   *
+   * @var string
+   */
+  protected $delta = 'main';
+
+  /**
+   * Permissions required by the user to perform the tests.
+   *
+   * @var array
+   */
+  protected $permissions = array(
+    'administer blocks',
+    'administer block attributes',
+  );
+
+  /**
+   * Enable modules and create user with specific permissions.
+   *
+   * By default Test Cases are carried on the "Main page content" Block.
+   */
+  public function setUp() {
+    // Merge inherited classes modules, see FieldUITestCase for an example.
+    $modules = func_get_args();
+    if (isset($modules[0]) && is_array($modules[0])) {
+      $modules = $modules[0];
+    }
+    $modules[] = 'block_attributes';
+    parent::setUp($modules);
+
+    // Authenticate test user.
+    $this->privilegedUser = $this->drupalCreateUser($this->permissions);
+    $this->drupalLogin($this->privilegedUser);
+  }
+
+  /**
+   * Build a complete data set of attribute values to perform the tests.
+   *
+   * Returns an array containing test values for every single attribute field.
+   * This array can then be passed to either the Block admin config form to
+   * update Block's configuration or to assert values upon Block display.
+   * Default values can be provided to the function for initializing test data,
+   * which is particularly useful for testing the Block Attributes
+   * configuration form.
+   *
+   * @param array $defaults
+   *   An array containing default values to initialize the test dataset.
+   */
+  public function getBlockAttributesTestingData($defaults = NULL) {
+    // Different styles for different scopes. Unfortunately, styles, can't be
+    // randomly generated, so we can use sample/example styles.
+    $testing_styles = array(
+      BLOCK_ATTRIBUTES_BLOCK => "font-weight: bold;text-decoration: underline;",
+      BLOCK_ATTRIBUTES_TITLE => "font-size: 11px; font-weight: normal;",
+      BLOCK_ATTRIBUTES_CONTENT => "text-align: center;",
+    );
+    // Get block attributes scopes ready for looping.
+    $scopes = array(
+      BLOCK_ATTRIBUTES_BLOCK,
+      BLOCK_ATTRIBUTES_TITLE,
+      BLOCK_ATTRIBUTES_CONTENT,
+    );
+    // Our Block title needs a value to test the Title level attributes.
+    // If default values are provided, title should be initialized outside.
+    if (empty($defaults)) {
+      $block_attributes['title'] = $this->randomName(8);
+    }
+
+    // Access Key is a Block level attribute, test with a random string.
+    // Special characters, such as > or ' create problems with xpath, so in
+    // this test we use alphanumeric characters exclusively, not randomString.
+    $block_attributes[BLOCK_ATTRIBUTES_BLOCK . '[accesskey]'] = (empty($defaults['block_attributes_accesskey_default'])) ? $this->randomName(1) : $defaults['block_attributes_accesskey_default'];
+
+    // Loop through all attributes to fill $block_attributes with all values.
+    foreach ($scopes as $scope) {
+      // Align: Test with a random alignment (not empty).
+      $block_attributes[$scope . '[align]'] = (empty($defaults['block_attributes_align_default'])) ? array_rand(array(
+        'left' => t('Left'),
+        'right' => t('Right'),
+        'center' => t('Center'),
+        'justify' => t('Justify'),
+      )) : $defaults['block_attributes_align_default'];
+
+      // Class: Test with three random class names.
+      $block_attributes[$scope . '[class]'] = (empty($defaults['block_attributes_class_default'])) ? implode(' ', array(
+        $this->randomName(8),
+        $this->randomName(8),
+        $this->randomName(8),
+      )) : $defaults['block_attributes_class_default'];
+
+      // ID: Test with a random CSS ID.
+      $block_attributes[$scope . '[id]'] = (empty($defaults['block_attributes_id_default'])) ? $this->randomName(8) : $defaults['block_attributes_id_default'];
+
+      // Style: Test Block level CSS styles.
+      $block_attributes[$scope . '[style]'] = (empty($defaults['block_attributes_style_default'])) ? $testing_styles[$scope] : $defaults['block_attributes_style_default'];
+
+      // Title: Test with a random title.
+      $block_attributes[$scope . '[title]'] = (empty($defaults['block_attributes_title_default'])) ? $this->randomName(8) : $defaults['block_attributes_title_default'];
+    }
+    // The CSS Class is not a Block Content level attribute.
+    unset($block_attributes[BLOCK_ATTRIBUTES_CONTENT . '[class]']);
+
+    return $block_attributes;
+  }
+
+  /**
+   * Assert whether all HTML attributes display correctly in page's markup.
+   *
+   * All attributes in all scopes (Block, title and content levels) are checked
+   * in the markup using xpath queries.
+   *
+   * @param array $block_attributes
+   *   An array containing test values for all the html attributes.
+   */
+  public function assertBlockAttributesDisplay($block_attributes) {
+    // Prepare string replacements arrays for xpath and format_string.
+    foreach ($block_attributes as $key => $value) {
+      // Remove the square brackets from the keys: they can't go through xpath.
+      // Transform 'attributes[id]' into ':attributesid', for example.
+      $xpath_replacements[':' . str_replace(array('[', ']'), '', $key)] = $value;
+      // Transform 'attributes[id]' into '@attributes[id]', for example.
+      $string_replacements['@' . $key] = $value;
+    }
+
+    // Test BLOCK_ATTRIBUTES_BLOCK and BLOCK_ATTRIBUTES_TITLE scopes:
+    // Query the markup to find Block and Title level markup and attributes.
+    $block_xpath = $this->xpath('//div[@id = :attributesid][contains(@class, :attributesclass)][@accesskey = :attributesaccesskey][@align = :attributesalign][@style = :attributesstyle][@title = :attributestitle]/h2[@align = :title_attributesalign][contains(@class, :title_attributesclass)][@id = :title_attributesid][@style = :title_attributesstyle][@title = :title_attributestitle]', $xpath_replacements);
+
+    // Test Block level and Title markup attributes and text.
+    $this->assertTrue((!empty($block_xpath[0])) && ((string) $block_xpath[0] == $block_attributes['title']), format_string('The Block level HTML attributes have all been found:<br/>[ID: @attributes[id]], [class: @attributes[class]], [accesskey: @attributes[accesskey]], [align: @attributes[align]], [style: @attributes[style]], [title: @attributes[title]].<br/> The Block Title HTML attributes have all been found:<br/>[ID: @title_attributes[id]], [class: @title_attributes[class]], [align: @title_attributes[align]], [style: @title_attributes[style]], [title: @title_attributes[title]].<br/>The Block Title has been found: @title.', $string_replacements));
+
+    // Test BLOCK_ATTRIBUTES_CONTENT scope:
+    // Query the markup to find Block content attributes.
+    $block_xpath = $this->xpath('//div[@id = :attributesid][contains(@class, :attributesclass)][@accesskey = :attributesaccesskey][@align = :attributesalign][@style = :attributesstyle][@title = :attributestitle]/div[@align = :content_attributesalign][@class = "content"][@id = :content_attributesid][@style = :content_attributesstyle][@title = :content_attributestitle]', $xpath_replacements);
+
+    // Test Block content attributes.
+    $this->assertTrue(!empty($block_xpath[0]), format_string('The Block content HTML attributes have all been found:<br/>[ID: @content_attributes[id]], [align: @content_attributes[align]], [style: @content_attributes[style]], [title: @content_attributes[title]].', $string_replacements));
+  }
+
+  /**
+   * Update Block Attributes and assert whether they are found when displayed.
+   *
+   * @param bool $anon
+   *   (optional) Set to TRUE to view block with anon user, defaults to TRUE.
+   * @param string $module
+   *   (optional) Machine name of the module Defaults to
+   *   $this->module if set to NULL.
+   * @param string $delta
+   *   (optional) Block delta as provided by its module. Defaults to
+   *   $this->delta if set to NULL.
+   */
+  public function assertUpdateDisplayBlockAttributes($anon = FALSE, $module = NULL, $delta = NULL) {
+    // Initialize $module and $delta by default if no value is provided.
+    if (!isset($module)) {
+      $module = $this->module;
+    }
+    if (!isset($delta)) {
+      $delta = $this->delta;
+    }
+    // Get Block Attributes testing data.
+    $block_attributes = $this->getBlockAttributesTestingData();
+
+    // Update Block Attributes fields.
+    $this->drupalPost("admin/structure/block/manage/$module/$delta/configure", $block_attributes, t('Save block'));
+
+    // Check Block configuration was saved successfully.
+    $this->assertText(t('The block configuration has been saved.'));
+    // Log out if the test is for anonymous user.
+    if ($anon) {
+      $this->drupalLogout();
+    }
+    // Browse to the homepage.
+    $this->drupalGet('');
+
+    // Assert whether Block's attributes could be found on the page.
+    $this->assertBlockAttributesDisplay($block_attributes);
+
+    // Login again after testing with the anonymous user.
+    if ($anon) {
+      $this->drupalLogin($this->privilegedUser);
+    }
+  }
+
+}
+
+/**
+ * Test the update and display of the HTML attributes for a Block.
+ */
+class BlockAttributesUpdateDisplayTestCase extends BlockAttributesTestCase {
+
+  /**
+   * Implements DrupalWebTestCase::getInfo().
+   */
+  public static function getInfo() {
+    return array(
+      'name' => 'Block HTML attributes update and display',
+      'description' => 'Test the update of a Block HTML attributes fields and the display for the Main Page Content Block.',
+      'group' => 'Block Attributes',
+    );
+  }
+
+  /**
+   * Update and display a Block multiple times to ensure attributes are found.
+   *
+   * A Block is updated and displayed several times and with logged in or
+   * anonymous user, with Block cache enabled or disabled.
+   */
+  public function testUpdateDisplayAttributes() {
+    // Edit the block, change attributes and check if they are found.
+    $this->assertUpdateDisplayBlockAttributes();
+
+    // Now, turn on caching programmatically and set it to 15 min expiry.
+    variable_set('block_cache', TRUE);
+    variable_set('cache_lifetime', 900);
+    variable_set('page_cache_maximum_age', 900);
+
+    // Edit the block, change attributes and check with the anonymous user.
+    $this->assertUpdateDisplayBlockAttributes(TRUE);
+
+    // Edit the block, change attributes and check with the anonymous user.
+    $this->assertUpdateDisplayBlockAttributes(TRUE);
+  }
+
+}
+
+/**
+ * Test Block Attributes permissions.
+ */
+class BlockAttributesPermissionTestCase extends BlockAttributesTestCase {
+
+  /**
+   * Implements DrupalWebTestCase::getInfo().
+   */
+  public static function getInfo() {
+    return array(
+      'name' => 'Administer block attributes permission',
+      'description' => 'Test the permission added by the module to administer block attributes.',
+      'group' => 'Block Attributes',
+    );
+  }
+
+  /**
+   * Enable modules and create user with specific permissions.
+   */
+  public function setUp() {
+    // Remove the 'administer block attributes' permission from the base class.
+    $this->permissions = array('administer blocks');
+    parent::setUp();
+  }
+
+  /**
+   * Ensure Block Attributes fields only appear with the right permissions.
+   *
+   * Test if a user without 'administer block attributes' permission has access
+   * to the Block Attributes fields on the block configuration page.
+   */
+  public function testPermission() {
+    // Browse to the "Main page content" block editing form page.
+    $this->drupalGet("admin/structure/block/manage/{$this->module}/{$this->delta}/configure");
+    // Get Block Attributes testing data.
+    $block_attributes = $this->getBlockAttributesTestingData();
+    // The Title field is not part of the HTML attributes to be tested.
+    unset($block_attributes['title']);
+    // For each attribute name check if the field exists on the page.
+    foreach ($block_attributes as $key => $value) {
+      $this->assertNoFieldByName($key, NULL, format_string('The field <em>@field_name</em> was not found on the page.', array(
+        '@field_name' => $key,
+      )));
+    }
+  }
+
+}
+
+/**
+ * Test Block Attributes integration with Context.
+ */
+class BlockAttributesContextTestCase extends BlockAttributesUpdateDisplayTestCase {
+
+  /**
+   * Implements DrupalWebTestCase::getInfo().
+   */
+  public static function getInfo() {
+    return array(
+      'name' => 'Integration with Context',
+      'description' => 'Test the integration of Block Attributes with the Context module and the update/display of a Block HTML attributes.',
+      // Include required contributed modules context and ctools for the test.
+      'dependencies' => array('context', 'ctools'),
+      'group' => 'Block Attributes',
+    );
+  }
+
+  /**
+   * Enable modules and create user with specific permissions.
+   */
+  public function setUp() {
+    // Override default module and delta to test with the "Who's online" block.
+    $this->module = 'user';
+    $this->delta = 'online';
+    // Include the Context module and its dependencies to be loaded.
+    parent::setUp('context');
+    // Initialize a test context with the test block.
+    $this->initializeContext();
+  }
+
+  /**
+   * Helper function to initialize a test Context with a test block.
+   */
+  public function initializeContext() {
+    // Import a basic context exported through the admin interface.
+    $context = new stdClass();
+    $context->disabled = FALSE;
+    $context->api_version = 3;
+    $context->name = 'front';
+    $context->description = 'Frontpage Context';
+    $context->tag = '';
+    $context->conditions = array(
+      'path' => array(
+        'values' => array(
+          '<front>' => '<front>',
+        ),
+      ),
+    );
+    $context->reactions = array(
+      'block' => array(
+        'blocks' => array(
+          $this->module . '-' . $this->delta => array(
+            'module' => $this->module,
+            'delta' => $this->delta,
+            'region' => 'content',
+            'weight' => '-10',
+          ),
+        ),
+      ),
+    );
+    $context->condition_mode = 0;
+
+    // Translatables
+    // Included for use with string extractors like potx.
+    t('Frontpage Context');
+
+    // Save the context.
+    context_save($context);
+  }
+
+}
+
+/**
+ * Test Block Attributes integration with Features through FE Block.
+ */
+class BlockAttributesFeaturesTestCase extends BlockAttributesTestCase {
+
+  /**
+   * Implements DrupalWebTestCase::getInfo().
+   */
+  public static function getInfo() {
+    return array(
+      'name' => 'Integration with Features',
+      'description' => 'Test the integration of Block Attributes with Features through the FE Block module and the update/display of Block HTML Attributes.',
+      // Include Features related modules required for this Test Case.
+      'dependencies' => array('features', 'ctools', 'fe_block'),
+      'group' => 'Block Attributes',
+    );
+  }
+
+  /**
+   * Enable modules and create user with specific permissions.
+   */
+  public function setUp() {
+    // Override default module and delta to test with the "Who's online" block.
+    $this->module = 'user';
+    $this->delta = 'online';
+    // Include all Features related modules and Test Helper feature.
+    parent::setUp('block_attributes_fe_block_test');
+  }
+
+  /**
+   * Test how Block Attributes reacts when exported to a Feature with FE Block.
+   *
+   * Helper Feature's Block configuration settings are imported, updated and
+   * the display is tested several times, before reverting the feature.
+   */
+  public function testFeatureDisplayAttributes() {
+    // Block attributes exported to the Test Feature module.
+    $test_attributes = array(
+      'title' => "Block Attributes Test Who's Online with FE Block",
+      'attributes[accesskey]' => 'A',
+      'attributes[align]' => 'right',
+      'attributes[class]' => 'fe_block-class1 fe_block-class2 fe_block-class3',
+      'attributes[id]' => 'fe_block-id1',
+      'attributes[style]' => 'font-weight: bold;text-decoration: underline;',
+      'attributes[title]' => 'FE Block - Block lvl title test1',
+      'title_attributes[align]' => 'center',
+      'title_attributes[class]' => 'fe_block_title-class1 fe_block_title-class2 fe_block_title-class3',
+      'title_attributes[id]' => 'fe_block_title-id1',
+      'title_attributes[style]' => 'font-size: 11px; font-weight: normal;',
+      'title_attributes[title]' => 'FE Block - Block Title title test1',
+      'content_attributes[align]' => 'left',
+      'content_attributes[id]' => 'fe_block_content-id1',
+      'content_attributes[style]' => 'text-align: center;',
+      'content_attributes[title]' => 'FE Block - Block Content title test1',
+    );
+
+    // Test helper feature machine name.
+    $test_feature = 'block_attributes_fe_block_test';
+
+    // Browse to the front page and check Block's attributes configuration.
+    $this->drupalGet('');
+    // Assert whether Block's attributes could be found on the page.
+    $this->assertBlockAttributesDisplay($test_attributes);
+
+    // Check Block's configuration form HTML attributes fields values.
+    $this->drupalGet("admin/structure/block/manage/{$this->module}/{$this->delta}/configure");
+    foreach ($test_attributes as $key => $value) {
+      $this->assertFieldByName($key, $value, format_string('The values from exported feature were found for the field <em>@field_name</em> in the Block\'s configuration page: @field_value', array('@field_name' => $key, '@field_value' => $value)));
+    }
+
+    // Run a standard Update/Display Test check with Anon.
+    $this->assertUpdateDisplayBlockAttributes(TRUE);
+
+    // Ensure Feature's state is overriden for 'fe_block_settings' component.
+    module_load_include('inc', 'features', 'features.export');
+    $test_feature_state = features_get_storage($test_feature);
+    $this->assertFalse(empty($test_feature_state), 'The state of the <em>Block Attributes FE Block Integration Test Helper</em> feature is <strong>Overridden</strong>.');
+    $test_feature_states = features_get_component_states(array($test_feature));
+    $this->assertFalse(empty($test_feature_states[$test_feature]['fe_block_settings']), 'The state of the <em>fe_block_settings</em> component of the <em>Block Attributes FE Block Integration Test Helper</em> feature is <strong>Overridden</strong>.');
+
+    // Revert feature and check again.
+    features_revert_module($test_feature);
+
+    // Browse to the front page and check Block's attributes configuration.
+    $this->drupalGet('');
+    // Assert whether Block's attributes could be found on the page.
+    $this->assertBlockAttributesDisplay($test_attributes);
+
+    // Check Block's configuration form HTML attributes fields values.
+    $this->drupalGet("admin/structure/block/manage/{$this->module}/{$this->delta}/configure");
+    foreach ($test_attributes as $key => $value) {
+      $this->assertFieldByName($key, $value, format_string('The values from exported feature were found for the field <em>@field_name</em> in the Block\'s configuration page: @field_value', array('@field_name' => $key, '@field_value' => $value)));
+    }
+  }
+
+}
+
+/**
+ * Test Block Attributes integration with Menu Block.
+ */
+class BlockAttributesMenuBlockTestCase extends BlockAttributesTestCase {
+
+  /**
+   * Implements DrupalWebTestCase::getInfo().
+   */
+  public static function getInfo() {
+    return array(
+      'name' => 'Integration with Menu Block',
+      'description' => 'Test the integration of Block Attributes with the Menu Block module and the update/display of a Menu Block\'s HTML attributes.',
+      // We could use Menu Block's API to import a block from code. But part of
+      // this test is about the creation process of a Menu Block.
+      'dependencies' => array('menu_block'),
+      'group' => 'Block Attributes',
+    );
+  }
+
+  /**
+   * Enable modules and create user with specific permissions.
+   */
+  public function setUp() {
+    // Override default parameters to test with the first Menu Block created.
+    $this->module = 'menu_block';
+    $this->delta = 1;
+    // Add permission required by Menu Block to browse the add menu block page.
+    $this->permissions[] = 'administer menu';
+    // Include the Menu Block module and its dependencies to be loaded.
+    parent::setUp('menu_block');
+  }
+
+  /**
+   * Create, update and display a Menu Block to ensure attributes are found.
+   *
+   * A Menu Block is added through the user interface. It is then updated and
+   * displayed several times with logged in or anonymous user.
+   */
+  public function testMenuBlockDisplayAttributes() {
+
+    // Get Block Attributes testing data.
+    $block_attributes = $this->getBlockAttributesTestingData() + array(
+      'menu_name' => 'navigation',
+      'regions[bartik]' => 'content',
+    );
+
+    // Start with the creation of a new Menu Block.
+    $this->drupalPost("admin/structure/block/add-menu-block", $block_attributes, t('Save block'));
+    // Check if the Block was successfully created.
+    $this->assertText(t('The block has been created.'));
+    // Browse to the homepage.
+    $this->drupalGet('');
+    // Assert whether Block's attributes could be found on the page.
+    $this->assertBlockAttributesDisplay($block_attributes);
+    // Run the standard tests on the existing Menu Block created above.
+    // Edit the block, change the class and check with the anonymous user.
+    $this->assertUpdateDisplayBlockAttributes(TRUE);
+  }
+
+}
+
+/**
+ * Test Block Attributes integration with Views block.
+ */
+class BlockAttributesViewsTestCase extends BlockAttributesUpdateDisplayTestCase {
+
+  /**
+   * Implements DrupalWebTestCase::getInfo().
+   */
+  public static function getInfo() {
+    return array(
+      'name' => 'Integration with Views block',
+      'description' => 'Test the integration of Block Attributes with Views blocks and the update/display of HTML attributes.',
+      'dependencies' => array('views'),
+      'group' => 'Block Attributes',
+    );
+  }
+
+  /**
+   * Enable modules and create the data necessary to run the tests.
+   */
+  public function setUp() {
+    // Override default parameters to test with the Views: Archive block.
+    $this->module = 'views';
+    $this->delta = 'archive-block';
+    // Include the Views module and its dependencies to be loaded.
+    parent::setUp('views');
+
+    // Programmatically enable the default Archive View, based on #820110-1.
+    $status = variable_get('views_defaults', array());
+    $status['archive'] = FALSE;
+    variable_set('views_defaults', $status);
+
+    // Note that the Views Archive block is not visible on the Block admin page
+    // unless the registry is rebuilt with: registry_rebuild().
+    // Directly publish the Views Archive Block to the content region.
+    $this->drupalPost("admin/structure/block/manage/{$this->module}/{$this->delta}/configure", array('regions[bartik]' => 'content'), t('Save block'));
+
+    // Create a sample node to have some data to display in Views: Archive.
+    $this->drupalCreateNode(array(
+      'type' => 'page',
+      'status' => 1,
+      'uid' => $this->privilegedUser->uid,
+    ));
+  }
+
+}
+
+/**
+ * Test Block Attributes admin configuration form.
+ */
+class BlockAttributesAdminConfigTestCase extends BlockAttributesTestCase {
+
+  /**
+   * Implements DrupalWebTestCase::getInfo().
+   */
+  public static function getInfo() {
+    return array(
+      'name' => 'Block Attributes admin configuration form',
+      'description' => 'Test the settings on Block Attributes\' admin configuration form: disable/enable attributes and default values for new blocks.',
+      'group' => 'Block Attributes',
+    );
+  }
+
+  /**
+   * Create a block based on default settings and test disabling attributes.
+   *
+   * Block Attributes admin configuration form default settings are initialized
+   * for all attributes and tested with the creation of a new custom Block. All
+   * attributes are then disabled and the Block creation form tested again.
+   */
+  public function testAdminConfigForm() {
+
+    // A few styles to be randomly selected for the test.
+    $styles = array(
+      "font-weight: bold;text-decoration: underline;",
+      "font-size: 11px; font-weight: normal;",
+      "text-align: center;",
+    );
+    // Initialize random values for the default attributes.
+    $block_attributes_defaults = array(
+      'block_attributes_accesskey_default' => $this->randomName(1),
+      'block_attributes_align_default' => array_rand(array(
+        'left' => t('Left'),
+        'right' => t('Right'),
+        'center' => t('Center'),
+        'justify' => t('Justify'),
+      )),
+      'block_attributes_class_default' => implode(' ', array(
+        $this->randomName(8),
+        $this->randomName(8),
+        $this->randomName(8),
+      )),
+      'block_attributes_id_default' => $this->randomName(8),
+      'block_attributes_style_default' => $styles[mt_rand(0, 2)],
+      'block_attributes_title_default' => $this->randomName(8),
+    );
+
+    // Update all of Block Attributes default fields.
+    $this->drupalPost("admin/structure/block/attributes", $block_attributes_defaults, t('Save configuration'));
+    // Check default configuration was saved successfully.
+    $this->assertText(t('The configuration options have been saved.'));
+
+    // Get formatted array for all Block attributes with default values.
+    $block_attributes = $this->getBlockAttributesTestingData($block_attributes_defaults);
+
+    // Check Block's configuration form HTML attributes field values.
+    $this->drupalGet("admin/structure/block/add");
+    foreach ($block_attributes as $key => $value) {
+      // Check each attribute field has the default value defined previously.
+      $this->assertFieldByName($key, $value, format_string('The default value for the field <em>@field_name</em> was found in the custom Block\'s creation page: @field_value', array('@field_name' => $key, '@field_value' => $value)));
+    }
+
+    // Add a few more field values to the testing dataset.
+    $test_attributes = $block_attributes + array(
+      'title' => $this->randomName(8),
+      'info' => $this->randomName(16),
+      'body[value]' => $this->randomName(128),
+      'regions[bartik]' => 'content',
+    );
+
+    // Update Block's HTML attributes fields and create a new block.
+    $this->drupalPost("admin/structure/block/add", $test_attributes, t('Save block'));
+    // Check Block configuration was saved successfully.
+    $this->assertText(t('The block has been created.'));
+    // Browse to the homepage.
+    $this->drupalGet('');
+    // Assert whether Block's attributes could be found on the page.
+    $this->assertBlockAttributesDisplay($test_attributes);
+
+    // Set all the checkboxes to disable all Block attributes.
+    $block_attributes_enable = array(
+      'block_attributes_accesskey_enable' => FALSE,
+      'block_attributes_align_enable' => FALSE,
+      'block_attributes_class_enable' => FALSE,
+      'block_attributes_id_enable' => FALSE,
+      'block_attributes_style_enable' => FALSE,
+      'block_attributes_title_enable' => FALSE,
+    );
+
+    // Set all Block Attributes to disabled.
+    $this->drupalPost("admin/structure/block/attributes", $block_attributes_enable, t('Save configuration'));
+    // Check default configuration was saved successfully.
+    $this->assertText(t('The configuration options have been saved.'));
+
+    // Check the block creation form and another block's configuration form.
+    $paths = array(
+      "admin/structure/block/add",
+      "admin/structure/block/manage/{$this->module}/{$this->delta}/configure",
+    );
+    foreach ($paths as $path) {
+      // Check that none of the attributes fields display on the forms anymore.
+      $this->drupalGet($path);
+      foreach ($block_attributes as $key => $value) {
+        $this->assertNoFieldByName($key, NULL, format_string('The field <em>@field_name</em> was not found on the page.', array(
+          '@field_name' => $key,
+        )));
+      }
+      // Ensure the fieldsets don't display if no attribute is contained.
+      // Attempt to select in the HTML markup the three fieldsets with an id
+      // starting with 'edit-' and ending with '-attributes'.
+      $fieldsets_xpath = $this->xpath('//fieldset[starts-with(@id,"edit-")][substring(@id, string-length(@id) - string-length("-attributes") +1) = "-attributes"][contains(@class, "collapsible")]');
+      $this->assertTrue(count($fieldsets_xpath) == 0, 'The block attributes fieldsets could not be found on the page.');
+    }
+  }
+
+}

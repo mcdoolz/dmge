@@ -1,0 +1,13 @@
+name = Field Formatter Class
+description = "Allows custom HTML classes for field formatters."
+core = 7.x
+package = Fields
+dependencies[] = field
+dependencies[] = field_formatter_settings
+
+; Information added by drupal.org packaging script on 2013-09-30
+version = "7.x-1.1+0-dev"
+core = "7.x"
+project = "field_formatter_class"
+datestamp = "1380578833"
+

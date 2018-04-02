@@ -1,0 +1,33 @@
+<?php
+
+/**
+ * @file
+ * Install file for the Image Style Selector field.
+ *
+ * Creates/drops the database schema on installing/uninstalling the module,
+ * through the schema hook function implemention. The database schema contains
+ * all necessary information to store the image style selected by the user.
+ */
+
+/**
+ * Implements hook_field_schema().
+ */
+function iss_field_schema($field) {
+  if ($field['type'] == 'iss') {
+    // Although this is not the primary id of an image style, the theme function
+    // theme_image_formatter() uses the 'machine name' to apply the specific
+    // image style to the image.
+    $schema['columns']['image_style'] = array(
+      'description' => 'The image style name.',
+      'type' => 'varchar',
+      'length' => 255,
+      'not null' => TRUE,
+    );
+
+    $schema['indexes'] = array(
+      'image_style' => array('image_style'),
+    );
+
+    return $schema;
+  }
+}

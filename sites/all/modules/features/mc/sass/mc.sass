@@ -1,0 +1,263 @@
+
+@import "compass/reset"
+@import "compass/css3/border-radius"
+@import "compass/css3/transform"
+@import "compass/css3/text-shadow"
+
+
+// Breakpoints
+
+$container-mobile: 639px
+$container-tablet: 959px
+$container-desktop: 1259px
+$container-hd: 1599px
+
+$gutter-width: 10px
+
+.captcha
+  &, &.form-wrapper
+    padding: 0
+    margin: 0 0 $gutter-width
+    border: none
+    text-align: center
+    .g-recaptcha
+      text-align: center
+      & > div
+        margin: 0 auto
+    legend
+      display: none
+
+=clearfix
+  clear: both
+  display: table
+  content: ' '
+
+=button
+  &, &:link, &:visited
+    background: darkgreen
+    color: white
+    border: none
+    padding: $gutter-width
+  &:hover
+    background: green
+
+.view
+  table.views-table
+    width: 100%
+    th, td
+      padding: $gutter-width
+      text-align: center
+      & > a
+        padding: $gutter-width
+        display: block
+
+.content-slider-wrapper
+  overflow: hidden
+  position: relative
+  width: 100%
+  height: 820px
+  z-index: 10
+  .content-slider
+    width: 100%
+    height: 820px
+    margin-top: -22px
+    .content-slide
+      width: 100%
+      height: 820px
+      color: white
+      background-repeat: no-repeat
+      background-size: cover
+      .field-link
+        a
+          +button
+      .content-slide-wrapper
+        max-width: $container-desktop
+        margin: 0 auto
+        height: 820px
+        img
+          height: auto !important
+        .content-slide-inner-wrapper
+          width: 90%
+          height: auto
+          position: relative
+          margin: 0 auto
+          top: 50%
+          +transform(translateY(-50%))
+          text-align: center
+          .field-copy
+            padding: $gutter-width
+            background: rgba(0, 0, 0, 0.33)
+
+.block-wrapper
+  .block-title
+    font-size: 40px
+    font-weight: normal
+    color: grey
+    padding-top: 60px
+    padding-bottom: 80px
+    text-align: center
+    &:after
+      border-top: 1px solid grey
+      margin-top: 40px
+      width: 100px
+      margin: 0 auto
+      clear: both
+      display: block
+      content: ' '
+      position: relative
+      top: 40px
+
+.sxs
+  padding-bottom: 40px
+  padding-top: 60px
+  margin-bottom: $gutter-width * 4
+  // height: 500px
+  color: white
+  .sxs-title
+    margin: 0
+    padding: 0
+    font-size: 3em
+    line-height: normal
+    text-align: left
+    font-style: italic
+    padding-bottom: 40px
+    margin-bottom: 30px
+    text-align: center
+    width: 100%
+    &:after
+      border-top: 1px solid green
+      width: 100px
+      margin: 0 auto
+      clear: both
+      display: block
+      content: ' '
+      position: relative
+      top: 40px
+    @media all and (max-width: $container-tablet)
+      font-size: 2em
+    @media all and (max-width: $container-mobile)
+      font-size: 1.25em
+  .sxs-copy
+    font-size: 1.5em
+    @media all and (max-width: $container-tablet)
+      font-size: 1.2em
+    @media all and (max-width: $container-mobile)
+      font-size: 1em
+  .sxs-inner-wrapper
+    width: 40%
+    padding: $gutter-width * 2
+    margin: 0
+    color: white
+    +text-shadow(0 1px 2px black)
+    background: rgba(0, 0, 0, 0.33)
+    &:after
+      +clearfix
+  &.sxs-right
+    .sxs-inner-wrapper
+      margin: 0 10% 0 0
+      float: right
+      clear: right
+  &.sxs-left
+    .sxs-inner-wrapper
+      margin: 0 0 0 10%
+      float: left
+      clear: left
+  &.sxs-left, &.sxs-right
+    +clearfix
+  @media all and (max-width: $container-mobile)
+    &.sxs-left, &.sxs-right
+      .sxs-inner-wrapper
+        width: 80%
+        margin: 0 auto
+        float: none
+        clear: both
+
+
+.ctas-wrapper
+  position: relative
+  margin: 0 0 $gutter-width*4
+  padding: 0
+  .ctas-title
+    width: 100%
+    clear: both
+    text-align: center
+    font-size: 40px
+    font-style: italic
+    margin-bottom: 80px
+    &:after
+      border-top: 1px solid green
+      margin-top: 40px
+      width: 100px
+      margin: 0 auto
+      clear: both
+      display: block
+      content: ' '
+      position: relative
+      top: 40px
+  .ctas-inner-wrapper
+    max-width: $container-desktop
+    width: 100%
+    text-align: center
+    margin: 0 auto
+    white-space: wrap
+    display: flex
+    flex-flow: row
+    flex-wrap: wrap
+    justify-content: space-around
+  .ctas-link
+    a
+      &, &:link, &:visited
+        +button
+        display: block
+        text-align: center
+        color: white
+  .cta
+    // Inside a CTA as opposed to the CTA view surrounding
+    text-align: center
+    padding: $gutter-width $gutter-width*2
+    width: 17.5%
+    @media all and (max-width: $container-tablet)
+      width: 40%
+    @media all and (max-width: $container-mobile)
+      width: 100%
+    &:last-child
+      margin-right: 0
+    .cta-image
+      overflow: hidden
+      margin: 0 auto 25px
+      img
+        height: 160px
+        width: auto
+        display: block
+        margin: 0 auto
+    .cta-copy
+      margin: 0 0 $gutter-width
+    .cta-title
+      margin: 0 0 $gutter-width
+      line-height: 30px
+      font-size: 30px
+      @media all and (max-width: $container-mobile)
+        font-size: 20px
+    .cta-link
+      +button
+      display: block
+
+.image-wrapper
+  padding-bottom: 90px
+  padding-top: 110px
+  color: white
+  margin: 0 0 50px
+  &:after
+    +clearfix
+  .image-copy-wrapper
+    width: 70%
+    margin: 0 auto
+    font-size: 30px
+    line-height: 30px
+    color: white
+    padding: $gutter-width
+    background: rgba(64, 64, 64, 0.6)
+    a
+      color: white
+      &:hover
+        color: darkgreen

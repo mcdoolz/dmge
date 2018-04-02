@@ -1,0 +1,13 @@
+name = Image Style Selector
+description = Field that allows users to select the image style that should be applied on an image.
+package = Fields
+core = 7.x
+dependencies[] = image
+files[] = iss.test
+
+; Information added by Drupal.org packaging script on 2015-02-19
+version = "7.x-1.0-alpha2"
+core = "7.x"
+project = "iss"
+datestamp = "1424362916"
+

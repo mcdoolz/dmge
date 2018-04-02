@@ -1,0 +1,11 @@
+name = Node Ownership
+description = Provide Users to take ownership of the node.
+core = 6.x
+
+
+; Information added by drupal.org packaging script on 2012-03-18
+version = "7.x-1.x-dev"
+core = "7.x"
+project = "nodeownership"
+datestamp = "1332031444"
+

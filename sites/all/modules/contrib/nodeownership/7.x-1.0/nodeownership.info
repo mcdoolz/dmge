@@ -1,0 +1,15 @@
+; $Id: nodeownership.info,v 1.0 2011/01/26 $
+name = Node Ownership
+description = Provide Users to take ownership of the node.
+core = 7.x
+
+
+files[] = nodeownership.install
+files[] = nodeownership.module
+
+; Information added by drupal.org packaging script on 2012-03-18
+version = "7.x-1.x-dev"
+core = "7.x"
+project = "nodeownership"
+datestamp = "1332031444"
+

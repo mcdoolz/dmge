@@ -1,0 +1,10 @@
+name = Social Icons by McDoolz
+description = A simple social icons module I know I can trust to be simple.
+core = 7.x
+
+; Information added by Drupal.org packaging script on 2017-07-18
+version = "7.x-1.x-dev"
+core = "7.x"
+project = "mcdoolz_social"
+datestamp = "1500339845"
+
