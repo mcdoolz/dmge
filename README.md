@@ -1,1 +1,1 @@
-Welcome to Weedster!
+Dooleys Maps and Game Emporium
