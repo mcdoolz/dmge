@@ -1,0 +1,29 @@
+name = Droogle
+description = Drupal and Google Drive Mashup.
+package = Babson Development
+core = 7.x
+dependencies[] = libraries
+dependencies[] = xautoload
+files[] = plugins/droogle_plugin_query.inc
+files[] = plugins/droogle_plugin_pager.inc
+files[] = handlers/droogle_handler_field.inc
+files[] = handlers/droogle_handler_field_date.inc
+files[] = handlers/droogle_handler_argument_og_group.inc
+files[] = handlers/droogle_handler_filter_string.inc
+files[] = handlers/droogle_handler_filter_string_contains.inc
+files[] = handlers/droogle_handler_filter_date.inc
+files[] = handlers/droogle_handler_filter_boolean.inc
+files[] = handlers/droogle_handler_filter_in.inc
+files[] = includes/DroogleStreamWrapper.inc
+files[] = includes/MediaInternetDroogleHandler.inc
+files[] = includes/DroogleStreamWrapper.inc
+files[] = includes/DroogleBrowser.inc
+
+
+
+; Information added by Drupal.org packaging script on 2015-06-05
+version = "7.x-4.0-beta15+26-dev"
+core = "7.x"
+project = "droogle"
+datestamp = "1433540022"
+

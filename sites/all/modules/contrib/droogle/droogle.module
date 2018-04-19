@@ -1,0 +1,748 @@
+<?php
+
+/**
+ * @file
+ * A module to integrate Drupal with Google Drive.
+ * Created by:  James Barnett, Babson College 2014.
+ */
+
+/**
+ * Implements hook_help().
+ */
+function droogle_help($path, $arg) {
+  $output = '';
+  switch ($path) {
+    case "admin/help#droogle":
+      $output = '<p>' . t("The module connects Drupal to Google Drive") . '</p>';
+      break;
+  }
+  return $output;
+}
+
+/**
+ * Implements hook_permission().
+ */
+function droogle_permission() {
+  return array(
+    'administer droogle' => array(
+      'title' => t('administer droogle'),
+      'description' => t('administer droogle'),
+    ),
+    'upload google docs' => array(
+      'title' => t('upload google docs'),
+      'description' => t('upload google docs'),
+    ),
+    'view google docs' => array(
+      'title' => t('view google docs'),
+      'description' => t('view google docs'),
+    ),
+  );
+}
+
+/**
+ * Implements hook_menu().
+ */
+function droogle_menu() {
+  $items = array();
+
+  $items['droogle_gdrive_create_file'] = array(
+    'title' => 'Gdrive File Upload',
+    'page callback' => 'droogle_file_upload',
+    'access arguments' => array('access content'),
+  );
+
+  $items['droogle'] = array(
+    'title' => 'droogle',
+    'page callback' => 'droogle_list_files',
+    'access arguments' => array('view google docs'),
+  );
+
+  $items['admin/config/content/droogle'] = array(
+    'title' => 'Droogle Settings',
+    'description' => 'Configuration of who can upload to google docs from an OG droogle block',
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('droogle_settings_form'),
+    'access arguments' => array('administer droogle'),
+    'file' => 'droogle.admin.inc',
+  );
+
+  $items['droogle_get_google_token'] = array(
+    'title' => 'droogle',
+    'page callback' => 'droogle_get_google_token_page',
+    'access arguments' => array('administer droogle'),
+    'file' => 'droogle.admin.inc',
+  );
+
+  return $items;
+}
+
+/**
+ * Implements hook_media_browser_plugin_info().
+ */
+function droogle_media_browser_plugin_info() {
+  $info['droogle'] = array(
+    'title' => t('Google Drive'),
+    'class' => 'DroogleBrowser',
+  );
+  return $info;
+}
+
+
+/**
+ * Get the refresh token.
+ *
+ * The refresh token most be requested to google, which involves redriecting to
+ * google for it so the user can confirm the permissions being asked for.
+ *
+ * @param $state
+ *   Additional state information that will be returned to final page.
+ */
+function droogle_get_google_token($state = array()) {
+  $url = "https://accounts.google.com/o/oauth2/auth";
+  $connection_info = droogle_get_connection_settings();
+  $client_id = $connection_info['client_id'];
+  $client_secret = $connection_info['client_secret'];
+  $redirect_uri = "http://" . $_SERVER['HTTP_HOST'] . "/droogle_get_google_token";
+  $access_type = "offline";
+  $approval_prompt = "force";
+  $grant_type = "authorization_code";
+  $scope = "https://www.googleapis.com/auth/drive";
+
+
+  $params_request = array(
+    "response_type" => "code",
+    "client_id" => "$client_id",
+    "redirect_uri" => "$redirect_uri",
+    "access_type" => "$access_type",
+    "approval_prompt" => "$approval_prompt",
+    "scope" => "$scope",
+    'state' => $state,
+  );
+  // To make sure the request is valid, as suggested by google documentation.
+  $params_request['state']['token'] = drupal_get_token($client_secret);
+  $params_request['state'] = serialize($params_request['state']);
+
+  $request_to = $url . '?' . http_build_query($params_request);
+
+  if (isset($_GET['code'])) {
+    // try to get an access token
+    $code = $_GET['code'];
+    $url = 'https://accounts.google.com/o/oauth2/token';
+    $params = array(
+        "code" => $code,
+        "client_id" => "$client_id",
+        "client_secret" => "$client_secret",
+        "redirect_uri" => "$redirect_uri",
+        "grant_type" => "$grant_type"
+    );
+
+    $curl = curl_init($url);
+    curl_setopt($curl, CURLOPT_POST, TRUE);
+    curl_setopt($curl, CURLOPT_POSTFIELDS, $params);
+    curl_setopt($curl, CURLOPT_HTTPAUTH, CURLAUTH_ANY);
+    curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, FALSE);
+    curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);
+
+    $json_response = curl_exec($curl);
+    curl_close($curl);
+
+    $auth_obj = json_decode($json_response);
+    $result = array();
+    $result['refresh_token'] = $auth_obj->refresh_token;
+    $result['access_token'] = $auth_obj->access_token;
+    return $result;
+  }
+  else {
+    return array('redirect' => $request_to);
+  }
+}
+
+/**
+ *  Implements hook_block_info().
+ */
+function droogle_block_info() {
+  $blocks = array();
+  $blocks['droogle-og-block'] = array(
+    'info' => t('Droogle OG Block'),
+  );
+  return $blocks;
+}
+
+ /**
+  *  Implements hook_block_view().
+  */
+function droogle_block_view($delta = '') {
+  $block = array();
+  switch ($delta) {
+    case 'droogle-og-block':
+      $block['subject'] = t('Droogle OG Block');
+      $block['content'] = droogle_list_files();
+      break;
+  }
+  return $block;
+}
+
+/**
+ * Get the client ID, password, and refresh token.
+ *
+ * @param $use_og
+ *   Check OG group.
+ * @param @group_context
+ *   Instead of using current group context, use this.
+ */
+function droogle_get_connection_settings($use_og = TRUE, $group_context = NULL) {
+  $return = array();
+  $return['client_id'] = variable_get('droogle_clientid', '');
+  $return['client_secret'] = variable_get('droogle_secret', '');
+  $return['refresh_token'] = variable_get('droogle_refresh_token', '');
+  if ($use_og) {
+    $return = droogle_get_connection_settings_from_og($group_context) + $return;
+  }
+  drupal_alter('droogle_connection_settings', $return, $use_og, $group_context);
+  return $return;
+}
+
+/**
+ * Get the client ID, password, and refresh token.
+ *
+ * @param @group_context
+ *   Instead of using current group context, use this.
+ */
+function droogle_get_connection_settings_from_og($group_context = NULL) {
+  $return = array();
+  if (module_exists('og_context')) {
+    $current_group = $group_context ? $group_context : og_context();
+    if ($current_group && ($entities = entity_load($current_group['group_type'], array($current_group['gid']))) && ($entity = reset($entities))) {
+      // Override any fields set to override.
+      $fields = array(
+        'client_id' => 'droogle_og_field_gdrive_client_id',
+        'client_secret' => 'droogle_og_field_gdrive_client_secret',
+        'refresh_token' => 'droogle_og_field_gdrive_refresh_token',
+      );
+      foreach ($fields as $var => $variable_name) {
+        if ($field_name = variable_get($variable_name)) {
+          if ($items = field_get_items($current_group['group_type'], $entity, $field_name)) {
+            $return[$var] = $items[0]['value'];
+          }
+        }
+      }
+      // This allows alteration by group like for og_subgroups.
+      drupal_alter('droogle_connection_settings_from_og', $return, $entity, $current_group['group_type']);
+    }
+  }
+  return $return;
+}
+
+/*
+ *  Function connects to google drive.
+ */
+function droogle_gdrive_connect($redirect_uri = NULL, $client_id = NULL, $client_secret = NULL, $refresh_token = NULL) {
+  $return_result = array();
+  if ($path = libraries_get_path('google-api-php-client-git-version')) {
+    ini_set('include_path', ini_get('include_path') . ':' . $_SERVER['DOCUMENT_ROOT'] . '/sites/all/libraries/google-api-php-client-git-version/src');
+    require_once 'Google/Client.php';
+    require_once 'Google/Http/MediaFileUpload.php';
+    require_once 'Google/Service/Drive.php';
+  }
+  else {
+    watchdog('droogle', 'Unable to find google api library, see droogle README for instructions.', array(), WATCHDOG_ERROR);
+    if (user_access('administer droogle')) {
+      drupal_set_message(t('Unable to find google drive library, see README.txt for installation instructions.'), 'error');
+    }
+    else {
+      drupal_set_message(t('Unable to connect to google drive, please contact an administrator'), 'error');
+    }
+    return FALSE;
+  }
+
+  $connection_info = droogle_get_connection_settings();
+  try {
+    $client = new Google_Client();
+    $client->setClientId($client_id ? $client_id : $connection_info['client_id']);
+    $client->setClientSecret($client_secret ? $client_secret :  $connection_info['client_secret']);
+    $client->setRedirectUri('http://' . $_SERVER['HTTP_HOST'] . '/droogle' . $redirect_uri);
+    $client->setAccessType('offline');
+    $client->addScope("https://www.googleapis.com/auth/drive");
+    $service = new Google_Service_Drive($client);
+
+    if (isset($_REQUEST['logout'])) {
+      unset($_SESSION['upload_token']);
+    }
+
+    if (isset($_GET['code'])) {
+      $client->authenticate($_GET['code']);
+      $_SESSION['upload_token'] = $client->getAccessToken();
+      $redirect = 'http://' . $_SERVER['HTTP_HOST'] . $_SERVER['PHP_SELF'];
+      header('Location: ' . filter_var($redirect, FILTER_SANITIZE_URL));
+    }
+
+    if (isset($_SESSION['upload_token']) && $_SESSION['upload_token']) {
+      $client->setAccessToken($_SESSION['upload_token']);
+      if ($client->isAccessTokenExpired()) {
+        unset($_SESSION['upload_token']);
+      }
+    }
+    else {
+      $auth_url = $client->createAuthUrl();
+    }
+  }
+  catch (Exception $e) {
+    watchdog('droogle', 'Unable to connect to google, error: @error', array('@error' => $e->getMessage()), WATCHDOG_ERROR);
+    if (user_access('administer droogle')) {
+      drupal_set_message(t('Unable to connect to google drive, error @error.', array('@error' => $e->getMessage())), 'error');
+    }
+    else {
+      drupal_set_message(t('Unable to connect to google drive, please contact an administrator'), 'error');
+    }
+    return FALSE;
+  }
+  try {
+    $refresh_token = $refresh_token ? $refresh_token : $connection_info['refresh_token'];
+    if (!empty($refresh_token) && ($client->isAccessTokenExpired() || $force)) {
+      $client->refreshToken($refresh_token);
+    }
+  }
+  catch (Exception $e) {
+    watchdog('droogle', 'Unable to refresh token: @error', array('@error' => $e->getMessage()), WATCHDOG_ERROR);
+    if (user_access('administer droogle')) {
+      drupal_set_message(t('Unable to refresh the token: @error.', array('@error' => $e->getMessage())), 'error');
+    }
+    else {
+      drupal_set_message(t('Unable to refresh the token, please contact an administrator.'), 'error');
+    }
+    return array();
+  }
+  if (!$client->getAccessToken()) {
+    return array();
+  }
+
+  $return_result['client'] = $client;
+  $return_result['service'] = $service;
+  if (isset($auth_url)) {
+    $return_result['authUrl'] = $auth_url;
+  }
+  return $return_result;
+}
+
+/*
+ *  Function creates a google drive document.
+ *  This functionality works but the module will
+ *  do more with it soon in coming versions.
+ */
+function droogle_file_upload($doctype = 'word', $doc_title = NULL, $role = NULL, $type = NULL, $permission_values = NULL) {
+  unset($result);
+  $return_result = droogle_gdrive_connect('droogle_gdrive_create_file');
+  if (!$return_result) {
+    return;
+  }
+  $client = $return_result['client'];
+  $service = $return_result['service'];
+  if (isset($return_result['authUrl'])) {
+    $auth_url = $return_result['authUrl'];
+  }
+
+  $file = new Google_Service_Drive_DriveFile();
+  if (!isset($doc_title)) {
+    $doc_title = 'Hello world from the new api! ' . time();
+  }
+  $file->setTitle($doc_title);
+  switch ($doctype) {
+  case 'word':
+    $file->setMimeType('application/vnd.google-apps.document');
+    break;
+  case 'excel':
+    $file->setMimeType('application/vnd.google-apps.spreadsheet');
+    break;
+  case 'presentation':
+    $file->setMimeType('application/vnd.google-apps.presentation');
+    break;
+  case 'drawing':
+    $file->setMimeType('application/vnd.google-apps.drawing');
+    break;
+  }
+
+  $result = $service->files->insert($file);
+  // Permission documentation is here:  https://developers.google.com/drive/v2/reference/permissions and
+  // here https://developers.google.com/drive/web/manage-sharing
+  $permission = new Google_Service_Drive_Permission();
+  if (isset($permission_values)) {
+    foreach ($permission_values as $value) {
+      $permission->setValue($value);
+    }
+  }
+  else {
+    $permission->setValue('wcheung@babson.edu');
+  }
+
+  if (isset($type)) {
+    $permission->setType($type);
+  }
+  else {
+    $permission->setType('user');
+  }
+
+  if (isset($role)) {
+    $permission->setRole($role);
+  }
+  else {
+    $permission->setRole('writer');
+  }
+
+  $service->permissions->insert( $result['id'], $permission );
+
+  $content = '';
+  if (isset($auth_url)) {
+    $content .= '<a class="login" href=' . $auth_url . '>Connect Me!</a></div>';
+  }
+  if (isset($result) && $result) {
+    drupal_set_message(t('File was Created in Google Drive!'));
+  }
+  return $content;
+}
+
+/*
+ *  A page callback for when you go to the droogle url.
+ */
+function droogle_list_files() {
+  $droogle_title_text = variable_get('droogle_title_text', '');
+  drupal_set_title($droogle_title_text);
+  $return_result = droogle_gdrive_connect('droogle');
+  if (!$return_result) {
+    return drupal_not_found();
+  }
+  $client = $return_result['client'];
+  $service = $return_result['service'];
+  if (isset($return_result['authUrl'])) {
+    $auth_url = $return_result['authUrl'];
+  }
+  return theme('droogle_list_files', array('service' => $service));
+}
+
+/**
+ * Load info about a file based on ID.
+ *
+ * The ID is part of the url after /d/.
+ */
+function droogle_gfile_load($id) {
+  $files = drupal_static(__FUNCTION__, array());
+  if (!isset($files[$id])) {
+    $return_result = droogle_gdrive_connect('droogle');
+    $service = $return_result['service'];
+    try {
+      $files[$id] = (array) $service->files->get($id);
+    }
+    catch (Exception $e) {
+      watchdog('droogle', 'Unable to connect to fetch file, error: @error', array('@error' => $e->getMessage()), WATCHDOG_ERROR);
+      if (user_access('administer droogle')) {
+        drupal_set_message(t('Unable to connect to fetch file, error @error.', array('@error' => $e->getMessage())), 'error');
+      }
+      else {
+        drupal_set_message(t('Unable to find file; this file may not accessible to the currently configured account. Please contact an administrator if this is in error.'), 'error');
+      }
+      return FALSE;
+    }
+    $files[$id] = (array) $service->files->get($id);
+  }
+  return $files[$id];
+}
+
+/**
+ * Parse the url to get the different parts.
+ */
+function droogle_parse_url($url) {
+  // https://docs.google.com/a/phase2technology.com/spreadsheets/d/1b2rw8CX41fUWcbZsnu2QK3qFbOJfWlNZ35Bj-K8RLWY/edit?usp=drivesdk*
+  // https://docs.google.com/a/phase2technology.com/document/d/18Upum1R5XMY5vfXGG1qTnQXt7QsVEVCFrkDP8JA4qck/edit?usp=drivesdk
+  // https://docs.google.com/spreadsheets/d/1ULue5cCe20jqXGrfgCfZiU6vgmUcm6xuYt8DJsPxRq4/edit#gid=0
+  $patterns = array(
+    '@docs.google.com/([\w]+)/d/([\w-]+)/edit@i',
+    '@docs.google.com/a/([\w.]+)/([\w]+)/d/([\w-]+)/edit@i',
+  );
+  $matches = array();
+  preg_match($patterns[0], $url, $matches);
+  if (count($matches) == 3) {
+    return array(
+      'type' => $matches[1],
+      'id' => $matches[2],
+    );
+  }
+  $matches = array();
+  preg_match($patterns[1], $url, $matches);
+  if (count($matches) == 4) {
+    return array(
+      'domain' => $matches[1],
+      'type' => $matches[2],
+      'id' => $matches[3],
+    );
+  }
+  return array();
+}
+
+
+/**
+ * Implements hook_theme().
+ *
+ * Information on hook theme http://groups.drupal.org/node/14274#comment-57950.
+ *    1. hook_theme which adds an array of callbacks and their arguments to the
+ *      theme registry. I didn't realize that I had to visit the modules page to
+ *      rebuild the theme registry before it would be added.
+ *    2. The themable function itself which starts with theme_ followed by the
+ *      function name that was added to the registry with hook_theme.
+ *    3. theme("whatever_function, $whatever_argument, $whatever_argument ")
+ *     which actually calls the function.
+ */
+function droogle_theme() {
+  return array(
+    'droogle_list_files' => array(
+      'arguments' => array(
+        'service' => NULL,
+      ),
+    ),
+    'droogle_views_pager' => array(
+      'variables' => array('current_page_token' => NULL, 'next_page_token' => NULL),
+      'pattern' => 'droogle_views_pager__',
+    ),
+  );
+}
+
+/**
+ * Implements of hook_theme().
+ *
+ * @param array $variables
+ *   an array with google document listings.
+ *
+ * @return string
+ *   html with listing of google docs to be output to the screen.
+ */
+function theme_droogle_list_files($variables) {
+  drupal_add_css(drupal_get_path('module', 'droogle') . '/css/droogle.css');
+  $service = $variables['service'];
+  $params = array(
+    'q' => "mimeType != 'application/vnd.google-apps.folder' and trashed = false"
+  );
+  $files = $service->files->listFiles($params);
+  $file_list = $files->getItems();
+  $content = '<ul>';
+  // Below line if for debugging.
+  foreach ($file_list as $file) {
+    switch ($file['mimeType']) {
+      case 'application/vnd.google-apps.document':
+        $content .= '<a href="' . $file["alternateLink"] . '"><li class="word">' . $file["title"] . '</li></a>';
+        break;
+      case 'application/vnd.google-apps.spreadsheet':
+        $content .= '<a href="' . $file["alternateLink"] . '"><li class="excel">' . $file["title"] . '</li></a>';
+        break;
+      case 'application/vnd.google-apps.presentation':
+        $content .= '<a href="' . $file["alternateLink"] . '"><li class="presentation">' . $file["title"] . '</li></a>';
+        break;
+      case 'application/vnd.google-apps.drawing':
+        $content .= '<a href="' . $file["alternateLink"] . '"><li class="drawing">' . $file["title"] . '</li></a>';
+        break;
+    }
+  }
+  $content .= '</ul>';
+
+  return $content;
+}
+
+/**
+ * Themes the droogle pager.
+ *
+ * As only know current page token and next, cannot do "real" paging.
+ */
+function theme_droogle_views_pager($vars) {
+  if (empty($vars['next_page_token']) && empty($vars['current_page_token'])) {
+    return;
+  }
+  $items[] = array(
+    'data' => l(t('First'), $_GET['q']),
+  );
+
+  if (!empty($vars['current_page_token'])) {
+    $items[] = array(
+      'data' => l(t('Current'), $_GET['q'], array('query' => array('page_token' => $vars['current_page_token']))),
+    );
+  }
+  if (!empty($vars['next_page_token'])) {
+    $items[] = array(
+      'data' => l(t('Next'), $_GET['q'], array('query' => array('page_token' => $vars['next_page_token']))),
+    );
+  }
+
+  return theme('item_list', array(
+    'items' => $items,
+    'title' => NULL,
+    'type' => 'ul',
+    'attributes' => array('class' => array('pager')),
+  ));
+}
+
+/**
+ * Implements hook_views_api().
+ */
+function droogle_views_api() {
+  return array(
+    'api' => '3.0',
+  );
+}
+
+/**
+ * Implements hook_media_internet_providers().
+ */
+function droogle_media_internet_providers() {
+  return array(
+    'MediaInternetDroogleHandler' => array(
+      'title' => t('Google Drive'),
+    ),
+  );
+}
+
+/**
+ * Implements hook_stream_wrappers().
+ */
+function droogle_stream_wrappers() {
+  return array(
+    'droogle' => array(
+      'name' => t('Google drive documents'),
+      'class' => 'DroogleStreamWrapper',
+      'description' => t('Remote google drive documents.'),
+      'type' => STREAM_WRAPPERS_READ_VISIBLE,
+    ),
+  );
+}
+
+
+/**
+ * Implements hook_file_mimetype_mapping_alter().
+ */
+function droogle_file_mimetype_mapping_alter(&$mapping) {
+  // @see https://developers.google.com/drive/web/mime-types
+  // Add the mime types so they can be processed as valid.
+  $mapping['mimetypes'][] = 'application/vnd.google-apps.audio';
+  $mapping['mimetypes'][] = 'application/vnd.google-apps.document';
+  $mapping['mimetypes'][] = 'application/vnd.google-apps.drawing';
+  $mapping['mimetypes'][] = 'application/vnd.google-apps.file';
+  $mapping['mimetypes'][] = 'application/vnd.google-apps.folder';
+  $mapping['mimetypes'][] = 'application/vnd.google-apps.form';
+  $mapping['mimetypes'][] = 'application/vnd.google-apps.fusiontable';
+  $mapping['mimetypes'][] = 'application/vnd.google-apps.photo';
+  $mapping['mimetypes'][] = 'application/vnd.google-apps.presentation';
+  $mapping['mimetypes'][] = 'application/vnd.google-apps.script';
+  $mapping['mimetypes'][] = 'application/vnd.google-apps.sites';
+  $mapping['mimetypes'][] = 'application/vnd.google-apps.spreadsheet';
+  $mapping['mimetypes'][] = 'application/vnd.google-apps.unknown';
+  $mapping['mimetypes'][] = 'application/vnd.google-apps.video';
+}
+
+/**
+ * Implements hook_file_default_types_alter().
+ */
+function droogle_file_default_types_alter(&$types) {
+  // Add google document mimetypes to file types if defined.
+  // This won't take effect if the file type has been overriden on site.
+  if (!empty($types['document'])) {
+    $types['document']->mimetypes[] = 'application/vnd.google-apps.document';
+    $types['document']->mimetypes[] = 'application/vnd.google-apps.file';
+    $types['document']->mimetypes[] = 'application/vnd.google-apps.presentation';
+    $types['document']->mimetypes[] = 'application/vnd.google-apps.spreadsheet';
+    $types['document']->mimetypes[] = 'application/vnd.google-apps.form';
+    $types['document']->mimetypes[] = 'application/vnd.google-apps.fusiontable';
+  }
+
+  if (!empty($types['audio'])) {
+    $types['audio']->mimetypes[] = 'application/vnd.google-apps.audio';
+  }
+
+  if (!empty($types['image'])) {
+    $types['image']->mimetypes[] = 'application/vnd.google-apps.drawing';
+    $types['image']->mimetypes[] = 'application/vnd.google-apps.photo';
+  }
+
+  if (!empty($types['video'])) {
+    $types['video']->mimetypes[] = 'application/vnd.google-apps.video';
+  }
+}
+
+/**
+ * Provides a form for adding media items from google drive.
+ */
+function droogle_media_add($form, &$form_state = array()) {
+  module_load_include('inc', 'media', 'includes/media.browser');
+
+  // This is set via #prefix so it's before <form> tag and works.
+  $form['#prefix'] = views_embed_view('droogle_browser', 'default');
+
+  $form['submitted-document'] = array(
+    '#type' => 'hidden',
+    '#default_value' => FALSE,
+  );
+
+  // Add media browser javascript and CSS.
+  drupal_add_js(drupal_get_path('module', 'droogle') . '/js/droogle.browser.js');
+  drupal_add_css(drupal_get_path('module', 'droogle') . '/css/droogle.browser.css');
+
+  $form['actions'] = array('#type' => 'actions');
+  $form['actions']['submit'] = array(
+    '#type' => 'submit',
+    '#value' => t('Submit'),
+  );
+  return $form;
+}
+
+/**
+ * Validate the object. Copied from media_yotube.
+ */
+function droogle_media_add_validate($form, &$form_state) {
+  if ($form_state['values']['op'] == t('Apply')) {
+    return;
+  }
+  $uri = $form_state['values']['submitted-document'];
+  try {
+    $file = file_uri_to_object($uri, TRUE);
+  }
+  catch (Exception $e) {
+    form_set_error('url', $e->getMessage());
+    return;
+  }
+  if (!$file->uri) {
+    form_set_error('url', t('Please select a document.'));
+    return;
+  }
+  else {
+    $parts = droogle_parse_url($file->uri);
+    if (empty($parts['id'])) {
+      form_set_error('url', t('Unable to parse URL as drive file'));
+    }
+    else {
+      $form_state['droogle_file'] = droogle_gfile_load($parts['id']);
+      if (!$form_state['droogle_file']) {
+        form_set_error('url', t('Unable to load file from google drive.'));
+      }
+    }
+  }
+}
+
+/**
+ * Submit function for adding media. Copied from media_yotube.
+ */
+function droogle_media_add_submit($form, &$form_state) {
+  $uri = $form_state['values']['submitted-document'];
+  try {
+    // Save the remote file
+    $file = file_uri_to_object($uri, FALSE);
+    // Override name.
+    $file->filename = $form_state['droogle_file']['title'];
+    file_save($file);
+  }
+  catch (Exception $e) {
+    form_set_error('url', $e->getMessage());
+    return;
+  }
+
+  if (!$file->fid) {
+    form_set_error('url', t('The file %file could not be saved. An unknown error has occurred.', array('%file' => $uri)));
+    return;
+  }
+  else {
+    $form_state['file'] = $file;
+  }
+}
