@@ -1,23 +1,195 @@
 <?php
-
 /**
  * @file
- * Installation/Uninstallation functions for rate module.
+ * Main install tasks and update tasks for the Rate module.
  */
-
-/**
- * Implements hook_uninstall().
- */
-function rate_uninstall() {
-  variable_del('rate_widgets');
-}
 
 /**
  * Implements hook_schema().
  */
 function rate_schema() {
   $schema = array();
-  
+
+  $schema['rate_widget'] = array(
+    'fields' => array(
+      'wid' => array(
+        'type' => 'serial',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+      ),
+      'type' => array(
+        'type' => 'varchar',
+        'length' => 64,
+        'not null' => TRUE,
+      ),
+      'name' => array(
+        'type' => 'varchar',
+        'length' => 255,
+        'not null' => TRUE,
+      ),
+      'mode' => array(
+        'type' => 'varchar',
+        'length' => 32,
+        'not null' => TRUE,
+      ),
+      'sprites' => array(
+        'type' => 'int',
+        'size' => 'tiny',
+        'not null' => TRUE,
+      ),
+      'highlight_voted' => array(
+        'type' => 'int',
+        'size' => 'tiny',
+        'not null' => TRUE,
+      ),
+      'highlight_mouseover' => array(
+        'type' => 'int',
+        'size' => 'tiny',
+        'not null' => TRUE,
+      ),
+      'desc_norating' => array(
+        'type' => 'varchar',
+        'length' => 255,
+        'not null' => TRUE,
+      ),
+      'desc_notvoted' => array(
+        'type' => 'varchar',
+        'length' => 255,
+        'not null' => TRUE,
+      ),
+      'desc_voted' => array(
+        'type' => 'varchar',
+        'length' => 255,
+        'not null' => TRUE,
+      ),
+      'desc_justvoted' => array(
+        'type' => 'varchar',
+        'length' => 255,
+        'not null' => TRUE,
+      ),
+      'desc_mouseover' => array(
+        'type' => 'varchar',
+        'length' => 255,
+        'not null' => FALSE,
+      ),
+      'css_file' => array(
+        'type' => 'varchar',
+        'length' => 255,
+        'not null' => FALSE,
+      ),
+      'js_file' => array(
+        'type' => 'varchar',
+        'length' => 255,
+        'not null' => FALSE,
+      ),
+    ),
+    'primary key' => array('wid'),
+  );
+
+  $schema['rate_widget_button'] = array(
+    'fields' => array(
+      'wid' => array(
+        'type' => 'int',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+      ),
+      'num' => array(
+        'type' => 'int',
+        'size' => 'tiny',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+      ),
+      'label' => array(
+        'type' => 'varchar',
+        'length' => 255,
+        'not null' => TRUE,
+      ),
+      'value' => array(
+        'type' => 'int',
+        'unsigned' => FALSE,
+        'not null' => TRUE,
+      ),
+      'description' => array(
+        'type' => 'varchar',
+        'length' => 255,
+        'not null' => TRUE,
+      ),
+      'width' => array(
+        'type' => 'int',
+        'unsigned' => TRUE,
+      ),
+      'height' => array(
+        'type' => 'int',
+        'unsigned' => TRUE,
+      ),
+      'img_default' => array(
+        'type' => 'varchar',
+        'length' => 255,
+      ),
+      'img_highlighted' => array(
+        'type' => 'varchar',
+        'length' => 255,
+      ),
+      'img_default_voted' => array(
+        'type' => 'varchar',
+        'length' => 255,
+      ),
+      'img_highlighted_voted' => array(
+        'type' => 'varchar',
+        'length' => 255,
+      ),
+      'img_disabled' => array(
+        'type' => 'varchar',
+        'length' => 255,
+      ),
+      'img_disabled_voted' => array(
+        'type' => 'varchar',
+        'length' => 255,
+      ),
+    ),
+    'primary key' => array('wid', 'num'),
+  );
+
+  $schema['rate_widget_element'] = array(
+    'fields' => array(
+      'wid' => array(
+        'type' => 'serial',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+      ),
+      'type' => array(
+        'type' => 'varchar',
+        'length' => 64,
+        'not null' => TRUE,
+      ),
+      'prefix' => array(
+        'type' => 'varchar',
+        'length' => 255,
+        'not null' => TRUE,
+      ),
+      'suffix' => array(
+        'type' => 'varchar',
+        'length' => 255,
+        'not null' => TRUE,
+      ),
+      'weight' => array(
+        'type' => 'int',
+        'size' => 'tiny',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+      ),
+      // 1 = full, 2 = compact, 4 = full disabled, 8 = compact disabled, 16 = closed
+      'mode' => array(
+        'type' => 'int',
+        'size' => 'tiny',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+        'default' => 31,
+      ),
+    ),
+    'primary key' => array('wid', 'type'),
+  );
+
   $schema['rate_bot_agent'] = array(
     'fields' => array(
       'id' => array(
@@ -33,7 +205,7 @@ function rate_schema() {
     ),
     'primary key' => array('id'),
   );
-  
+
   $schema['rate_bot_ip'] = array(
     'fields' => array(
       'id' => array(
@@ -49,13 +221,13 @@ function rate_schema() {
     ),
     'primary key' => array('id'),
   );
-  
+
   return $schema;
 }
 
 /**
  * Update css and js attributes in the widget objects.
- * 
+ *
  * This function has to be called when the information from hook_rate_templates() is changed.
  */
 function _rate_update_templates_data() {
@@ -89,71 +261,20 @@ function _rate_update_templates_data() {
 }
 
 /**
- * Rename helpful template to yesno.
- */
-function rate_update_6000() {
-  $widgets = variable_get('rate_widgets', array());
-  foreach ($widgets as $widget_id => $widget) {
-    $template = isset($widget->template) ? $widget->template : NULL;
-    // "helpful" template was renamed to "yesno".
-    if ($template == 'helpful') {
-      $widget->template = 'yesno';
-    }
-    $widgets[$widget_id] = $widget;
-  }
-  variable_set('rate_widgets', $widgets);
-  return array();
-}
-
-/**
- * Update paths to JS and CSS files.
- */
-function rate_update_6001() {
-  _rate_update_templates_data();
-  return array();
-}
-
-/**
  * Create tables for blacklisting bots.
  */
 function rate_update_7100() {
   $schema = drupal_get_schema_unprocessed('rate');
-	if (!db_table_exists("rate_bot_agent")) {
-		db_create_table('rate_bot_agent', $schema['rate_bot_agent']);
-	}
-	if (!db_table_exists("rate_bot_ip")) {
-		db_create_table('rate_bot_ip', $schema['rate_bot_ip']);
-	}
+  db_create_table('rate_bot_agent', $schema['rate_bot_agent']);
+  db_create_table('rate_bot_ip', $schema['rate_bot_ip']);
 }
 
 /**
- * Add "delete_vote_on_second_click" property.
+ * Add rate_widget_element.mode field.
  */
-function rate_update_7101() {
-  $widgets = variable_get('rate_widgets', array());
-  foreach ($widgets as $widget_id => $widget) {
-    if (!isset($widget->delete_vote_on_second_click)) {
-      $widget->delete_vote_on_second_click = 0;
-    }
-    $widgets[$widget_id] = $widget;
+function rate_update_7201() {
+  if (!db_field_exists('rate_widget_element', 'mode')) {
+    $schema = drupal_get_schema_unprocessed('rate');
+    db_add_field('rate_widget_element', 'mode', $schema['rate_widget_element']['fields']['mode']);
   }
-  variable_set('rate_widgets', $widgets);
-  return array();
-}
-
-/**
- * Add "use_source_translation" property.
- */
-function rate_update_7102() {
-  $widgets = variable_get('rate_widgets', array());
-  foreach ($widgets as $widget_id => $widget) {
-    if (!isset($widget->use_source_translation)) {
-      // The default setting for new widgets is TRUE. But we set it here to
-      // FALSE to not change existing behavior.
-      $widget->use_source_translation = FALSE;
-    }
-    $widgets[$widget_id] = $widget;
-  }
-  variable_set('rate_widgets', $widgets);
-  return array();
 }
