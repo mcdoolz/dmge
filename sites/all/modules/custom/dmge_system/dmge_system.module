@@ -51,6 +51,13 @@ function dmge_system_menu() {
     'page arguments' => array('dmge_system_theme_settings'),
     'access arguments' => array('configure dmge'),
   );
+  $items['system'] = array(
+    'title' => 'DMGE',
+    'type'  => 'MENU_CALLBACK',
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('dmge_system_theme_settings'),
+    'access arguments' => array('configure dmge'),
+  );
   return $items;
 }
 
