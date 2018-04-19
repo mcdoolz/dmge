@@ -30,8 +30,8 @@ files[] = tests/entityreference.feeds.test
 files[] = tests/entityreference.entity_translation.test
 
 ; Information added by Drupal.org packaging script on 2017-08-16
-version = "7.x-1.5"
+version = "7.x-1.5+0-dev"
 core = "7.x"
 project = "entityreference"
-datestamp = "1502895850"
+datestamp = "1502895845"
 
