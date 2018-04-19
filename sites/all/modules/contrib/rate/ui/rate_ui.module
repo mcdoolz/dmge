@@ -1,0 +1,205 @@
+<?php
+/**
+ * @file
+ * Main module file for the Rate UI module.
+ */
+
+/**
+ * Implements hook_menu().
+ */
+function rate_ui_menu() {
+  $menu = array();
+
+  $menu['admin/structure/rate'] = array(
+    'title' => 'Rate widgets',
+    'description' => 'Manage rating widgets.',
+    'page callback' => 'rate_ui_widgets_page',
+    'access arguments' => array('administer site configuration'),
+    'type' => MENU_NORMAL_ITEM,
+    'file' => 'rate_ui.pages.inc',
+  );
+
+  $menu['admin/structure/rate/add'] = array(
+    'title' => 'Add rate widget',
+    'description' => 'Manage rating widgets.',
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('rate_ui_widget_form'),
+    'access arguments' => array('administer site configuration'),
+    'type' => MENU_LOCAL_ACTION,
+    'file' => 'rate_ui.form.inc',
+  );
+
+  $menu['admin/structure/rate/widget/%/edit'] = array(
+    'title' => 'Edit Rate widget',
+    'description' => 'Edit Rate widget.',
+    'access arguments' => array('administer site configuration'),
+    'file' => 'rate_ui.form.inc',
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('rate_ui_widget_form', 4),
+    'type' => MENU_CALLBACK,
+  );
+
+  $menu['admin/structure/rate/widget/%/delete'] = array(
+    'title' => 'Delete Rate widget',
+    'description' => 'Delete Rate widget.',
+    'access arguments' => array('administer site configuration'),
+    'file' => 'rate_ui.form.inc',
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('rate_ui_delete_form', 4),
+    'type' => MENU_CALLBACK,
+  );
+
+  return $menu;
+}
+
+/**
+ * Implements hook_theme().
+ */
+function rate_ui_theme() {
+  return array(
+    'rate_ui_buttons' => array(
+      'render element' => 'element',
+    ),
+    'rate_ui_sprites' => array(
+      'render element' => 'element',
+    ),
+    'rate_ui_layout' => array(
+      'render element' => 'element',
+    ),
+  );
+}
+
+/**
+ * Theme function for rate ui buttons.
+ */
+function theme_rate_ui_buttons($element) {
+  $header = array(
+    t('Label'),
+    t('Value'),
+    t('Description'),
+  );
+  $rows = array();
+
+  foreach ($element['element'] as $name => $button) {
+    if (is_numeric($name)) {
+      $button["button{$name}_label"]['#title'] = '';
+      $button["button{$name}_value"]['#title'] = '';
+      $button["button{$name}_description"]['#title'] = '';
+
+      $rows[] = array(
+        drupal_render($button["button{$name}_label"]),
+        drupal_render($button["button{$name}_value"]),
+        drupal_render($button["button{$name}_description"]),
+      );
+    }
+  }
+
+  $table_variables = array(
+    'header' => $header,
+    'rows' => $rows,
+  );
+  return theme('table', $table_variables);
+}
+
+/**
+ * Theme function for Rate ui sprites.
+ */
+function theme_rate_ui_sprites($element) {
+  if ($element['element']['#imagesource'] == 'spritegenerator') {
+    $header = array(
+      t('Kind'),
+      t('Class'),
+    );
+  }
+  else {
+    $header = array(
+      t('Kind'),
+      t('X'),
+      t('Y'),
+      t('Width'),
+      t('Height'),
+    );
+  }
+  $rows = array();
+
+  foreach ($element['element'] as $name => $button) {
+    if ($name{0} != '#') {
+      $fields = array();
+      foreach ($button as $field_name => $field) {
+        if (preg_match('/^button([0-9]+)_([a-z_]+)_([a-z]+)$/', $field_name, $match)) {
+          $number = $match[1];
+          $kind = $match[2];
+          $field_name = $match[3];
+          $field['#title'] = '';
+          $fields[$field_name] = drupal_render($field);
+        }
+      }
+      if ($element['element']['#imagesource'] == 'spritegenerator') {
+        $rows[] = array(
+          $button['#title'],
+          $fields['class'],
+        );
+      }
+      else {
+        $rows[] = array(
+          $button['#title'],
+          $fields['x'],
+          $fields['y'],
+          $fields['width'],
+          $fields['height'],
+        );
+      }
+    }
+  }
+
+  $table_variables = array(
+    'header' => $header,
+    'rows' => $rows,
+  );
+  return theme('table', $table_variables);
+}
+
+/**
+ * Theme function for rate ui layout.
+ */
+function theme_rate_ui_layout($element) {
+  $header = array(
+    t('Element'),
+    t('Mode'),
+    t('Prefix HTML'),
+    t('Suffix HTML'),
+    t('Weight'),
+  );
+  $rows = array();
+
+  foreach ($element['element'] as $type => $item) {
+    if ($type{0} == '#') {
+      continue;
+    }
+    $item["element_{$type}_prefix"]['#title'] = '';
+    $item["element_{$type}_suffix"]['#title'] = '';
+    $item["element_{$type}_weight"]['#title'] = '';
+    $item["element_{$type}_weight"]['#attributes']['class'] = array('rate-layout-order-weight');
+    $rows[] = array(
+      'data' => array(
+        drupal_render($item["element_$type"]),
+        array('class' => 'rate-elements-inline', 'data' => drupal_render($item['mode'])),
+        drupal_render($item["element_{$type}_prefix"]),
+        drupal_render($item["element_{$type}_suffix"]),
+        drupal_render($item["element_{$type}_weight"]),
+      ),
+      'class' => array('draggable'),
+    );
+  }
+
+  drupal_add_tabledrag('rate-layout', 'order', 'sibling', 'rate-layout-order-weight');
+
+  $table_variables = array(
+    'header' => $header,
+    'rows' => $rows,
+    'attributes' => array(
+      'id' => 'rate-layout',
+    ),
+  );
+  return theme('table', $table_variables);
+}

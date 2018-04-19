@@ -1,0 +1,12 @@
+div.rate-form-button div.form-item {
+  float: left;
+}
+
+div.rate-form-button {
+  width: 100%;
+  overflow: hidden;
+}
+
+.rate-elements-inline * {
+  display: inline;
+}

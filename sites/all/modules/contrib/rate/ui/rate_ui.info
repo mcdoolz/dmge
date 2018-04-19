@@ -1,0 +1,14 @@
+name = Rate UI
+description = User interface for creating widgets.
+core = 7.x
+package = Voting
+dependencies[] = rate
+files[] = rate_ui.install
+files[] = rate_ui.module
+
+; Information added by drupal.org packaging script on 2013-10-01
+version = "7.x-2.x-dev"
+core = "7.x"
+project = "rate"
+datestamp = "1380624828"
+
