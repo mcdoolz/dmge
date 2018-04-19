@@ -6,9 +6,9 @@
  */
 
 $aliases['live'] = array(
-  'uri' => 'dmge.net',
-  'root' => '/home/dddmge',
-  'remote-host' => 'dmge.net',
+  'uri' => 'dmge.digitalforge.ca',
+  'root' => '/home/dforge/ddmge',
+  'remote-host' => 'dmge.digitalforge.ca',
   'remote-user' => 'dforge',
   'ssh-options' => '-o PasswordAuthentication=no -i /home/mcdoolz/.ssh/authorized_keys/dmge_rsa',
   'path-aliases' => array(
