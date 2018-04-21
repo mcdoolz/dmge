@@ -6,6 +6,7 @@
  */
 
 class votingapi_views_handler_field_value extends views_handler_field_numeric {
+
   function construct() {
     parent::construct();
     $this->definition['float'] = TRUE;
@@ -33,10 +34,6 @@ class votingapi_views_handler_field_value extends views_handler_field_numeric {
         '#weight' => -5,
       );
     }
-  }
-
-  function element_type($none_supported = FALSE, $default_empty = FALSE, $inline = FALSE) {
-    return 'div';
   }
 
   /**

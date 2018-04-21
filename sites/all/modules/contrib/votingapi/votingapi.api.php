@@ -10,14 +10,15 @@
  * Adds to or changes the calculated vote results for a piece of content.
  *
  * VotingAPI calculates a number of common aggregate functions automatically,
- * including the average vote and total number of votes cast. Results are grouped
- * by 'tag', 'value_type', and then 'function' in the following format:
+ * including the average vote and total number of votes cast. Results are
+ * grouped by 'tag', 'value_type', and then 'function' in the following format:
  *
  *   $results[$tag][$value_type][$aggregate_function] = $value;
  *
  * If no custom tag is being used for votes, the catch-all "vote" tag should be
  * used. In cases where custom tags are used to vote on different aspects of a
- * piece of content, a catch-all "vote" value should still be calculated for use
+ * piece of content, a catch-all "vote" value should still be calculated for
+ * use
  * on summary screens, etc.
  *
  * @param $vote_results
@@ -34,7 +35,7 @@ function hook_votingapi_results_alter(&$vote_results, $content_type, $content_id
   // We're using a MySQLism (STDDEV isn't ANSI SQL), but it's OK because this is
   // an example. And no one would ever base real code on sample code. Ever. Never.
 
-  $sql  = "SELECT v.tag, STDDEV(v.value) as standard_deviation ";
+  $sql = "SELECT v.tag, STDDEV(v.value) as standard_deviation ";
   $sql .= "FROM {votingapi_vote} v ";
   $sql .= "WHERE v.content_type = '%s' AND v.content_id = %d AND v.value_type = 'percent' ";
   $sql .= "GROUP BY v.tag";
@@ -51,15 +52,16 @@ function hook_votingapi_results_alter(&$vote_results, $content_type, $content_id
 
 
 /**
- * Adds to or alters metadata describing Voting tags, value_types, and functions.
+ * Adds to or alters metadata describing Voting tags, value_types, and
+ * functions.
  *
- * If your module uses custom tags or value_types, or calculates custom aggregate
- * functions, please implement this hook so other modules can properly interperet
- * and display your data.
+ * If your module uses custom tags or value_types, or calculates custom
+ * aggregate functions, please implement this hook so other modules can
+ * properly interperet and display your data.
  *
  * Three major bins of data are stored: tags, value_types, and aggregate result
- * functions. Each entry in these bins is keyed by the value stored in the actual
- * VotingAPI tables, and contains an array with (minimally) 'name' and
+ * functions. Each entry in these bins is keyed by the value stored in the
+ * actual VotingAPI tables, and contains an array with (minimally) 'name' and
  * 'description' keys. Modules can add extra keys to their entries if desired.
  *
  * @param $data
@@ -72,7 +74,8 @@ function hook_votingapi_metadata_alter(&$data) {
   $data['tags']['bread'] = array(
     'name' => t('Bread'),
     'description' => t('The quality of the food at a restaurant.'),
-    'module' => 'mymodule', // This is optional; we can add it for our own purposes.
+    'module' => 'mymodule',
+    // This is optional; we can add it for our own purposes.
   );
   $data['tags']['circuses'] = array(
     'name' => t('Circuses'),
@@ -94,17 +97,19 @@ function hook_votingapi_metadata_alter(&$data) {
 }
 
 /**
- * Returns callback functions and descriptions to format a VotingAPI Views field.
+ * Returns callback functions and descriptions to format a VotingAPI Views
+ * field.
  *
  * Loads all votes for a given piece of content, then calculates and caches the
  * aggregate vote results. This is only intended for modules that have assumed
  * responsibility for the full voting cycle: the votingapi_set_vote() function
  * recalculates automatically.
  *
- * @param $field
+ * @param object $field
  *   A Views field object. This can be used to expose formatters only for tags,
  *   vote values, aggregate functions, etc.
- * @return
+ *
+ * @return array
  *   An array of key-value pairs, in which each key is a callback function and
  *   each value is a human-readable description of the formatter.
  *
@@ -120,65 +125,97 @@ function hook_votingapi_views_formatters($field) {
 }
 
 /**
- * VotingApi's vote storage can be overriden by pointing setting the
- * 'votingapi_vote_storage' variable to an alternative class.
+ * Save a vote in the database.
+ *
+ * @param $vote
+ *   See votingapi_add_votes() for the structure of this array, with the
+ *   defaults loaded from votingapi_prep_vote().
  */
-variable_set('votingapi_vote_storage', 'Mongodb_VoteStorage');
- 
-class Mongodb_VoteStorage {
+function hook_votingapi_storage_add_vote(&$vote) {
+  _mongodb_votingapi_prepare_vote($vote);
+  mongodb_collection('votingapi_vote')->insert($vote);
+}
 
-  /**
-   * Save a vote in the database.
-   *
-   * @param $vote instance of VotingApi_Vote.
-   */
-  function addVote(&$vote) {
-    mongodb_collection('votingapi_vote')->insert($vote);
+/**
+ * Delete votes from the database.
+ *
+ * @param $votes
+ *   An array of votes to delete. Minimally, each vote must have the 'vote_id'
+ *   key set.
+ * @param $vids
+ *   A list of the 'vote_id' values from $voes.
+ */
+function hook_votingapi_storage_delete_votes($votes, $vids) {
+  mongodb_collection('votingapi_vote')->delete(array('vote_id' => array('$in' => array_map('intval', $vids))));
+}
+
+/**
+ * Select invidual votes from the database
+ *
+ * @param array $criteria
+ *   A keyed array used to build the select query. Keys can contain
+ *   a single value or an array of values to be matched.
+ *   $criteria['vote_id']       (If this is set, all other keys are skipped)
+ *   $criteria['entity_id']
+ *   $criteria['entity_type']
+ *   $criteria['value_type']
+ *   $criteria['tag']
+ *   $criteria['uid']
+ *   $criteria['vote_source']
+ *   $criteria['timestamp']   If this is set, records with timestamps
+ *      GREATER THAN the set value will be selected. Defaults to
+ *      REQUEST_TIME - variable_get('votingapi_anonymous_window', 3600); if
+ *      the anonymous window is above zero.
+ * @param int $limit
+ *   An integer specifying the maximum number of votes to return. 0 means
+ *   unlimited and is the default.
+ *
+ * @return array
+ *   An array of votes matching the criteria.
+ */
+function hook_votingapi_storage_select_votes($criteria, $limit) {
+  _mongodb_votingapi_prepare_vote($criteria);
+  $find = array();
+  foreach ($criteria as $key => $value) {
+    $find[$key] = is_array($value) ? array('$in' => $value) : $value;
   }
-
-  /**
-   * Delete votes from the database.
-   *
-   * @param $votes An array of VotingApi_Vote instances to delete.
-   *   Minimally, each vote must have the 'vote_id' key set.
-   * @param $vids
-   *   A list of the 'vote_id' values from $votes.
-   */
-  function deleteVotes($votes, $vids) {
-    mongodb_collection('votingapi_vote')->delete(array('vote_id' => array('$in' => array_map('intval', $vids))));
+  $cursor = mongodb_collection('votingapi_vote')->find($find);
+  if (!empty($limit)) {
+    $cursor->limit($limit);
   }
+  $votes = array();
+  foreach ($cursor as $vote) {
+    $votes[] = $vote;
+  }
+  return $votes;
+}
 
-  /**
-   * Select individual votes from the database.
-   *
-   * @param $criteria instance of VotingApi_Criteria.
-   * @param $limit
-   *   An integer specifying the maximum number of votes to return. 0 means
-   *   unlimited and is the default.
-   * @return
-   *   An array of VotingApi_Vote objects matching the criteria.
-   */
-  function selectVotes($criteria, $limit) {
-    $find = array();
-    foreach ($criteria as $key => $value) {
-      $find[$key] = is_array($value) ? array('$in' => $value) : $value;
+/**
+ * Allows to act on votes before being inserted.
+ *
+ * @param $votes
+ *  An array of votes, each with the following structure:
+ *  $vote['entity_type']  (Optional, defaults to 'node')
+ *  $vote['entity_id']    (Required)
+ *  $vote['value_type']    (Optional, defaults to 'percent')
+ *  $vote['value']         (Required)
+ *  $vote['tag']           (Optional, defaults to 'vote')
+ *  $vote['uid']           (Optional, defaults to current user)
+ *  $vote['vote_source']   (Optional, defaults to current IP)
+ *  $vote['timestamp']     (Optional, defaults to REQUEST_TIME)
+ */
+function hook_votingapi_preset_votes(&$votes) {
+  foreach ($votes as $vote) {
+    if ($vote['tag'] == 'recommend') {
+      // Do something if the 'recommend' vote is being inserted.
     }
-    $cursor = mongodb_collection('votingapi_vote')->find($find);
-    if (!empty($limit)) {
-      $cursor->limit($limit);
-    }
-    $votes = array();
-    foreach ($cursor as $vote) {
-      $votes[] = $vote;
-    }
-    return $votes;
   }
+}
 
-  /**
-   * TODO
-   *
-   */
-  function standardResults($entity_id, $entity) {
-    // TODO
-  }
+/**
+ * TODO
+ *
+ */
+function hook_votingapi_storage_standard_results($entity_id, $entity) {
+  // TODO
 }
