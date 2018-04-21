@@ -240,6 +240,7 @@ function droogle_gdrive_connect($redirect_uri = NULL, $client_id = NULL, $client
   $return_result = array();
   if ($path = libraries_get_path('google-api-php-client-git-version')) {
     ini_set('include_path', ini_get('include_path') . ':' . $_SERVER['DOCUMENT_ROOT'] . '/sites/all/libraries/google-api-php-client-git-version/src');
+    require_once("Google/autoload.php");
     require_once 'Google/Client.php';
     require_once 'Google/Http/MediaFileUpload.php';
     require_once 'Google/Service/Drive.php';
