@@ -44,3 +44,24 @@ a:hover
     background: black !important
     color: white !important
     text-decoration: none
+
+.artist, .node-type-artist
+  .artist-tags
+    a
+      display: inline-block
+      border: 1px solid black
+      padding: 5px
+      margin: 0 5px
+      font-size: 10px
+    &:first-child
+      a
+        margin-left: 0
+
+.rate-widget
+  font-size: 20px
+  .rate-description
+    display: block
+    clear: both
+    font-size: 10px
+  .artists &
+    //

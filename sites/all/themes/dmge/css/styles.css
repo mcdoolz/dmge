@@ -1850,4 +1850,28 @@ a:hover {
   text-decoration: none;
 }
 
+/* line 50, ../sass/_theme.sass */
+.artist .artist-tags a, .node-type-artist .artist-tags a {
+  display: inline-block;
+  border: 1px solid black;
+  padding: 5px;
+  margin: 0 5px;
+  font-size: 10px;
+}
+/* line 57, ../sass/_theme.sass */
+.artist .artist-tags:first-child a, .node-type-artist .artist-tags:first-child a {
+  margin-left: 0;
+}
+
+/* line 60, ../sass/_theme.sass */
+.rate-widget {
+  font-size: 20px;
+}
+/* line 62, ../sass/_theme.sass */
+.rate-widget .rate-description {
+  display: block;
+  clear: both;
+  font-size: 10px;
+}
+
 /* @import "theme-B"; */
