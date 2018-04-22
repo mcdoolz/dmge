@@ -269,7 +269,7 @@ function _mcdoolz_social_contents($block) {
   $filtered_links = array();
   foreach ($links as $key => $link) {
     $compare = strtolower($link['link']);
-    $compare = _strposa($compare, $networks);
+    $compare = _mcdoolz_strposa($compare, $networks);
     if ($compare) {
       // Eg: <i class="fa fa-reddit" aria-hidden="true"></i>.
       $network_name = str_replace(array('.com', '.ca', '.net'), '', $compare);
@@ -302,7 +302,7 @@ function _sort_by_weight($a, $b) {
  *
  * http://stackoverflow.com/questions/6284553/using-an-array-as-needles-in-strpos
  */
-function _strposa($haystack, $needle, $offset = 0) {
+function _mcdoolz_strposa($haystack, $needle, $offset = 0) {
   if (!is_array($needle)) {
     $needle = array($needle);
   }
