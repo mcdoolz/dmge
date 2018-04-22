@@ -3,7 +3,7 @@
     attach: function(context) {
       $('.rate-widget:not(.rate-processed)', context).addClass('rate-processed').each(function () {
         var widget = $(this);
-        var ids = widget.attr('id').match(/^rate\-([a-z]+)\-([0-9]+)\-([0-9]+)\-([0-9])$/);
+        var ids = widget.attr('class').match(/^rate\-([a-z]+)\-([0-9]+)\-([0-9]+)\-([0-9])$/);
         var data = {
           entity_type: widget.attr('data-entity-type'),
           entity_id: widget.attr('data-entity-id'),
@@ -18,17 +18,17 @@
 
         // Save description in attribute so we can reset this on mouseout.
         widget.attr('data-description', $('span.rate-description', widget).text());
-        
+
         var s = widget.attr('data-highlight-mouseover');
         var d = widget.attr('data-desc-mouseover');
         var index = 0;
         $('a.rate-button', widget).each(function() {
           // Number all buttons for the before / after highlighting.
           $(this).attr('data-index', index);
-          
+
           // Store the initial highlighted state so we can reset this on mouseout.
           $(this).attr('data-highlighted', $(this).hasClass('highlighted') ? 1 : 0);
-          
+
           $(this).hover(function() {
             if (s) {
               // Highlighting on mouseover is enabled.
@@ -51,7 +51,7 @@
               $('span.rate-description', widget).text(desc);
             }
           });
-          
+
           $(this).mouseout(function() {
             $('a.rate-button', $(this).parent()).each(function() {
               if ($(this).attr('data-highlighted') == 1) {
@@ -63,7 +63,7 @@
               $('span.rate-description', widget).text(widget.attr('data-description'));
             });
           });
-          
+
           ++index;
         });
       });
@@ -92,7 +92,7 @@
       else {
         // Get parent object.
         var p = widget.parent();
-        
+
         // Invoke JavaScript hook.
         widget.trigger('eventAfterRate', [data]);
 
