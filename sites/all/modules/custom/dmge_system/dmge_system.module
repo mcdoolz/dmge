@@ -37,13 +37,6 @@ function dmge_system_theme() {
  */
 function dmge_system_menu() {
   // Module settings.
-  $items['system'] = array(
-    'title' => 'DMGE',
-    'description' => 'Adjust DMGE settings.',
-    'page callback' => 'drupal_get_form',
-    'page arguments' => array('dmge_system_theme_settings'),
-    'access arguments' => array('configure dmge'),
-  );
   $items['admin/config/administration/dmge_system'] = array(
     'title' => 'DMGE',
     'description' => 'Adjust DMGE settings.',
@@ -51,7 +44,7 @@ function dmge_system_menu() {
     'page arguments' => array('dmge_system_theme_settings'),
     'access arguments' => array('configure dmge'),
   );
-  $items['system'] = array(
+  $items['engine'] = array(
     'title' => 'DMGE',
     'type'  => 'MENU_CALLBACK',
     'page callback' => 'drupal_get_form',
