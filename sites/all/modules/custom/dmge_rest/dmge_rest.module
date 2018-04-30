@@ -1,0 +1,144 @@
+<?php
+// dmge_rest.module
+/** Gets a user object by id.
+ *
+ * @param int $id
+ * @return object
+ */
+function dmge_rest_get_user($id) {
+  return db_query('SELECT * FROM {user} WHERE id=:id', array(':id' => $id))
+           ->fetchAll();
+}
+
+/** Writes a user to the database
+ *
+ * @param object $user
+ * @return void
+ */
+function dmge_rest_write_user($user) {
+  $primary_key = !empty($user->id) ? array('id') : NULL;
+  drupal_write_record('user', $user, $primary_key);
+}
+
+/**
+ * Deletes a user from the database.
+ *
+ * @param int $id
+ * @return void
+ */
+function dmge_rest_delete_user($id) {
+  db_query('DELETE FROM {user} WHERE id=:id', array(':id' => $id));
+}
+
+/**
+ * Implementation of hook_services_resources().
+ */
+function dmge_rest_services_resources() {
+  return array(
+    'user' => array(
+      'retrieve' => array(
+        'help' => 'Retrieves a user',
+        'file' => array('file' => 'inc', 'module' => 'dmge_rest'),
+        'callback' => '_dmge_rest_retrieve',
+        'access callback' => '_dmge_rest_access',
+        'access arguments' => array('view'),
+        'access arguments append' => TRUE,
+        'args' => array(
+          array(
+            'name' => 'id',
+            'type' => 'int',
+            'description' => 'The id of the user to get',
+            'source' => array('path' => '0'),
+            'optional' => FALSE,
+          ),
+        ),
+      ),
+      'create' => array(
+        'help' => 'Creates a user',
+        'file' => array('file' => 'inc', 'module' => 'dmge_rest'),
+        'callback' => '_dmge_rest_create',
+        'access arguments' => array('user resource create'),
+        'access arguments append' => FALSE,
+        'args' => array(
+          array(
+            'name' => 'data',
+            'type' => 'struct',
+            'description' => 'The user object',
+            'source' => 'data',
+            'optional' => FALSE,
+          ),
+        ),
+      ),
+      'update' => array(
+        'help' => 'Updates a user',
+        'file' => array('file' => 'inc', 'module' => 'dmge_rest'),
+        'callback' => '_dmge_rest_update',
+        'access callback' => '_dmge_rest_access',
+        'access arguments' => array('update'),
+        'access arguments append' => TRUE,
+        'args' => array(
+          array(
+            'name' => 'id',
+            'type' => 'int',
+            'description' => 'The id of the node to update',
+            'source' => array('path' => '0'),
+            'optional' => FALSE,
+          ),
+          array(
+            'name' => 'data',
+            'type' => 'struct',
+            'description' => 'The user data object',
+            'source' => 'data',
+            'optional' => FALSE,
+          ),
+        ),
+      ),
+      'delete' => array(
+        'help' => 'Deletes a user',
+        'file' => array('file' => 'inc', 'module' => 'dmge_rest'),
+        'callback' => '_dmge_rest_delete',
+        'access callback' => '_dmge_rest_access',
+        'access arguments' => array('delete'),
+        'access arguments append' => TRUE,
+        'args' => array(
+          array(
+            'name' => 'nid',
+            'type' => 'int',
+            'description' => 'The id of the user to delete',
+            'source' => array('path' => '0'),
+            'optional' => FALSE,
+          ),
+        ),
+      ),
+      'index' => array(
+        'help' => 'Retrieves a listing of users',
+        'file' => array('file' => 'inc', 'module' => 'dmge_rest'),
+        'callback' => '_dmge_rest_index',
+        'access callback' => 'user_access',
+        'access arguments' => array('access content'),
+        'access arguments append' => FALSE,
+        'args' => array(
+          array(
+            'name' => 'page',
+            'type' => 'int',
+            'description' => '',
+            'source' => array(
+              'param' => 'page',
+            ),
+            'optional' => TRUE,
+            'default value' => 0,
+          ),
+          array(
+           'name' => 'parameters',
+           'type' => 'array',
+           'description' => '',
+           'source' => 'param',
+           'optional' => TRUE,
+           'default value' => array(),
+          ),
+        ),
+      ),
+    ),
+  );
+}
+?>

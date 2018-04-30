@@ -1,0 +1,6 @@
+name = DMGE REST
+description = "Provides the DMGE with a REST server."
+package = DMGE
+core = 7.x
+configure = admin/config/services/dmge
+dependencies[] = system (>7.10)
