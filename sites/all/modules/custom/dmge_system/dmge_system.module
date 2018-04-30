@@ -75,9 +75,55 @@ function _dmge_rewrite_url($url) {
     $url = parse_url($url);
     $matches = array();
     preg_match('/h=(\d+)/', $url['query'], $matches);
-    $url = 'https://www.patreon.com/posts/' . $matches[1];
+    if (!empty($matches)) {
+      $url = 'https://www.patreon.com/posts/' . $matches[1];
+    }
   }
   return $url;
+}
+
+function dmge_system_form_user_login_block_alter(&$form, $form_state) {
+  _dmge_system_login_form_alter($form, $form_state);
+}
+function dmge_system_form_user_login_alter(&$form, $form_state) {
+  _dmge_system_login_form_alter($form, $form_state);
+}
+
+function _dmge_system_login_form_alter(&$form, $form_state = NULL) {
+  dpm($form);
+  $form['links']['#markup'] = '<div class="item-list"><ul><li class="first"><a href="/user/register" title="Create a new user account."><i class="fas fa-user-plus">&nbsp;</i> Register</a></li><li class="last"><a href="/user/password" title="Request new password via e-mail."><i class="fas fa-unlock-alt">&nbsp;</i> Request new password</a></li></ul></div>';
+  unset($form['actions']);
+  $form['actions']['button']['#prefix'] = '<button type="submit" class="login-button edit-submit">';
+  $form['actions']['button']['#suffix'] = '</button>';
+  $form['actions']['button']['#markup'] = '<i class="fas fa-sign-in-alt">&nbsp;</i> Login';
+  $form['actions']['button']['#weight'] = -999;
+  if (module_exists('patreon_user')) {
+    if (user_is_anonymous()) {
+      if ($settings = (variable_get('patreon_user_registration', 0))) {
+        $client_id = variable_get('patreon_client_id', NULL);
+        $method = variable_get('patreon_user_registration_method', PATREON_USER_COPY_ACCOUNT);
+
+        if ($url = patreon_authorise_account($client_id, patreon_user_get_callback_url(), FALSE)) {
+          if ($method == PATREON_USER_COPY_ACCOUNT) {
+            $title = t('Register via Patreon');
+            $suffix = t('<p>Already registered? <a href="@url">Log in here</a>.</p>', array(
+              '@url' => url('/user', array('absolute' => TRUE)),
+            ));
+          }
+          else {
+            $title = t('Log on via Patreon');
+            $suffix = NULL;
+          }
+          $markup = t('<p><a href="@url" id="user-login-patreon"><i class="fab fa-patreon">&nbsp;</i> @title</a></p>!suffix', array(
+            '@url' => $url,
+            '@title' => $title,
+            '!suffix' => $suffix,
+          ));
+          $form['patreon_link']['#markup'] = $markup;
+        }
+      }
+    }
+  }
 }
 
 function dmge_system_preprocess_field($vars) {
