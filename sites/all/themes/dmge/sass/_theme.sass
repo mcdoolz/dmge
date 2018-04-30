@@ -66,6 +66,10 @@ a:hover
     position: relative
     z-index: 420
 
+#block-user-login
+  background: white
+  padding: $zen-gutter-width
+
 .node-title
   font-weight: bold
   text-transform: uppercase
@@ -102,7 +106,7 @@ a:hover
       top: 0
       left: 0
       font-family: 'FontAwesome'
-      content: '\f1fc'
+      content: '\f007'
 
   .resource-type
     font-size: 10px
@@ -277,6 +281,12 @@ a:hover
         font-size: 20px
         line-height: 30px
         margin: 0 10px 0 0
+        background: white
+        border: 1px solid black
+        padding: $zen-gutter-width
+        &:hover
+          background: black
+          color: white
   .resource-group
     position: relative
     display: flex
@@ -356,3 +366,19 @@ a:hover
     padding: $zen-gutter-width
     .library &
       display: none
+
+.flag-outer
+  +zen-clear(both)
+  +zen-float(none)
+  position: relative
+.flag-abuse-node
+  a
+    padding: 0 0 0 30px
+    &:before
+      position: absolute
+      display: block
+      font-size: 20px
+      top: 0
+      left: 0
+      font-family: 'FontAwesome'
+      content: '\f024'

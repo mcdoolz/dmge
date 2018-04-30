@@ -405,21 +405,26 @@ article, aside, details, figcaption, figure, footer, header, hgroup, main, menu,
 .ctas-wrapper .cta .cta-link:hover {
   background: black;
 }
+/* line 244, ../sass/mc.sass */
+.ctas-wrapper .cta .cta-link:hover {
+  background: white;
+  color: black;
+}
 
-/* line 245, ../sass/mc.sass */
+/* line 248, ../sass/mc.sass */
 .image-wrapper {
   padding-bottom: 90px;
   padding-top: 110px;
   color: white;
   margin: 0 0 50px;
 }
-/* line 250, ../sass/mc.sass */
+/* line 253, ../sass/mc.sass */
 .image-wrapper:after {
   clear: both;
   display: table;
   content: " ";
 }
-/* line 252, ../sass/mc.sass */
+/* line 255, ../sass/mc.sass */
 .image-wrapper .image-copy-wrapper {
   width: 70%;
   margin: 0 auto;
@@ -429,11 +434,11 @@ article, aside, details, figcaption, figure, footer, header, hgroup, main, menu,
   padding: 10px;
   background: rgba(64, 64, 64, 0.6);
 }
-/* line 260, ../sass/mc.sass */
+/* line 263, ../sass/mc.sass */
 .image-wrapper .image-copy-wrapper a {
   color: white;
 }
-/* line 262, ../sass/mc.sass */
+/* line 265, ../sass/mc.sass */
 .image-wrapper .image-copy-wrapper a:hover {
   color: black;
 }

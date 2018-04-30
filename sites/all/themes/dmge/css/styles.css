@@ -1876,12 +1876,18 @@ a:hover {
 }
 
 /* line 69, ../sass/_theme.sass */
+#block-user-login {
+  background: white;
+  padding: 20px;
+}
+
+/* line 73, ../sass/_theme.sass */
 .node-title {
   font-weight: bold;
   text-transform: uppercase;
 }
 
-/* line 73, ../sass/_theme.sass */
+/* line 77, ../sass/_theme.sass */
 .node-add-to-cart, .node-readmore a {
   display: block !important;
   color: black !important;
@@ -1893,18 +1899,18 @@ a:hover {
   margin: 0;
   border: 1px solid black;
 }
-/* line 83, ../sass/_theme.sass */
+/* line 87, ../sass/_theme.sass */
 .node-add-to-cart:hover, .node-readmore a:hover {
   background: black !important;
   color: white !important;
   text-decoration: none;
 }
 
-/* line 89, ../sass/_theme.sass */
+/* line 93, ../sass/_theme.sass */
 .resource .resource-title, .node-type-resource .resource-title {
   text-transform: uppercase;
 }
-/* line 91, ../sass/_theme.sass */
+/* line 95, ../sass/_theme.sass */
 .resource .map-author, .node-type-resource .map-author {
   font-size: 10px;
   display: block;
@@ -1913,7 +1919,7 @@ a:hover {
   position: relative;
   padding: 0 0 0 30px;
 }
-/* line 98, ../sass/_theme.sass */
+/* line 102, ../sass/_theme.sass */
 .resource .map-author:before, .node-type-resource .map-author:before {
   position: absolute;
   display: block;
@@ -1921,9 +1927,9 @@ a:hover {
   top: 0;
   left: 0;
   font-family: "FontAwesome";
-  content: "\f1fc";
+  content: "\f007";
 }
-/* line 107, ../sass/_theme.sass */
+/* line 111, ../sass/_theme.sass */
 .resource .resource-type, .node-type-resource .resource-type {
   font-size: 10px;
   text-transform: uppercase;
@@ -1931,7 +1937,7 @@ a:hover {
   line-height: 20px;
   padding: 0 0 0 30px;
 }
-/* line 113, ../sass/_theme.sass */
+/* line 117, ../sass/_theme.sass */
 .resource .resource-type:before, .node-type-resource .resource-type:before {
   position: absolute;
   display: block;
@@ -1940,19 +1946,19 @@ a:hover {
   left: 0;
   font-family: "FontAwesome";
 }
-/* line 121, ../sass/_theme.sass */
+/* line 125, ../sass/_theme.sass */
 .resource .resource-type.animated:before, .node-type-resource .resource-type.animated:before {
   content: "\f03d";
 }
-/* line 124, ../sass/_theme.sass */
+/* line 128, ../sass/_theme.sass */
 .resource .resource-type.static:before, .node-type-resource .resource-type.static:before {
   content: "\f03e";
 }
-/* line 127, ../sass/_theme.sass */
+/* line 131, ../sass/_theme.sass */
 .resource .resource-link, .node-type-resource .resource-link {
   margin: 0 0 50px 0;
 }
-/* line 129, ../sass/_theme.sass */
+/* line 133, ../sass/_theme.sass */
 .resource .resource-link a, .node-type-resource .resource-link a {
   display: block;
   text-align: center;
@@ -1962,25 +1968,25 @@ a:hover {
   font-size: 20px;
   border: 1px solid black;
 }
-/* line 137, ../sass/_theme.sass */
+/* line 141, ../sass/_theme.sass */
 .resource .resource-link a:hover, .node-type-resource .resource-link a:hover {
   color: grey;
   border-color: grey;
 }
-/* line 140, ../sass/_theme.sass */
+/* line 144, ../sass/_theme.sass */
 .resource .resource-tags, .node-type-resource .resource-tags {
   position: relative;
   display: block;
   padding: 0 0 0 30px;
   text-transform: uppercase;
 }
-/* line 141, ../sass/_theme.sass */
+/* line 145, ../sass/_theme.sass */
 .resource .resource-tags ul, .resource .resource-tags ul li, .resource .resource-tags .item-list, .node-type-resource .resource-tags ul, .node-type-resource .resource-tags ul li, .node-type-resource .resource-tags .item-list {
   margin: 0;
   padding: 0;
   display: inline;
 }
-/* line 149, ../sass/_theme.sass */
+/* line 153, ../sass/_theme.sass */
 .resource .resource-tags:before, .node-type-resource .resource-tags:before {
   position: absolute;
   display: block;
@@ -1990,7 +1996,7 @@ a:hover {
   font-family: "FontAwesome";
   content: "\f02c";
 }
-/* line 157, ../sass/_theme.sass */
+/* line 161, ../sass/_theme.sass */
 .resource .resource-tags a, .node-type-resource .resource-tags a {
   display: inline-block;
   text-transform: uppercase;
@@ -2000,7 +2006,7 @@ a:hover {
   padding: 0;
   margin: 0;
 }
-/* line 165, ../sass/_theme.sass */
+/* line 169, ../sass/_theme.sass */
 .resource .resource-tags a:first-child, .node-type-resource .resource-tags a:first-child {
   margin: 0;
 }
@@ -2014,7 +2020,7 @@ a:hover {
 .node-resource:after {
   clear: both;
 }
-/* line 169, ../sass/_theme.sass */
+/* line 173, ../sass/_theme.sass */
 .node-resource .resource-type {
   float: left;
   width: 100%;
@@ -2022,7 +2028,7 @@ a:hover {
   margin-right: -100%;
   margin: 0 0 10px 0;
 }
-/* line 172, ../sass/_theme.sass */
+/* line 176, ../sass/_theme.sass */
 .node-resource .map-author {
   float: left;
   width: 43.75%;
@@ -2030,14 +2036,14 @@ a:hover {
   margin-right: -43.75%;
   clear: left;
 }
-/* line 175, ../sass/_theme.sass */
+/* line 179, ../sass/_theme.sass */
 .node-resource .resource-links {
   float: left;
   width: 37.5%;
   margin-left: 56.25%;
   margin-right: -93.75%;
 }
-/* line 177, ../sass/_theme.sass */
+/* line 181, ../sass/_theme.sass */
 .node-resource .resource-tags {
   float: left;
   width: 25%;
@@ -2045,7 +2051,7 @@ a:hover {
   margin-right: -56.25%;
   clear: right;
 }
-/* line 180, ../sass/_theme.sass */
+/* line 184, ../sass/_theme.sass */
 .node-resource .rate-widget {
   float: left;
   width: 25%;
@@ -2054,35 +2060,35 @@ a:hover {
   clear: left;
 }
 
-/* line 185, ../sass/_theme.sass */
+/* line 189, ../sass/_theme.sass */
 .artist .artist-image, .node-type-artist .artist-image {
   display: block;
   margin: 0 auto;
   text-align: center;
 }
-/* line 189, ../sass/_theme.sass */
+/* line 193, ../sass/_theme.sass */
 .artist .artist-copy, .node-type-artist .artist-copy {
   font-size: 16px;
   line-height: 24px;
   margin: 0 0 50px 0;
 }
-/* line 193, ../sass/_theme.sass */
+/* line 197, ../sass/_theme.sass */
 .artist .artist-links, .node-type-artist .artist-links {
   margin-bottom: 20px;
 }
-/* line 195, ../sass/_theme.sass */
+/* line 199, ../sass/_theme.sass */
 .artist .artist-links, .node-type-artist .artist-links {
   font-family: sans-serif;
   text-transform: uppercase;
   font-size: 10px;
 }
-/* line 199, ../sass/_theme.sass */
+/* line 203, ../sass/_theme.sass */
 .artist .artist-links ul, .node-type-artist .artist-links ul {
   margin: 0;
   padding: 0;
   list-style: none;
 }
-/* line 203, ../sass/_theme.sass */
+/* line 207, ../sass/_theme.sass */
 .artist .artist-links ul li, .node-type-artist .artist-links ul li {
   margin: 0;
   padding: 0;
@@ -2090,27 +2096,27 @@ a:hover {
   margin: 0 20px;
   display: inline-block;
 }
-/* line 209, ../sass/_theme.sass */
+/* line 213, ../sass/_theme.sass */
 .artist .artist-links ul li a, .node-type-artist .artist-links ul li a {
   display: block;
   border: 1px solid black;
   padding: 20px;
 }
-/* line 213, ../sass/_theme.sass */
+/* line 217, ../sass/_theme.sass */
 .artist .artist-links ul li:first-child, .node-type-artist .artist-links ul li:first-child {
   margin-left: 0;
 }
-/* line 215, ../sass/_theme.sass */
+/* line 219, ../sass/_theme.sass */
 .artist .artist-links ul li:last-child, .node-type-artist .artist-links ul li:last-child {
   margin-right: 0;
 }
-/* line 217, ../sass/_theme.sass */
+/* line 221, ../sass/_theme.sass */
 .artist .artist-tags, .node-type-artist .artist-tags {
   position: relative;
   padding: 0 0 0 20px;
   margin: 0;
 }
-/* line 221, ../sass/_theme.sass */
+/* line 225, ../sass/_theme.sass */
 .artist .artist-tags:before, .node-type-artist .artist-tags:before {
   position: absolute;
   display: block;
@@ -2120,7 +2126,7 @@ a:hover {
   font-family: "FontAwesome";
   content: "\f02c";
 }
-/* line 229, ../sass/_theme.sass */
+/* line 233, ../sass/_theme.sass */
 .artist .artist-tags a, .node-type-artist .artist-tags a {
   display: inline-block;
   text-transform: uppercase;
@@ -2129,26 +2135,26 @@ a:hover {
   line-height: 20px;
   padding: 0 20px;
 }
-/* line 236, ../sass/_theme.sass */
+/* line 240, ../sass/_theme.sass */
 .artist .artist-tags a:first-child, .node-type-artist .artist-tags a:first-child {
   margin: 0;
 }
 
-/* line 239, ../sass/_theme.sass */
+/* line 243, ../sass/_theme.sass */
 .node-artist .artist-image {
   float: left;
   width: 50%;
   margin-left: 0%;
   margin-right: -50%;
 }
-/* line 241, ../sass/_theme.sass */
+/* line 245, ../sass/_theme.sass */
 .node-artist .artist-copy {
   float: left;
   width: 43.75%;
   margin-left: 50%;
   margin-right: -93.75%;
 }
-/* line 243, ../sass/_theme.sass */
+/* line 247, ../sass/_theme.sass */
 .node-artist .artist-rating {
   float: left;
   width: 37.5%;
@@ -2156,7 +2162,7 @@ a:hover {
   margin-right: -37.5%;
   clear: left;
 }
-/* line 246, ../sass/_theme.sass */
+/* line 250, ../sass/_theme.sass */
 .node-artist .artist-tags {
   float: left;
   width: 50%;
@@ -2164,11 +2170,11 @@ a:hover {
   margin-right: -100%;
   clear: left;
 }
-/* line 249, ../sass/_theme.sass */
+/* line 253, ../sass/_theme.sass */
 .node-artist #block-views-library-author-maps-block {
   clear: both;
 }
-/* line 251, ../sass/_theme.sass */
+/* line 255, ../sass/_theme.sass */
 .node-artist .rate-widget {
   float: left;
   width: 37.5%;
@@ -2177,16 +2183,16 @@ a:hover {
   clear: left;
 }
 
-/* line 256, ../sass/_theme.sass */
+/* line 260, ../sass/_theme.sass */
 #block-views-artists-artist-block .artist {
   clear: both;
 }
-/* line 258, ../sass/_theme.sass */
+/* line 262, ../sass/_theme.sass */
 #block-views-artists-artist-block .artist .artist-name {
   font-size: 30px;
   line-height: 30px;
 }
-/* line 261, ../sass/_theme.sass */
+/* line 265, ../sass/_theme.sass */
 #block-views-artists-artist-block .artist .rate-widget {
   float: right;
   width: 18.75%;
@@ -2194,24 +2200,32 @@ a:hover {
   margin-left: -18.75%;
 }
 
-/* line 269, ../sass/_theme.sass */
+/* line 273, ../sass/_theme.sass */
 .library .view-filters label {
   font-weight: normal;
   text-transform: uppercase;
 }
-/* line 272, ../sass/_theme.sass */
+/* line 276, ../sass/_theme.sass */
 .library .view-filters label input[type=text] {
   font-size: 20px;
   line-height: 30px;
   padding: 0 10px;
 }
-/* line 276, ../sass/_theme.sass */
+/* line 280, ../sass/_theme.sass */
 .library .view-filters label input[type=submit], .library .view-filters label input[type=button] {
   font-size: 20px;
   line-height: 30px;
   margin: 0 10px 0 0;
+  background: white;
+  border: 1px solid black;
+  padding: 20px;
 }
-/* line 280, ../sass/_theme.sass */
+/* line 287, ../sass/_theme.sass */
+.library .view-filters label input[type=submit]:hover, .library .view-filters label input[type=button]:hover {
+  background: black;
+  color: white;
+}
+/* line 290, ../sass/_theme.sass */
 .library .resource-group {
   position: relative;
   display: flex;
@@ -2223,23 +2237,23 @@ a:hover {
   margin: 20px;
   border: none;
 }
-/* line 290, ../sass/_theme.sass */
+/* line 300, ../sass/_theme.sass */
 .library .resource-group-title {
   width: 100%;
   text-transform: uppercase;
   border-bottom: 1px solid black;
   margin-bottom: 40px;
 }
-/* line 295, ../sass/_theme.sass */
+/* line 305, ../sass/_theme.sass */
 .library .resource {
   margin: 0 20px 20px 20px;
 }
-/* line 297, ../sass/_theme.sass */
+/* line 307, ../sass/_theme.sass */
 .library .rate-widget {
   font-size: 20px;
 }
 
-/* line 300, ../sass/_theme.sass */
+/* line 310, ../sass/_theme.sass */
 .rate-widget {
   position: relative;
   font-size: 60px;
@@ -2247,7 +2261,7 @@ a:hover {
   margin: 0 0 20px 0;
   padding: 0 0 0 50px;
 }
-/* line 306, ../sass/_theme.sass */
+/* line 316, ../sass/_theme.sass */
 .rate-widget:before {
   position: absolute;
   display: block;
@@ -2257,7 +2271,7 @@ a:hover {
   font-family: "FontAwesome";
   content: "\f005";
 }
-/* line 314, ../sass/_theme.sass */
+/* line 324, ../sass/_theme.sass */
 .rate-widget .rate-button {
   display: block;
   clear: right;
@@ -2271,7 +2285,7 @@ a:hover {
   width: 100px;
   position: relative;
 }
-/* line 326, ../sass/_theme.sass */
+/* line 336, ../sass/_theme.sass */
 .rate-widget .rate-button:before {
   position: absolute;
   display: block;
@@ -2280,32 +2294,32 @@ a:hover {
   left: 10px;
   font-family: "Font Awesome 5 Free";
 }
-/* line 335, ../sass/_theme.sass */
+/* line 345, ../sass/_theme.sass */
 .rate-widget .rate-button.button1:before {
   content: "\f164";
 }
-/* line 338, ../sass/_theme.sass */
+/* line 348, ../sass/_theme.sass */
 .rate-widget .rate-button.button2:before {
   content: "\f165";
 }
-/* line 340, ../sass/_theme.sass */
+/* line 350, ../sass/_theme.sass */
 .rate-widget .rate-button:first-child {
   margin-top: 0;
 }
-/* line 342, ../sass/_theme.sass */
+/* line 352, ../sass/_theme.sass */
 .rate-widget .rate-button:nth-child(2) {
   margin-bottom: 0;
 }
-/* line 344, ../sass/_theme.sass */
+/* line 354, ../sass/_theme.sass */
 .rate-widget .rate-button.highlighted {
   background: black;
   color: white;
 }
-/* line 347, ../sass/_theme.sass */
+/* line 357, ../sass/_theme.sass */
 .library .rate-widget .rate-button {
   display: none;
 }
-/* line 349, ../sass/_theme.sass */
+/* line 359, ../sass/_theme.sass */
 .rate-widget .rate-description {
   display: block;
   clear: both;
@@ -2315,9 +2329,31 @@ a:hover {
   text-align: center;
   padding: 20px;
 }
-/* line 357, ../sass/_theme.sass */
+/* line 367, ../sass/_theme.sass */
 .library .rate-widget .rate-description {
   display: none;
+}
+
+/* line 370, ../sass/_theme.sass */
+.flag-outer {
+  clear: both;
+  float: none;
+  position: relative;
+}
+
+/* line 375, ../sass/_theme.sass */
+.flag-abuse-node a {
+  padding: 0 0 0 30px;
+}
+/* line 377, ../sass/_theme.sass */
+.flag-abuse-node a:before {
+  position: absolute;
+  display: block;
+  font-size: 20px;
+  top: 0;
+  left: 0;
+  font-family: "FontAwesome";
+  content: "\f024";
 }
 
 /* @import "theme-B"; */
