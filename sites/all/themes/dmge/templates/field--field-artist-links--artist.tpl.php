@@ -2,7 +2,7 @@
 // dmge artist links
 ?>
 
-
+<div class="artist-links">
 <?php foreach ($items as $delta => $item): ?>
   <div class="<?php print $classes; ?>"<?php print $attributes; ?>>
     <a href="<?php print $item['field_artist_link'][0]['#element']['url']; ?>" target="_blank">
@@ -11,3 +11,4 @@
     </a>
   </div>
 <?php endforeach; ?>
+</div>
