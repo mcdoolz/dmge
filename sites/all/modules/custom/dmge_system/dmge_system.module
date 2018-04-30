@@ -44,18 +44,21 @@ function dmge_system_menu() {
     'page arguments' => array('dmge_system_theme_settings'),
     'access arguments' => array('configure dmge'),
   );
-  $items['engine'] = array(
-    'title' => 'DMGE',
-    'type'  => MENU_CALLBACK,
-    'page callback' => 'drupal_get_form',
-    'page arguments' => array('dmge_system_theme_settings'),
-    'access arguments' => array('configure dmge'),
-  );
   return $items;
 }
 
-function dmge_system_theme_settings() {
-  return "hello world";
+
+function dmge_system_theme_settings($form = array()) {
+  $form['markup']['#markup'] = "I should do something with this.";
+  return $form;
+}
+
+/**
+ * In case we need a redirect in code.
+ */
+function dmge_system_engine($form = array()) {
+  $form['markup']['#markup'] = "hello world";
+  return $form;
 }
 
 /**
@@ -126,6 +129,9 @@ function _dmge_system_login_form_alter(&$form, $form_state = NULL) {
   }
 }
 
+/**
+ * Tried to alter values, but did it in the template instead (multifield didn't care about my alterations)
+ */
 function dmge_system_preprocess_field($vars) {
   // dpm($vars);
   switch ($vars['element']['#field_name']) {
@@ -145,4 +151,12 @@ function dmge_system_preprocess_field($vars) {
       // nothing
       break;
   }
+}
+
+/**
+ * Alter search button.
+ */
+function dmge_system_form_library_resources_block_form_alter(&$form, $form_state) {
+  $form['keys']['#attributes']['placeholder'][] = t('Search');
+  $form['actions']['submit']['#value'] = html_entity_decode('&#xf002;');
 }
