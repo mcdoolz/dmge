@@ -93,7 +93,6 @@ function dmge_system_form_user_login_alter(&$form, $form_state) {
 }
 
 function _dmge_system_login_form_alter(&$form, $form_state = NULL) {
-  dpm($form);
   $form['links']['#markup'] = '<div class="item-list"><ul><li class="first"><a href="/user/register" title="Create a new user account."><i class="fas fa-user-plus">&nbsp;</i> Register</a></li><li class="last"><a href="/user/password" title="Request new password via e-mail."><i class="fas fa-unlock-alt">&nbsp;</i> Request new password</a></li></ul></div>';
   unset($form['actions']);
   $form['actions']['button']['#prefix'] = '<button type="submit" class="login-button edit-submit">';
@@ -133,7 +132,6 @@ function _dmge_system_login_form_alter(&$form, $form_state = NULL) {
  * Tried to alter values, but did it in the template instead (multifield didn't care about my alterations)
  */
 function dmge_system_preprocess_field($vars) {
-  // dpm($vars);
   switch ($vars['element']['#field_name']) {
     case 'field_resource_links':
     // $link = &$vars['element']['#items'][0]['field_resource_link'][LANGUAGE_NONE][0];
