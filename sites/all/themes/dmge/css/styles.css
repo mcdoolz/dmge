@@ -667,16 +667,16 @@ table {
   /* line 88, ../sass/layouts/_responsive.scss */
   .sidebar-first #content {
     float: left;
-    width: 66.66667%;
-    margin-left: 33.33333%;
-    margin-right: -100%;
+    width: 12.5%;
+    margin-left: 6.25%;
+    margin-right: -18.75%;
   }
   /* line 93, ../sass/layouts/_responsive.scss */
   .sidebar-first .region-sidebar-first {
     float: left;
-    width: 33.33333%;
+    width: 6.25%;
     margin-left: 0%;
-    margin-right: -33.33333%;
+    margin-right: -6.25%;
   }
 
   /**
@@ -690,16 +690,16 @@ table {
   /* line 103, ../sass/layouts/_responsive.scss */
   .sidebar-second #content {
     float: left;
-    width: 66.66667%;
+    width: 12.5%;
     margin-left: 0%;
-    margin-right: -66.66667%;
+    margin-right: -12.5%;
   }
   /* line 108, ../sass/layouts/_responsive.scss */
   .sidebar-second .region-sidebar-second {
     float: left;
-    width: 33.33333%;
-    margin-left: 66.66667%;
-    margin-right: -100%;
+    width: 6.25%;
+    margin-left: 12.5%;
+    margin-right: -18.75%;
   }
 
   /**
@@ -714,23 +714,23 @@ table {
   /* line 118, ../sass/layouts/_responsive.scss */
   .two-sidebars #content {
     float: left;
-    width: 66.66667%;
-    margin-left: 33.33333%;
-    margin-right: -100%;
+    width: 12.5%;
+    margin-left: 6.25%;
+    margin-right: -18.75%;
   }
   /* line 123, ../sass/layouts/_responsive.scss */
   .two-sidebars .region-sidebar-first {
     float: left;
-    width: 33.33333%;
+    width: 6.25%;
     margin-left: 0%;
-    margin-right: -33.33333%;
+    margin-right: -6.25%;
   }
   /* line 128, ../sass/layouts/_responsive.scss */
   .two-sidebars .region-sidebar-second {
     float: left;
-    width: 100%;
+    width: 18.75%;
     margin-left: 0%;
-    margin-right: -100%;
+    margin-right: -18.75%;
     padding-left: 0;
     padding-right: 0;
     clear: left;
@@ -752,24 +752,24 @@ table {
   /* line 138, ../sass/layouts/_responsive.scss */
   .two-sidebars .region-sidebar-second .block:nth-child(3n+1) {
     float: left;
-    width: 33.33333%;
+    width: 6.25%;
     margin-left: 0%;
-    margin-right: -33.33333%;
+    margin-right: -6.25%;
     clear: left;
   }
   /* line 143, ../sass/layouts/_responsive.scss */
   .two-sidebars .region-sidebar-second .block:nth-child(3n+2) {
     float: left;
-    width: 33.33333%;
-    margin-left: 33.33333%;
-    margin-right: -66.66667%;
+    width: 6.25%;
+    margin-left: 6.25%;
+    margin-right: -12.5%;
   }
   /* line 147, ../sass/layouts/_responsive.scss */
   .two-sidebars .region-sidebar-second .block:nth-child(3n) {
     float: left;
-    width: 33.33333%;
-    margin-left: 66.66667%;
-    margin-right: -100%;
+    width: 6.25%;
+    margin-left: 12.5%;
+    margin-right: -18.75%;
   }
 }
 /**
@@ -787,16 +787,16 @@ table {
   /* line 166, ../sass/layouts/_responsive.scss */
   .sidebar-first #content {
     float: left;
-    width: 80%;
-    margin-left: 20%;
-    margin-right: -100%;
+    width: 25%;
+    margin-left: 6.25%;
+    margin-right: -31.25%;
   }
   /* line 171, ../sass/layouts/_responsive.scss */
   .sidebar-first .region-sidebar-first {
     float: left;
-    width: 20%;
+    width: 6.25%;
     margin-left: 0%;
-    margin-right: -20%;
+    margin-right: -6.25%;
   }
 
   /**
@@ -810,16 +810,16 @@ table {
   /* line 181, ../sass/layouts/_responsive.scss */
   .sidebar-second #content {
     float: left;
-    width: 80%;
+    width: 25%;
     margin-left: 0%;
-    margin-right: -80%;
+    margin-right: -25%;
   }
   /* line 186, ../sass/layouts/_responsive.scss */
   .sidebar-second .region-sidebar-second {
     float: left;
-    width: 20%;
-    margin-left: 80%;
-    margin-right: -100%;
+    width: 6.25%;
+    margin-left: 25%;
+    margin-right: -31.25%;
   }
 
   /**
@@ -834,23 +834,23 @@ table {
   /* line 196, ../sass/layouts/_responsive.scss */
   .two-sidebars #content {
     float: left;
-    width: 60%;
-    margin-left: 20%;
-    margin-right: -80%;
+    width: 18.75%;
+    margin-left: 6.25%;
+    margin-right: -25%;
   }
   /* line 201, ../sass/layouts/_responsive.scss */
   .two-sidebars .region-sidebar-first {
     float: left;
-    width: 20%;
+    width: 6.25%;
     margin-left: 0%;
-    margin-right: -20%;
+    margin-right: -6.25%;
   }
   /* line 206, ../sass/layouts/_responsive.scss */
   .two-sidebars .region-sidebar-second {
     float: left;
-    width: 20%;
-    margin-left: 80%;
-    margin-right: -100%;
+    width: 6.25%;
+    margin-left: 25%;
+    margin-right: -31.25%;
   }
 }
 /* Component (SMACSS module) rules */
@@ -1826,12 +1826,62 @@ a:hover {
 }
 
 /* line 29, ../sass/_theme.sass */
+.block__title, .block-title {
+  padding: 10px;
+  margin: 20px auto;
+  text-align: center;
+  border: none;
+  border-bottom: 1px solid black;
+  font-weight: normal;
+}
+/* line 36, ../sass/_theme.sass */
+.block__title, .block__title h1, .block__title h2, .block__title h3, .block__title h4, .block__title h5, .block__title h6, .block-title, .block-title h1, .block-title h2, .block-title h3, .block-title h4, .block-title h5, .block-title h6 {
+  text-transform: uppercase;
+  font-size: 30px;
+  line-height: 30px;
+  letter-spacing: 1px;
+}
+
+/* line 45, ../sass/_theme.sass */
+#navigation #main-menu li[class*="menu"], .inline #navigation #main-menu[class*="menu"], .links #navigation #main-menu[class*="menu"] {
+  margin: 0;
+  padding: 0;
+  float: none;
+}
+/* line 49, ../sass/_theme.sass */
+#navigation #main-menu li a, .inline #navigation #main-menu a, .links #navigation #main-menu a {
+  display: inline-block;
+  padding: 10px 20px;
+  text-transform: uppercase;
+  font-weight: normal;
+  letter-spacing: 0.25px;
+}
+/* line 55, ../sass/_theme.sass */
+#navigation #main-menu li a:hover, .inline #navigation #main-menu a:hover, .links #navigation #main-menu a:hover {
+  background: black;
+  color: white;
+}
+/* line 58, ../sass/_theme.sass */
+#navigation #main-menu li a:first-child, .inline #navigation #main-menu a:first-child, .links #navigation #main-menu a:first-child {
+  margin: 0;
+}
+
+/* line 62, ../sass/_theme.sass */
+.breadcrumb a {
+  float: right;
+  clear: both;
+  display: block;
+  position: relative;
+  z-index: 420;
+}
+
+/* line 69, ../sass/_theme.sass */
 .node-title {
   font-weight: bold;
   text-transform: uppercase;
 }
 
-/* line 33, ../sass/_theme.sass */
+/* line 73, ../sass/_theme.sass */
 .node-add-to-cart, .node-readmore a {
   display: block !important;
   color: black !important;
@@ -1843,61 +1893,196 @@ a:hover {
   margin: 0;
   border: 1px solid black;
 }
-/* line 43, ../sass/_theme.sass */
+/* line 83, ../sass/_theme.sass */
 .node-add-to-cart:hover, .node-readmore a:hover {
   background: black !important;
   color: white !important;
   text-decoration: none;
 }
 
-/* line 49, ../sass/_theme.sass */
+/* line 89, ../sass/_theme.sass */
+.resource .resource-title, .node-type-resource .resource-title {
+  text-transform: uppercase;
+}
+/* line 91, ../sass/_theme.sass */
 .resource .map-author, .node-type-resource .map-author {
-  float: right;
-  clear: right;
-  font-size: 20px;
+  font-size: 10px;
   display: block;
-}
-/* line 55, ../sass/_theme.sass */
-.resource .map-link a, .node-type-resource .map-link a {
-  display: block;
-  text-align: center;
-  margin: 0;
-  padding: 10px;
-  font-size: 20px;
-  border: 1px solid black;
-}
-/* line 62, ../sass/_theme.sass */
-.resource .map-rating, .node-type-resource .map-rating {
+  text-transform: uppercase;
+  line-height: 20px;
   position: relative;
-  padding: 0 0 0 20px;
+  padding: 0 0 0 30px;
 }
-/* line 65, ../sass/_theme.sass */
-.resource .map-rating:before, .node-type-resource .map-rating:before {
+/* line 98, ../sass/_theme.sass */
+.resource .map-author:before, .node-type-resource .map-author:before {
   position: absolute;
   display: block;
+  font-size: 20px;
   top: 0;
   left: 0;
   font-family: "FontAwesome";
-  content: "\f005";
+  content: "\f1fc";
+}
+/* line 107, ../sass/_theme.sass */
+.resource .resource-type, .node-type-resource .resource-type {
+  font-size: 10px;
+  text-transform: uppercase;
+  position: relative;
+  line-height: 20px;
+  padding: 0 0 0 30px;
+}
+/* line 113, ../sass/_theme.sass */
+.resource .resource-type:before, .node-type-resource .resource-type:before {
+  position: absolute;
+  display: block;
+  font-size: 20px;
+  top: 0;
+  left: 0;
+  font-family: "FontAwesome";
+}
+/* line 121, ../sass/_theme.sass */
+.resource .resource-type.animated:before, .node-type-resource .resource-type.animated:before {
+  content: "\f03d";
+}
+/* line 124, ../sass/_theme.sass */
+.resource .resource-type.static:before, .node-type-resource .resource-type.static:before {
+  content: "\f03e";
+}
+/* line 127, ../sass/_theme.sass */
+.resource .resource-link, .node-type-resource .resource-link {
+  margin: 0 0 50px 0;
+}
+/* line 129, ../sass/_theme.sass */
+.resource .resource-link a, .node-type-resource .resource-link a {
+  display: block;
+  text-align: center;
+  margin: 0;
+  padding: 20px;
+  line-height: 20px;
+  font-size: 20px;
+  border: 1px solid black;
+}
+/* line 137, ../sass/_theme.sass */
+.resource .resource-link a:hover, .node-type-resource .resource-link a:hover {
+  color: grey;
+  border-color: grey;
+}
+/* line 140, ../sass/_theme.sass */
+.resource .resource-tags, .node-type-resource .resource-tags {
+  position: relative;
+  display: block;
+  padding: 0 0 0 30px;
+  text-transform: uppercase;
+}
+/* line 141, ../sass/_theme.sass */
+.resource .resource-tags ul, .resource .resource-tags ul li, .resource .resource-tags .item-list, .node-type-resource .resource-tags ul, .node-type-resource .resource-tags ul li, .node-type-resource .resource-tags .item-list {
+  margin: 0;
+  padding: 0;
+  display: inline;
+}
+/* line 149, ../sass/_theme.sass */
+.resource .resource-tags:before, .node-type-resource .resource-tags:before {
+  position: absolute;
+  display: block;
+  font-size: 20px;
+  top: 0;
+  left: 0;
+  font-family: "FontAwesome";
+  content: "\f02c";
+}
+/* line 157, ../sass/_theme.sass */
+.resource .resource-tags a, .node-type-resource .resource-tags a {
+  display: inline-block;
+  text-transform: uppercase;
+  font-size: 10px;
+  letter-spacing: 0.25px;
+  line-height: 20px;
+  padding: 0;
+  margin: 0;
+}
+/* line 165, ../sass/_theme.sass */
+.resource .resource-tags a:first-child, .node-type-resource .resource-tags a:first-child {
+  margin: 0;
 }
 
-/* line 74, ../sass/_theme.sass */
+/* line 46, ../sass-extensions/zen-grids/stylesheets/zen/_grids.scss */
+.node-resource:before, .node-resource:after {
+  content: "";
+  display: table;
+}
+/* line 50, ../sass-extensions/zen-grids/stylesheets/zen/_grids.scss */
+.node-resource:after {
+  clear: both;
+}
+/* line 169, ../sass/_theme.sass */
+.node-resource .resource-type {
+  float: left;
+  width: 100%;
+  margin-left: 0%;
+  margin-right: -100%;
+  margin: 0 0 10px 0;
+}
+/* line 172, ../sass/_theme.sass */
+.node-resource .map-author {
+  float: left;
+  width: 43.75%;
+  margin-left: 0%;
+  margin-right: -43.75%;
+  clear: left;
+}
+/* line 175, ../sass/_theme.sass */
+.node-resource .resource-links {
+  float: left;
+  width: 37.5%;
+  margin-left: 56.25%;
+  margin-right: -93.75%;
+}
+/* line 177, ../sass/_theme.sass */
+.node-resource .resource-tags {
+  float: left;
+  width: 25%;
+  margin-left: 31.25%;
+  margin-right: -56.25%;
+  clear: right;
+}
+/* line 180, ../sass/_theme.sass */
+.node-resource .rate-widget {
+  float: left;
+  width: 25%;
+  margin-left: 0%;
+  margin-right: -25%;
+  clear: left;
+}
+
+/* line 185, ../sass/_theme.sass */
+.artist .artist-image, .node-type-artist .artist-image {
+  display: block;
+  margin: 0 auto;
+  text-align: center;
+}
+/* line 189, ../sass/_theme.sass */
+.artist .artist-copy, .node-type-artist .artist-copy {
+  font-size: 16px;
+  line-height: 24px;
+  margin: 0 0 50px 0;
+}
+/* line 193, ../sass/_theme.sass */
 .artist .artist-links, .node-type-artist .artist-links {
   margin-bottom: 20px;
 }
-/* line 76, ../sass/_theme.sass */
+/* line 195, ../sass/_theme.sass */
 .artist .artist-links, .node-type-artist .artist-links {
   font-family: sans-serif;
   text-transform: uppercase;
   font-size: 10px;
 }
-/* line 80, ../sass/_theme.sass */
+/* line 199, ../sass/_theme.sass */
 .artist .artist-links ul, .node-type-artist .artist-links ul {
   margin: 0;
   padding: 0;
   list-style: none;
 }
-/* line 84, ../sass/_theme.sass */
+/* line 203, ../sass/_theme.sass */
 .artist .artist-links ul li, .node-type-artist .artist-links ul li {
   margin: 0;
   padding: 0;
@@ -1905,84 +2090,174 @@ a:hover {
   margin: 0 20px;
   display: inline-block;
 }
-/* line 90, ../sass/_theme.sass */
+/* line 209, ../sass/_theme.sass */
 .artist .artist-links ul li a, .node-type-artist .artist-links ul li a {
   display: block;
   border: 1px solid black;
   padding: 20px;
 }
-/* line 94, ../sass/_theme.sass */
+/* line 213, ../sass/_theme.sass */
 .artist .artist-links ul li:first-child, .node-type-artist .artist-links ul li:first-child {
   margin-left: 0;
 }
-/* line 96, ../sass/_theme.sass */
+/* line 215, ../sass/_theme.sass */
 .artist .artist-links ul li:last-child, .node-type-artist .artist-links ul li:last-child {
   margin-right: 0;
 }
-/* line 99, ../sass/_theme.sass */
+/* line 217, ../sass/_theme.sass */
+.artist .artist-tags, .node-type-artist .artist-tags {
+  position: relative;
+  padding: 0 0 0 20px;
+  margin: 0;
+}
+/* line 221, ../sass/_theme.sass */
+.artist .artist-tags:before, .node-type-artist .artist-tags:before {
+  position: absolute;
+  display: block;
+  font-size: 20px;
+  top: 0;
+  left: 0;
+  font-family: "FontAwesome";
+  content: "\f02c";
+}
+/* line 229, ../sass/_theme.sass */
 .artist .artist-tags a, .node-type-artist .artist-tags a {
   display: inline-block;
-  border: 1px solid black;
-  padding: 5px;
-  margin: 0 5px;
-  margin-bottom: 20px;
+  text-transform: uppercase;
   font-size: 10px;
+  letter-spacing: 0.25px;
+  line-height: 20px;
+  padding: 0 20px;
 }
-/* line 107, ../sass/_theme.sass */
-.artist .artist-tags:first-child a, .node-type-artist .artist-tags:first-child a {
-  margin-left: 0;
+/* line 236, ../sass/_theme.sass */
+.artist .artist-tags a:first-child, .node-type-artist .artist-tags a:first-child {
+  margin: 0;
 }
 
-/* line 114, ../sass/_theme.sass */
-.library .view-content {
+/* line 239, ../sass/_theme.sass */
+.node-artist .artist-image {
+  float: left;
+  width: 50%;
+  margin-left: 0%;
+  margin-right: -50%;
+}
+/* line 241, ../sass/_theme.sass */
+.node-artist .artist-copy {
+  float: left;
+  width: 43.75%;
+  margin-left: 50%;
+  margin-right: -93.75%;
+}
+/* line 243, ../sass/_theme.sass */
+.node-artist .artist-rating {
+  float: left;
+  width: 37.5%;
+  margin-left: 0%;
+  margin-right: -37.5%;
+  clear: left;
+}
+/* line 246, ../sass/_theme.sass */
+.node-artist .artist-tags {
+  float: left;
+  width: 50%;
+  margin-left: 50%;
+  margin-right: -100%;
+  clear: left;
+}
+/* line 249, ../sass/_theme.sass */
+.node-artist #block-views-library-author-maps-block {
+  clear: both;
+}
+/* line 251, ../sass/_theme.sass */
+.node-artist .rate-widget {
+  float: left;
+  width: 37.5%;
+  margin-left: 0%;
+  margin-right: -37.5%;
+  clear: left;
+}
+
+/* line 256, ../sass/_theme.sass */
+#block-views-artists-artist-block .artist {
+  clear: both;
+}
+/* line 258, ../sass/_theme.sass */
+#block-views-artists-artist-block .artist .artist-name {
+  font-size: 30px;
+  line-height: 30px;
+}
+/* line 261, ../sass/_theme.sass */
+#block-views-artists-artist-block .artist .rate-widget {
+  float: right;
+  width: 18.75%;
+  margin-right: 0%;
+  margin-left: -18.75%;
+}
+
+/* line 269, ../sass/_theme.sass */
+.library .view-filters label {
+  font-weight: normal;
+  text-transform: uppercase;
+}
+/* line 272, ../sass/_theme.sass */
+.library .view-filters label input[type=text] {
+  font-size: 20px;
+  line-height: 30px;
+  padding: 0 10px;
+}
+/* line 276, ../sass/_theme.sass */
+.library .view-filters label input[type=submit], .library .view-filters label input[type=button] {
+  font-size: 20px;
+  line-height: 30px;
+  margin: 0 10px 0 0;
+}
+/* line 280, ../sass/_theme.sass */
+.library .resource-group {
+  position: relative;
   display: flex;
   flex-direction: row;
   flex-wrap: wrap;
-  justify-content: space-around;
   align-items: flex-start;
-}
-/* line 120, ../sass/_theme.sass */
-.library .resource {
-  position: relative;
-  display: inline-block;
+  justify-content: center;
   padding: 20px;
   margin: 20px;
-  border: 1px solid black;
+  border: none;
 }
-/* line 126, ../sass/_theme.sass */
+/* line 290, ../sass/_theme.sass */
 .library .resource-group-title {
+  width: 100%;
   text-transform: uppercase;
   border-bottom: 1px solid black;
   margin-bottom: 40px;
 }
-/* line 130, ../sass/_theme.sass */
-.library .resource-rating {
-  position: relative;
-  padding: 0 0 0 20px;
+/* line 295, ../sass/_theme.sass */
+.library .resource {
+  margin: 0 20px 20px 20px;
 }
-/* line 133, ../sass/_theme.sass */
-.library .resource-rating:before {
+/* line 297, ../sass/_theme.sass */
+.library .rate-widget {
+  font-size: 20px;
+}
+
+/* line 300, ../sass/_theme.sass */
+.rate-widget {
+  position: relative;
+  font-size: 60px;
+  line-height: 60px;
+  margin: 0 0 20px 0;
+  padding: 0 0 0 50px;
+}
+/* line 306, ../sass/_theme.sass */
+.rate-widget:before {
   position: absolute;
   display: block;
+  font-size: 20px;
   top: 0;
   left: 0;
   font-family: "FontAwesome";
   content: "\f005";
 }
-
-/* line 141, ../sass/_theme.sass */
-.rate-widget {
-  font-size: 60px;
-  line-height: 60px;
-  width: 200px;
-  margin-bottom: 20px;
-}
-/* line 146, ../sass/_theme.sass */
-.library .rate-widget {
-  font-size: 30px;
-  line-height: normal;
-}
-/* line 149, ../sass/_theme.sass */
+/* line 314, ../sass/_theme.sass */
 .rate-widget .rate-button {
   display: block;
   clear: right;
@@ -1990,29 +2265,47 @@ a:hover {
   font-size: 15px;
   line-height: 20px;
   border: 1px solid black;
-  padding: 5px 0;
-  text-align: center;
+  padding: 5px 10px 5px 0;
+  text-align: right;
   margin: 5px 0;
   width: 100px;
+  position: relative;
 }
-/* line 160, ../sass/_theme.sass */
+/* line 326, ../sass/_theme.sass */
+.rate-widget .rate-button:before {
+  position: absolute;
+  display: block;
+  font-size: 20px;
+  line-height: 20px;
+  left: 10px;
+  font-family: "Font Awesome 5 Free";
+}
+/* line 335, ../sass/_theme.sass */
+.rate-widget .rate-button.button1:before {
+  content: "\f164";
+}
+/* line 338, ../sass/_theme.sass */
+.rate-widget .rate-button.button2:before {
+  content: "\f165";
+}
+/* line 340, ../sass/_theme.sass */
 .rate-widget .rate-button:first-child {
   margin-top: 0;
 }
-/* line 162, ../sass/_theme.sass */
+/* line 342, ../sass/_theme.sass */
 .rate-widget .rate-button:nth-child(2) {
   margin-bottom: 0;
 }
-/* line 164, ../sass/_theme.sass */
+/* line 344, ../sass/_theme.sass */
 .rate-widget .rate-button.highlighted {
   background: black;
   color: white;
 }
-/* line 167, ../sass/_theme.sass */
+/* line 347, ../sass/_theme.sass */
 .library .rate-widget .rate-button {
   display: none;
 }
-/* line 169, ../sass/_theme.sass */
+/* line 349, ../sass/_theme.sass */
 .rate-widget .rate-description {
   display: block;
   clear: both;
@@ -2022,7 +2315,7 @@ a:hover {
   text-align: center;
   padding: 20px;
 }
-/* line 177, ../sass/_theme.sass */
+/* line 357, ../sass/_theme.sass */
 .library .rate-widget .rate-description {
   display: none;
 }

@@ -26,6 +26,46 @@ a:hover
   padding: 0
   margin-right: 10px
 
+.block__title, .block-title
+  padding: 10px
+  margin: 20px auto
+  text-align: center
+  border: none
+  border-bottom: 1px solid black
+  font-weight: normal
+  &, h1, h2, h3, h4, h5, h6
+    text-transform: uppercase
+    font-size: 30px
+    line-height: 30px
+    letter-spacing: 1px
+
+#navigation
+  #main-menu
+    li, .inline &, .links &
+      &[class*="menu"]
+        margin: 0
+        padding: 0
+        float: none
+      a
+        display: inline-block
+        padding: 10px 20px
+        text-transform: uppercase
+        font-weight: normal
+        letter-spacing: 0.25px
+        &:hover
+          background: black
+          color: white
+        &:first-child
+          margin: 0
+
+.breadcrumb
+  a
+    float: right
+    clear: both
+    display: block
+    position: relative
+    z-index: 420
+
 .node-title
   font-weight: bold
   text-transform: uppercase
@@ -46,31 +86,110 @@ a:hover
     text-decoration: none
 
 .resource, .node-type-resource
+  .resource-title
+    text-transform: uppercase
   .map-author
-    float: right
-    clear: right
-    font-size: 20px
+    font-size: 10px
     display: block
-  .map-link
+    text-transform: uppercase
+    line-height: 20px
+    position: relative
+    padding: 0 0 0 30px
+    &:before
+      position: absolute
+      display: block
+      font-size: 20px
+      top: 0
+      left: 0
+      font-family: 'FontAwesome'
+      content: '\f1fc'
+
+  .resource-type
+    font-size: 10px
+    text-transform: uppercase
+    position: relative
+    line-height: 20px
+    padding: 0 0 0 30px
+    &:before
+      position: absolute
+      display: block
+      font-size: 20px
+      top: 0
+      left: 0
+      font-family: 'FontAwesome'
+    &.animated
+      &:before
+        content: '\f03d'
+    &.static
+      &:before
+        content: '\f03e'
+
+  .resource-link
+    margin: 0 0 50px 0
     a
       display: block
       text-align: center
       margin: 0
-      padding: 10px
+      padding: 20px
+      line-height: 20px
       font-size: 20px
       border: 1px solid black
-  .map-rating
+      &:hover
+        color: grey
+        border-color: grey
+  .resource-tags
+    ul, ul li, .item-list
+      margin: 0
+      padding: 0
+      display: inline
     position: relative
-    padding: 0 0 0 20px
+    display: block
+    padding: 0 0 0 30px
+    text-transform: uppercase
     &:before
       position: absolute
       display: block
+      font-size: 20px
       top: 0
       left: 0
       font-family: 'FontAwesome'
-      content: '\f005'
+      content: '\f02c'
+    a
+      display: inline-block
+      text-transform: uppercase
+      font-size: 10px
+      letter-spacing: 0.25px
+      line-height: 20px
+      padding: 0
+      margin: 0
+      &:first-child
+        margin: 0
+.node-resource
+  +zen-grid-container()
+  .resource-type
+    +zen-grid-item(16, 1)
+    margin: 0 0 10px 0
+  .map-author
+    +zen-grid-item(7, 1)
+    +zen-clear(left)
+  .resource-links
+    +zen-grid-item(6, 10)
+  .resource-tags
+    +zen-grid-item(4, 6)
+    +zen-clear(right)
+  .rate-widget
+    +zen-grid-item(4, 1)
+    +zen-clear(left)
 
 .artist, .node-type-artist
+  .artist-image
+    display: block
+    margin: 0 auto
+    text-align: center
+  .artist-copy
+    font-size: 16px
+    line-height: 24px
+    margin: 0 0 50px 0
   .artist-links
     margin-bottom: 20px
     &
@@ -96,56 +215,102 @@ a:hover
         &:last-child
           margin-right: 0
   .artist-tags
-    a
-      display: inline-block
-      border: 1px solid black
-      padding: 5px
-      margin: 0 5px
-      margin-bottom: 20px
-      font-size: 10px
-    &:first-child
-      a
-        margin-left: 0
-
-#block-views-library-author-maps-block
-  // +zen-col
-
-.library
-  .view-content
-    display: flex
-    flex-direction: row
-    flex-wrap: wrap
-    justify-content: space-around
-    align-items: flex-start
-  .resource
-    position: relative
-    display: inline-block
-    padding: $zen-gutter-width
-    margin: $zen-gutter-width
-    border: 1px solid black
-  .resource-group-title
-    text-transform: uppercase
-    border-bottom: 1px solid black
-    margin-bottom: $zen-gutter-width*2
-  .resource-rating
     position: relative
     padding: 0 0 0 20px
+    margin: 0
     &:before
       position: absolute
       display: block
+      font-size: 20px
       top: 0
       left: 0
       font-family: 'FontAwesome'
-      content: '\f005'
+      content: '\f02c'
+    a
+      display: inline-block
+      text-transform: uppercase
+      font-size: 10px
+      letter-spacing: 0.25px
+      line-height: 20px
+      padding: 0 20px
+      &:first-child
+        margin: 0
+.node-artist
+  .artist-image
+    +zen-grid-item(8, 1)
+  .artist-copy
+    +zen-grid-item(7, 9)
+  .artist-rating
+    +zen-grid-item(6, 1)
+    +zen-clear(left)
+  .artist-tags
+    +zen-grid-item(8, 9)
+    +zen-clear(left)
+  #block-views-library-author-maps-block
+    +zen-clear(both)
+  .rate-widget
+    +zen-grid-item(6, 1)
+    +zen-clear(left)
+
+#block-views-artists-artist-block
+  .artist
+    +zen-clear(both)
+    .artist-name
+      font-size: 30px
+      line-height: 30px
+    .rate-widget
+      +zen-grid-item(3, 1, right)
+
+#block-views-library-author-maps-block
+  //
+
+.library
+  .view-filters
+    label
+      font-weight: normal
+      text-transform: uppercase
+      input[type=text]
+        font-size: 20px
+        line-height: 30px
+        padding: 0 10px
+      input[type=submit], input[type=button]
+        font-size: 20px
+        line-height: 30px
+        margin: 0 10px 0 0
+  .resource-group
+    position: relative
+    display: flex
+    flex-direction: row
+    flex-wrap: wrap
+    align-items: flex-start
+    justify-content: center
+    padding: $zen-gutter-width
+    margin: $zen-gutter-width
+    border: none
+  .resource-group-title
+    width: 100%
+    text-transform: uppercase
+    border-bottom: 1px solid black
+    margin-bottom: $zen-gutter-width*2
+  .resource
+    margin: 0 $zen-gutter-width $zen-gutter-width $zen-gutter-width
+  .rate-widget
+    font-size: 20px
 
 .rate-widget
+  position: relative
   font-size: 60px
   line-height: 60px
-  width: 200px
-  margin-bottom: 20px
-  .library &
-    font-size: 30px
-    line-height: normal
+  margin: 0 0 20px 0
+  padding: 0 0 0 50px
+  &:before
+    position: absolute
+    display: block
+    font-size: 20px
+    top: 0
+    left: 0
+    font-family: 'FontAwesome'
+    content: '\f005'
   .rate-button
     display: block
     clear: right
@@ -153,10 +318,25 @@ a:hover
     font-size: 15px
     line-height: 20px
     border: 1px solid black
-    padding: 5px 0
-    text-align: center
+    padding: 5px 10px 5px 0
+    text-align: right
     margin: 5px 0
     width: 100px
+    position: relative
+    &:before
+      position: absolute
+      display: block
+      font-size: 20px
+      line-height: 20px
+      // top: 0
+      left: 10px
+      font-family: 'Font Awesome 5 Free'
+    &.button1
+      &:before
+        content: '\f164'
+    &.button2
+      &:before
+        content: '\f165'
     &:first-child
       margin-top: 0
     &:nth-child(2)
