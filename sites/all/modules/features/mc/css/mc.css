@@ -122,14 +122,14 @@ article, aside, details, figcaption, figure, footer, header, hgroup, main, menu,
 }
 /* line 36, ../sass/mc.sass */
 .content-slider-wrapper .content-slider .content-slide .field-link a, .content-slider-wrapper .content-slider .content-slide .field-link a:link, .content-slider-wrapper .content-slider .content-slide .field-link a:visited {
-  background: darkgreen;
+  background: black;
   color: white;
   border: none;
   padding: 10px;
 }
 /* line 41, ../sass/mc.sass */
 .content-slider-wrapper .content-slider .content-slide .field-link a:hover {
-  background: green;
+  background: black;
 }
 /* line 73, ../sass/mc.sass */
 .content-slider-wrapper .content-slider .content-slide .content-slide-wrapper {
@@ -204,7 +204,7 @@ article, aside, details, figcaption, figure, footer, header, hgroup, main, menu,
 }
 /* line 127, ../sass/mc.sass */
 .sxs .sxs-title:after {
-  border-top: 1px solid green;
+  border-top: 1px solid black;
   width: 100px;
   margin: 0 auto;
   clear: both;
@@ -301,7 +301,7 @@ article, aside, details, figcaption, figure, footer, header, hgroup, main, menu,
 }
 /* line 187, ../sass/mc.sass */
 .ctas-wrapper .ctas-title:after {
-  border-top: 1px solid green;
+  border-top: 1px solid black;
   margin-top: 40px;
   width: 100px;
   margin: 0 auto;
@@ -331,14 +331,14 @@ article, aside, details, figcaption, figure, footer, header, hgroup, main, menu,
 }
 /* line 36, ../sass/mc.sass */
 .ctas-wrapper .ctas-link a, .ctas-wrapper .ctas-link a:link, .ctas-wrapper .ctas-link a:visited, .ctas-wrapper .ctas-link a:link, .ctas-wrapper .ctas-link a:link:link, .ctas-wrapper .ctas-link a:link:visited, .ctas-wrapper .ctas-link a:visited, .ctas-wrapper .ctas-link a:visited:link, .ctas-wrapper .ctas-link a:visited:visited {
-  background: darkgreen;
+  background: black;
   color: white;
   border: none;
   padding: 10px;
 }
 /* line 41, ../sass/mc.sass */
 .ctas-wrapper .ctas-link a:hover, .ctas-wrapper .ctas-link a:link:hover, .ctas-wrapper .ctas-link a:visited:hover {
-  background: green;
+  background: black;
 }
 /* line 214, ../sass/mc.sass */
 .ctas-wrapper .cta {
@@ -396,14 +396,14 @@ article, aside, details, figcaption, figure, footer, header, hgroup, main, menu,
 }
 /* line 36, ../sass/mc.sass */
 .ctas-wrapper .cta .cta-link, .ctas-wrapper .cta .cta-link:link, .ctas-wrapper .cta .cta-link:visited {
-  background: darkgreen;
+  background: black;
   color: white;
   border: none;
   padding: 10px;
 }
 /* line 41, ../sass/mc.sass */
 .ctas-wrapper .cta .cta-link:hover {
-  background: green;
+  background: black;
 }
 
 /* line 245, ../sass/mc.sass */
@@ -435,5 +435,5 @@ article, aside, details, figcaption, figure, footer, header, hgroup, main, menu,
 }
 /* line 262, ../sass/mc.sass */
 .image-wrapper .image-copy-wrapper a:hover {
-  color: darkgreen;
+  color: black;
 }

@@ -1792,14 +1792,14 @@ tr.selected td {
 /* SMACSS theme rules */
 /* line 5, ../sass/_theme.sass */
 a, a:link, a:visited, input[type="button"], input[type="submit"] {
-  color: blue;
   text-decoration: none;
+  color: black;
 }
 
 /* line 8, ../sass/_theme.sass */
 a:hover {
-  color: blue;
-  text-decoration: underline;
+  text-decoration: none;
+  color: darkgrey;
 }
 
 /* line 12, ../sass/_theme.sass */
@@ -1850,28 +1850,181 @@ a:hover {
   text-decoration: none;
 }
 
-/* line 50, ../sass/_theme.sass */
+/* line 49, ../sass/_theme.sass */
+.resource .map-author, .node-type-resource .map-author {
+  float: right;
+  clear: right;
+  font-size: 20px;
+  display: block;
+}
+/* line 55, ../sass/_theme.sass */
+.resource .map-link a, .node-type-resource .map-link a {
+  display: block;
+  text-align: center;
+  margin: 0;
+  padding: 10px;
+  font-size: 20px;
+  border: 1px solid black;
+}
+/* line 62, ../sass/_theme.sass */
+.resource .map-rating, .node-type-resource .map-rating {
+  position: relative;
+  padding: 0 0 0 20px;
+}
+/* line 65, ../sass/_theme.sass */
+.resource .map-rating:before, .node-type-resource .map-rating:before {
+  position: absolute;
+  display: block;
+  top: 0;
+  left: 0;
+  font-family: "FontAwesome";
+  content: "\f005";
+}
+
+/* line 74, ../sass/_theme.sass */
+.artist .artist-links, .node-type-artist .artist-links {
+  margin-bottom: 20px;
+}
+/* line 76, ../sass/_theme.sass */
+.artist .artist-links, .node-type-artist .artist-links {
+  font-family: sans-serif;
+  text-transform: uppercase;
+  font-size: 10px;
+}
+/* line 80, ../sass/_theme.sass */
+.artist .artist-links ul, .node-type-artist .artist-links ul {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+/* line 84, ../sass/_theme.sass */
+.artist .artist-links ul li, .node-type-artist .artist-links ul li {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  margin: 0 20px;
+  display: inline-block;
+}
+/* line 90, ../sass/_theme.sass */
+.artist .artist-links ul li a, .node-type-artist .artist-links ul li a {
+  display: block;
+  border: 1px solid black;
+  padding: 20px;
+}
+/* line 94, ../sass/_theme.sass */
+.artist .artist-links ul li:first-child, .node-type-artist .artist-links ul li:first-child {
+  margin-left: 0;
+}
+/* line 96, ../sass/_theme.sass */
+.artist .artist-links ul li:last-child, .node-type-artist .artist-links ul li:last-child {
+  margin-right: 0;
+}
+/* line 99, ../sass/_theme.sass */
 .artist .artist-tags a, .node-type-artist .artist-tags a {
   display: inline-block;
   border: 1px solid black;
   padding: 5px;
   margin: 0 5px;
+  margin-bottom: 20px;
   font-size: 10px;
 }
-/* line 57, ../sass/_theme.sass */
+/* line 107, ../sass/_theme.sass */
 .artist .artist-tags:first-child a, .node-type-artist .artist-tags:first-child a {
   margin-left: 0;
 }
 
-/* line 60, ../sass/_theme.sass */
-.rate-widget {
-  font-size: 20px;
+/* line 114, ../sass/_theme.sass */
+.library .view-content {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  justify-content: space-around;
+  align-items: flex-start;
 }
-/* line 62, ../sass/_theme.sass */
+/* line 120, ../sass/_theme.sass */
+.library .resource {
+  position: relative;
+  display: inline-block;
+  padding: 20px;
+  margin: 20px;
+  border: 1px solid black;
+}
+/* line 126, ../sass/_theme.sass */
+.library .resource-group-title {
+  text-transform: uppercase;
+  border-bottom: 1px solid black;
+  margin-bottom: 40px;
+}
+/* line 130, ../sass/_theme.sass */
+.library .resource-rating {
+  position: relative;
+  padding: 0 0 0 20px;
+}
+/* line 133, ../sass/_theme.sass */
+.library .resource-rating:before {
+  position: absolute;
+  display: block;
+  top: 0;
+  left: 0;
+  font-family: "FontAwesome";
+  content: "\f005";
+}
+
+/* line 141, ../sass/_theme.sass */
+.rate-widget {
+  font-size: 60px;
+  line-height: 60px;
+  width: 200px;
+  margin-bottom: 20px;
+}
+/* line 146, ../sass/_theme.sass */
+.library .rate-widget {
+  font-size: 30px;
+  line-height: normal;
+}
+/* line 149, ../sass/_theme.sass */
+.rate-widget .rate-button {
+  display: block;
+  clear: right;
+  float: right;
+  font-size: 15px;
+  line-height: 20px;
+  border: 1px solid black;
+  padding: 5px 0;
+  text-align: center;
+  margin: 5px 0;
+  width: 100px;
+}
+/* line 160, ../sass/_theme.sass */
+.rate-widget .rate-button:first-child {
+  margin-top: 0;
+}
+/* line 162, ../sass/_theme.sass */
+.rate-widget .rate-button:nth-child(2) {
+  margin-bottom: 0;
+}
+/* line 164, ../sass/_theme.sass */
+.rate-widget .rate-button.highlighted {
+  background: black;
+  color: white;
+}
+/* line 167, ../sass/_theme.sass */
+.library .rate-widget .rate-button {
+  display: none;
+}
+/* line 169, ../sass/_theme.sass */
 .rate-widget .rate-description {
   display: block;
   clear: both;
   font-size: 10px;
+  line-height: 10px;
+  width: 100%;
+  text-align: center;
+  padding: 20px;
+}
+/* line 177, ../sass/_theme.sass */
+.library .rate-widget .rate-description {
+  display: none;
 }
 
 /* @import "theme-B"; */

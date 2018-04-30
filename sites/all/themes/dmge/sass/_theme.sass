@@ -3,11 +3,11 @@
 @import "compass/css3/box-shadow"
 
 a, a:link, a:visited, input[type="button"], input[type="submit"]
-  color: blue
   text-decoration: none
+  color: black
 a:hover
-  color: blue
-  text-decoration: underline
+  text-decoration: none
+  color: darkgrey
 
 #site-name
   font-size: 20px
@@ -45,23 +45,134 @@ a:hover
     color: white !important
     text-decoration: none
 
+.resource, .node-type-resource
+  .map-author
+    float: right
+    clear: right
+    font-size: 20px
+    display: block
+  .map-link
+    a
+      display: block
+      text-align: center
+      margin: 0
+      padding: 10px
+      font-size: 20px
+      border: 1px solid black
+  .map-rating
+    position: relative
+    padding: 0 0 0 20px
+    &:before
+      position: absolute
+      display: block
+      top: 0
+      left: 0
+      font-family: 'FontAwesome'
+      content: '\f005'
+
 .artist, .node-type-artist
+  .artist-links
+    margin-bottom: 20px
+    &
+      font-family: sans-serif
+      text-transform: uppercase
+      font-size: 10px
+    ul
+      margin: 0
+      padding: 0
+      list-style: none
+      li
+        margin: 0
+        padding: 0
+        list-style: none
+        margin: 0 20px
+        display: inline-block
+        a
+          display: block
+          border: 1px solid black
+          padding: 20px
+        &:first-child
+          margin-left: 0
+        &:last-child
+          margin-right: 0
   .artist-tags
     a
       display: inline-block
       border: 1px solid black
       padding: 5px
       margin: 0 5px
+      margin-bottom: 20px
       font-size: 10px
     &:first-child
       a
         margin-left: 0
 
+#block-views-library-author-maps-block
+  // +zen-col
+
+.library
+  .view-content
+    display: flex
+    flex-direction: row
+    flex-wrap: wrap
+    justify-content: space-around
+    align-items: flex-start
+  .resource
+    position: relative
+    display: inline-block
+    padding: $zen-gutter-width
+    margin: $zen-gutter-width
+    border: 1px solid black
+  .resource-group-title
+    text-transform: uppercase
+    border-bottom: 1px solid black
+    margin-bottom: $zen-gutter-width*2
+  .resource-rating
+    position: relative
+    padding: 0 0 0 20px
+    &:before
+      position: absolute
+      display: block
+      top: 0
+      left: 0
+      font-family: 'FontAwesome'
+      content: '\f005'
+
 .rate-widget
-  font-size: 20px
+  font-size: 60px
+  line-height: 60px
+  width: 200px
+  margin-bottom: 20px
+  .library &
+    font-size: 30px
+    line-height: normal
+  .rate-button
+    display: block
+    clear: right
+    float: right
+    font-size: 15px
+    line-height: 20px
+    border: 1px solid black
+    padding: 5px 0
+    text-align: center
+    margin: 5px 0
+    width: 100px
+    &:first-child
+      margin-top: 0
+    &:nth-child(2)
+      margin-bottom: 0
+    &.highlighted
+      background: black
+      color: white
+    .library &
+      display: none
   .rate-description
     display: block
     clear: both
     font-size: 10px
-  .artists &
-    //
+    line-height: 10px
+    width: 100%
+    text-align: center
+    padding: $zen-gutter-width
+    .library &
+      display: none
