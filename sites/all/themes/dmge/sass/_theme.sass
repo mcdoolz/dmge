@@ -1,6 +1,7 @@
 // Theme for DMGE
 
 @import "compass/css3/box-shadow"
+@import "compass/css3/border-radius"
 
 a, a:link, a:visited, input[type="button"], input[type="submit"]
   text-decoration: none
@@ -177,7 +178,7 @@ a:hover
     +zen-grid-item(7, 1)
     +zen-clear(left)
   .resource-links
-    +zen-grid-item(6, 10)
+    +zen-grid-item(5, 11)
   .resource-tags
     +zen-grid-item(4, 6)
     +zen-clear(right)
@@ -240,8 +241,11 @@ a:hover
       &:first-child
         margin: 0
 .node-artist
+  .artist-links
+    +zen-clear(left)
+    +zen-grid-item(3, 1)
   .artist-image
-    +zen-grid-item(8, 1)
+    +zen-grid-item(4, 3)
   .artist-copy
     +zen-grid-item(7, 9)
   .artist-rating
@@ -269,33 +273,35 @@ a:hover
   //
 
 .library
-  .view-filters
+  .views-exposed-form
     label
       font-weight: normal
       text-transform: uppercase
-      input[type=text]
-        font-size: 20px
-        line-height: 30px
-        padding: 0 10px
-      input[type=submit], input[type=button]
-        font-size: 20px
-        line-height: 30px
-        margin: 0 10px 0 0
-        background: white
-        border: 1px solid black
-        padding: $zen-gutter-width
-        &:hover
-          background: black
-          color: white
+    input[type=text]
+      font-size: 20px
+      line-height: 30px
+      padding: 20px
+      border: 1px solid black
+    input[type='submit'], input[type='button']
+      font-size: 20px
+      line-height: 30px
+      margin: 0 10px 0 0
+      background: white
+      border: 1px solid black
+      padding: $zen-gutter-width
+      &:hover
+        background: black
+        color: white
+
   .resource-group
     position: relative
     display: flex
     flex-direction: row
     flex-wrap: wrap
     align-items: flex-start
-    justify-content: center
-    padding: $zen-gutter-width
-    margin: $zen-gutter-width
+    justify-content: flex-start
+    padding: $zen-gutter-width 0
+    margin: $zen-gutter-width 0
     border: none
   .resource-group-title
     width: 100%
@@ -304,6 +310,14 @@ a:hover
     margin-bottom: $zen-gutter-width*2
   .resource
     margin: 0 $zen-gutter-width $zen-gutter-width $zen-gutter-width
+    padding: $zen-gutter-width
+    &.views-row-odd
+      &, a
+        color: white
+        background: black
+      a
+        &:hover
+          color: grey
   .rate-widget
     font-size: 20px
 
@@ -385,3 +399,30 @@ a:hover
 
 .edit-submit-library
   font-family: 'FontAwesome'
+
+/* these apply to auto-completing form fields
+
+html.js input
+  &.form-autocomplete
+    background-image: url(../images/throbber.gif)
+    background-position: 100% 0px
+    background-repeat: no-repeat
+  &.throbbing
+    background-position: 100% -16px
+
+/* these apply to all ajax progresses
+
+.ajax-progress
+  display: inline-block
+  *display: inline
+  *zoom: 1
+  .throbber
+    background: transparent url(../images/throbber.gif) no-repeat 0px 0px
+    float: left
+    height: 16px
+    width: 16px
+    margin: 2px
+
+.flag-waiting .flag-throbber
+  background: url(../images/throbber-active.gif) no-repeat right center
+  padding-right: 13px
