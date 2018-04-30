@@ -2356,4 +2356,9 @@ a:hover {
   content: "\f024";
 }
 
+/* line 386, ../sass/_theme.sass */
+.edit-submit-library {
+  font-family: "FontAwesome";
+}
+
 /* @import "theme-B"; */
