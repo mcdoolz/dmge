@@ -46,7 +46,7 @@ function dmge_system_menu() {
   );
   $items['engine'] = array(
     'title' => 'DMGE',
-    'type'  => 'MENU_CALLBACK',
+    'type'  => MENU_CALLBACK,
     'page callback' => 'drupal_get_form',
     'page arguments' => array('dmge_system_theme_settings'),
     'access arguments' => array('configure dmge'),
@@ -56,4 +56,47 @@ function dmge_system_menu() {
 
 function dmge_system_theme_settings() {
   return "hello world";
+}
+
+/**
+ * Returns true if link is a patreon link.
+ */
+function _dmge_is_patreon($url) {
+  if (strpos($url, 'patreon') !== FALSE) {
+    return TRUE;
+  }
+}
+
+/**
+ * Helper rewrites url for provider.
+ */
+function _dmge_rewrite_url($url) {
+  if (_dmge_is_patreon($url)) {
+    $url = parse_url($url);
+    $matches = array();
+    preg_match('/h=(\d+)/', $url['query'], $matches);
+    $url = 'https://www.patreon.com/posts/' . $matches[1];
+  }
+  return $url;
+}
+
+function dmge_system_preprocess_field($vars) {
+  // dpm($vars);
+  switch ($vars['element']['#field_name']) {
+    case 'field_resource_links':
+    // $link = &$vars['element']['#items'][0]['field_resource_link'][LANGUAGE_NONE][0];
+    // $link = &$vars['items'][0]['field_resource_link']['#items'][0];
+    // if (strpos($link['url'], 'patreon') !== FALSE) {
+    //   $url = parse_url($link['url']);
+    //   $matches = array();
+    //   preg_match('/h=(\d+)/', $url['query'], $matches);
+    //   $link['display_url'] = 'https://www.patreon.com/posts/' . $matches[1];
+    //   $link['url'] = $link['display_url'];
+    // }
+      break;
+
+    default:
+      // nothing
+      break;
+  }
 }
