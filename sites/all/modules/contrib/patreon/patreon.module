@@ -133,7 +133,7 @@ function patreon_authorise_account($client_id, $redirect_url = NULL, $redirect =
   }
 
   if ($valid) {
-    $url = PATREON_URL . '/oauth2/authorize?response_type=code&client_id=' . $client_id . '&redirect_uri=' . $redirect_url;
+    $url = PATREON_URL . '/oauth2/authorize?response_type=code&client_id=' . $client_id;
 
     if ($redirect) {
       drupal_goto($url);
