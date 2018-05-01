@@ -51,7 +51,7 @@ function patreon_menu() {
     'access callback' => TRUE,
     'page callback' => 'drupal_get_form',
     'page arguments' => array('patreon_oauth_callback'),
-    'access arguments' => array('administer patreon'),
+    // 'access arguments' => array('administer patreon'),
     'type' => MENU_CALLBACK,
     'file' => 'patreon.pages.inc',
   );
