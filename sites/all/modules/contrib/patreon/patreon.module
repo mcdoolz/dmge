@@ -192,7 +192,9 @@ function patreon_get_token($code) {
 function patreon_check_response($response) {
   $return = TRUE;
   $message = NULL;
-
+  if (is_object($response)) {
+    watchdog('patreon response', '<pre>' . print_r($response, TRUE) . '</pre>', array(), WATCHDOG_ERROR);
+  }
   if (isset($response['errors']) && !empty($response['errors'])) {
     $return = FALSE;
     $message = t('There was a problem contacting Patreon. Please contact an administrator.');
