@@ -166,6 +166,7 @@ function patreon_get_token($code) {
   if ($library['loaded'] && $key && $secret) {
     $oauth_client = new Patreon\OAuth($key, $secret);
     $url = patreon_get_callback_url();
+    watchdog('patreon', '<pre>' . print_r($oauth_client) . '</pre>', array(), WATCHDOG_ERROR);
     $tokens = $oauth_client->get_tokens($code, $url);
     if ($tokens && $access_token = $tokens['access_token']) {
       $return = check_plain($access_token);
