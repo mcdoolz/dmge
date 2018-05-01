@@ -194,6 +194,7 @@ function patreon_check_response($response) {
   $message = NULL;
   if (is_object($response)) {
     watchdog('patreon response', '<pre>' . print_r($response, TRUE) . '</pre>', array(), WATCHDOG_ERROR);
+    watchdog('patreon response', '<pre>' . print_r(get_class_methods($response), TRUE) . '</pre>', array(), WATCHDOG_ERROR);
   }
   if (isset($response['errors']) && !empty($response['errors'])) {
     $return = FALSE;
