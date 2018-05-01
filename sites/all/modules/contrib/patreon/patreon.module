@@ -86,8 +86,7 @@ function patreon_permission() {
  *   The absolute URL of the Oauth callback url.
  */
 function patreon_get_callback_url() {
-  return $_SERVER['HTTP_HOST'] . '/' . PATREON_OAUTH_CALLBACK_URL;
-  // return url('/' . PATREON_OAUTH_CALLBACK_URL, array('absolute' => TRUE));
+  return url('/' . PATREON_OAUTH_CALLBACK_URL, array('absolute' => TRUE));
 }
 
 /**
@@ -133,7 +132,7 @@ function patreon_authorise_account($client_id, $redirect_url = NULL, $redirect =
   }
 
   if ($valid) {
-    $url = PATREON_URL . '/oauth2/authorize?response_type=code&client_id=' . $client_id;
+    $url = PATREON_URL . '/oauth2/authorize?response_type=code&client_id=' . $client_id . '&redirect_uri=' . $redirect_url;
 
     if ($redirect) {
       drupal_goto($url);
