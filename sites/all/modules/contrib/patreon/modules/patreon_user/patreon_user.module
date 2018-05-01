@@ -138,8 +138,7 @@ function patreon_user_block_view($delta = '') {
  *   The absolute URL of the oauth callback.
  */
 function patreon_user_get_callback_url() {
-  return $_SERVER['HTTP_HOST'] . '/'. PATREON_USER_OAUTH_CALLBACK_URL;
-  // return url('/' . PATREON_USER_OAUTH_CALLBACK_URL, array('absolute' => TRUE));
+  return url('/' . PATREON_USER_OAUTH_CALLBACK_URL, array('absolute' => TRUE));
 }
 
 /**
