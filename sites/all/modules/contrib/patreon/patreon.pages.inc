@@ -60,6 +60,11 @@ function patreon_admin_form_submit($form, &$form_state) {
  * Callback to obtain a valid Oauth token.
  */
 function patreon_oauth_callback() {
+  if (empty($_GET['code'])) {
+    drupal_set_message(t('There was an error fetching data from the Patreon API. Please try again.'), 'error');
+    watchdog('patreon_user', 'Did not receive an OAUTH code.', array(), WATCHDOG_WARNING);
+    drupal_goto('admin/config/services/patreon');
+  }
   if (user_is_logged_in() && $code = $_GET['code']) {
     if ($token = patreon_get_token($code)) {
       variable_set('patreon_access_token', $token);
