@@ -10,6 +10,9 @@ a:hover
   text-decoration: none
   color: darkgrey
 
+#header
+  margin: $zen-gutter-width auto
+
 #site-name
   font-size: 20px
   text-transform: uppercase
@@ -60,13 +63,31 @@ a:hover
           margin: 0
 
 .breadcrumb
-  a
-    float: right
-    clear: both
+  +zen-grid-item(16, 1, right)
+  +zen-float(right)
+  +zen-clear(right)
+  text-align: right
+  white-space: nowrap
+  position: relative
+  z-index: 420
+  ol, ul
     display: block
-    position: relative
-    z-index: 420
+    li
+      display: inline-block
+      margin-left: $zen-gutter-width
+      &:first-child
+        margin: 0
 
+li.attached-block
+  position: relative
+.menu-attach-block-wrapper
+  position: absolute
+  right: 0
+  top: 100%
+  z-index: 960
+  +border-radius(none)
+  +box-shadow(0 3px 6px black)
+  background: white
 #block-user-login
   background: white
   padding: $zen-gutter-width
@@ -183,7 +204,7 @@ a:hover
     +zen-grid-item(4, 6)
     +zen-clear(right)
   .rate-widget
-    +zen-grid-item(4, 1)
+    +zen-grid-item(3, 1)
     +zen-clear(left)
 
 .artist, .node-type-artist
