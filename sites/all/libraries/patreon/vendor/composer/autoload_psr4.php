@@ -6,5 +6,4 @@ $vendorDir = dirname(dirname(__FILE__));
 $baseDir = dirname($vendorDir);
 
 return array(
-    'Art4\\JsonApiClient\\' => array($vendorDir . '/art4/json-api-client/src'),
 );

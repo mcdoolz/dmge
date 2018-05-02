@@ -4,22 +4,8 @@
 
 namespace Composer\Autoload;
 
-class ComposerStaticInit031cee12d90dedd2348f2b1c920b2517
+class ComposerStaticInit93b0ef6c8dd2eaeb72b587d8b640587f
 {
-    public static $prefixLengthsPsr4 = array (
-        'A' => 
-        array (
-            'Art4\\JsonApiClient\\' => 19,
-        ),
-    );
-
-    public static $prefixDirsPsr4 = array (
-        'Art4\\JsonApiClient\\' => 
-        array (
-            0 => __DIR__ . '/..' . '/art4/json-api-client/src',
-        ),
-    );
-
     public static $prefixesPsr0 = array (
         'P' => 
         array (
@@ -33,9 +19,7 @@ class ComposerStaticInit031cee12d90dedd2348f2b1c920b2517
     public static function getInitializer(ClassLoader $loader)
     {
         return \Closure::bind(function () use ($loader) {
-            $loader->prefixLengthsPsr4 = ComposerStaticInit031cee12d90dedd2348f2b1c920b2517::$prefixLengthsPsr4;
-            $loader->prefixDirsPsr4 = ComposerStaticInit031cee12d90dedd2348f2b1c920b2517::$prefixDirsPsr4;
-            $loader->prefixesPsr0 = ComposerStaticInit031cee12d90dedd2348f2b1c920b2517::$prefixesPsr0;
+            $loader->prefixesPsr0 = ComposerStaticInit93b0ef6c8dd2eaeb72b587d8b640587f::$prefixesPsr0;
 
         }, null, ClassLoader::class);
     }
