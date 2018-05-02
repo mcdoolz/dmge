@@ -91,7 +91,9 @@ function dmge_system_form_user_login_block_alter(&$form, &$form_state) {
 function dmge_system_form_user_login_alter(&$form, &$form_state) {
   _dmge_system_login_form_alter($form, $form_state);
 }
-
+function dmge_system_form_user_register_form_alter(&$form, &$form_state) {
+  _dmge_system_login_form_alter($form, $form_state);
+}
 function _dmge_system_login_form_alter(&$form, &$form_state = NULL) {
   $form['links']['#markup'] = '<div class="item-list"><ul><li class="first"><a href="/user/register" title="Create a new user account."><i class="fas fa-user-plus">&nbsp;</i> Register</a></li><li class="last"><a href="/user/password" title="Request new password via e-mail."><i class="fas fa-unlock-alt">&nbsp;</i> Request new password</a></li></ul></div>';
   unset($form['actions']);
