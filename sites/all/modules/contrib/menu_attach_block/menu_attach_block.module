@@ -176,7 +176,9 @@ function menu_attach_block_link(&$variables) {
       );
       $block_output = theme('menu_attach_block_wrapper', $variables);
       return $link . $block_output;
-    }
+    } elseif ($variables['path'] == '<block>' || $variables['path'] == '<droplink>') {
+  		return;
+  	}
   }
 
   // Otherwise, pass through to the original theme function (likely theme_link).
