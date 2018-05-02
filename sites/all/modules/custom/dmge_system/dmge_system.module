@@ -94,6 +94,10 @@ function dmge_system_form_user_login_alter(&$form, &$form_state) {
 function dmge_system_form_user_register_form_alter(&$form, &$form_state) {
   _dmge_system_login_form_alter($form, $form_state);
 }
+function dmge_system_form_passwordless_login_alter(&$form, &$form_state) {
+  _dmge_system_login_form_alter($form, $form_state);
+}
+
 function _dmge_system_login_form_alter(&$form, &$form_state = NULL) {
   unset($form['actions']);
   $form['actions']['button']['#prefix'] = '<button type="submit" class="login-button edit-submit">';
@@ -112,7 +116,6 @@ function _dmge_system_login_form_alter(&$form, &$form_state = NULL) {
           }
           else {
             $title = t('Log on via Patreon');
-            $suffix = NULL;
           }
           $patreon_link = t('<a href="@url" id="user-login-patreon"><i class="fab fa-patreon">&nbsp;</i> @title</a>', array(
             '@url' => $url,
