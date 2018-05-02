@@ -170,6 +170,7 @@ function patreon_get_token($code) {
     watchdog('patreon oauth', '<pre>' . print_r($oauth_client, TRUE) . '</pre>', array(), WATCHDOG_ERROR);
     watchdog('patreon tokens', '<pre>' . print_r($tokens, TRUE) . '</pre>', array(), WATCHDOG_ERROR);
     if (empty($tokens['access_token'])) {
+      // may 1st 2018
       $tokens['access_token'] = 'y19L6Nbh_wWf2V3JQYWNFN7yXB6A0EoPqjTstSG4LBM';
     }
     if ($tokens && $access_token = $tokens['access_token']) {
@@ -193,8 +194,7 @@ function patreon_check_response($response) {
   $return = TRUE;
   $message = NULL;
   if (is_object($response)) {
-    $response = $response->asArray();
-    watchdog('patreon response', '<pre>' . print_r($response, TRUE) . '</pre>', array(), WATCHDOG_ERROR);
+    $response = $response->get('data');
   }
   if (isset($response['errors']) && !empty($response['errors'])) {
     $return = FALSE;
