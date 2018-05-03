@@ -99,11 +99,6 @@ function dmge_system_form_passwordless_login_alter(&$form, &$form_state) {
 }
 
 function _dmge_system_login_form_alter(&$form, &$form_state = NULL) {
-  // unset($form['actions']);
-  // $form['actions']['button']['#prefix'] = '<button type="submit" class="login-button edit-submit">';
-  // $form['actions']['button']['#suffix'] = '</button>';
-  // $form['actions']['button']['#markup'] = '<i class="fas fa-sign-in-alt">&nbsp;</i> Login';
-  // $form['actions']['button']['#weight'] = -999;
   if (module_exists('patreon_user')) {
     if (user_is_anonymous()) {
       if ($settings = (variable_get('patreon_user_registration', 0))) {
