@@ -153,3 +153,42 @@ function dmge_system_form_library_resources_block_form_alter(&$form, $form_state
   $form['keys']['#attributes']['placeholder'][] = t('Search');
   $form['actions']['submit']['#value'] = html_entity_decode('&#xf002;');
 }
+
+/**
+ * Implements hook_perm().
+ */
+function dmge_system_perm() {
+  return array(
+    'account view any note',
+    'account view own notes',
+  );
+}
+
+/**
+ * Implements hook_services_resources().
+ */
+function dmge_system_services_resources() {
+  return array(
+   'user' => array(
+     'retrieve' => array(
+       'help' => 'Retrieves an account',
+       'callback' => '_dmge_system_account_retrieve',
+       'access callback' => TRUE,
+       'args' => array(
+         array(
+           'mail' => 'mail',
+         ),
+       ),
+     ),
+   ),
+ );
+}
+
+function _dmge_system_account_retrieve($mail) {
+  return dmge_system_get_account($mail);
+}
+
+function dmge_system_get_account($mail) {
+  $result = db_query("SELECT * FROM {users} WHERE mail=:mail", array(':mail' => $mail));
+  return $result->fetchObject();
+}
