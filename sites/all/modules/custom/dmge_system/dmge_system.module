@@ -163,35 +163,3 @@ function dmge_system_perm() {
     'account view own notes',
   );
 }
-
-/**
- * Implements hook_services_resources().
- */
-function dmge_system_services_resources() {
-  return array(
-   'user' => array(
-     'targeted_actions' => array(
-       'attach_file' => array(
-         'help' => 'Get an account and check it.',
-         'callback' => '_dmge_system_account_retrieve',
-         // 'access callback' => '_node_resource_access',
-         // 'access arguments' => array('update'),
-         // 'access arguments append' => TRUE,
-         'args' => array(
-           array(
-             'mail' => 'mail',
-             'password' => 'password'
-           ),
-     ),
-   ),
- );
-}
-
-function _dmge_system_account_retrieve($mail) {
-  return dmge_system_get_account($mail);
-}
-
-function dmge_system_get_account($mail) {
-  $result = db_query("SELECT * FROM {users} WHERE mail=:mail", array(':mail' => $mail));
-  return $result->fetchObject();
-}
