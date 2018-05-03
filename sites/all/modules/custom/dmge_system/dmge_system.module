@@ -170,15 +170,19 @@ function dmge_system_perm() {
 function dmge_system_services_resources() {
   return array(
    'user' => array(
-     'retrieve' => array(
-       'help' => 'Retrieves an account',
-       'callback' => '_dmge_system_account_retrieve',
-       'access callback' => TRUE,
-       'args' => array(
-         array(
-           'mail' => 'mail',
-         ),
-       ),
+     'targeted_actions' => array(
+       'attach_file' => array(
+         'help' => 'Upload and attach file(s) to a node. POST multipart/form-data to node/123/attach_file',
+         'file' => array('type' => 'inc', 'module' => 'services', 'name' => 'resources/node_resource'),
+         'callback' => '_node_resource_attach_file',
+         'access callback' => '_node_resource_access',
+         'access arguments' => array('update'),
+         'access arguments append' => TRUE,
+         'args' => array(
+           array(
+             'mail' => 'mail',
+             'password' => 'password'
+           ),
      ),
    ),
  );
