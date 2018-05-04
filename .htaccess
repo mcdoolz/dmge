@@ -151,4 +151,7 @@ DirectoryIndex index.php index.html index.htm
 <IfModule mod_headers.c>
   # Disable content sniffing, since it's an attack vector.
   Header always set X-Content-Type-Options nosniff
+  Header set Access-Control-Allow-Origin "*"
+  Header always set Access-Control-Allow-Methods "POST, GET, PUT, DELETE, OPTIONS"
+  Header always set Access-Control-Allow-Headers "X-Requested-With, content-type, Authorization"
 </IfModule>
