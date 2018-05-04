@@ -155,11 +155,10 @@ function dmge_system_form_library_resources_block_form_alter(&$form, $form_state
 }
 
 /**
- * Implements hook_perm().
+ * Implements hook_rest_server_execute_errors_alter().
  */
-function dmge_system_perm() {
-  return array(
-    'account view any note',
-    'account view own notes',
-  );
+function dmge_system_rest_server_execute_errors_alter(&$error_alter_array, $controller, $arguments) {
+  if ($error_alter_array['code'] === 401) {
+    $error_alter_array['code'] = 400;
+  }
 }
