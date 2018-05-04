@@ -1,3 +1,4 @@
+
 #
 # Apache/PHP/Drupal settings:
 #
@@ -60,6 +61,10 @@ DirectoryIndex index.php index.html index.htm
 # Various rewrite rules.
 <IfModule mod_rewrite.c>
   RewriteEngine on
+
+  # Enforance SSL
+  RewriteCond %{HTTPS} off
+  RewriteRule ^(.*)$ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
 
   # Set "protossl" to "s" if we were accessed via https://.  This is used later
   # if you enable "www." stripping or enforcement, in order to ensure that
@@ -151,7 +156,27 @@ DirectoryIndex index.php index.html index.htm
 <IfModule mod_headers.c>
   # Disable content sniffing, since it's an attack vector.
   Header always set X-Content-Type-Options nosniff
-  Header set Access-Control-Allow-Origin "*"
-  Header always set Access-Control-Allow-Methods "POST, GET, PUT, DELETE, OPTIONS"
-  Header always set Access-Control-Allow-Headers "X-Requested-With, content-type, Authorization"
+  Header set Access-Control-Allow-Origin *
+  Header always set Access-Control-Allow-Methods "POST, GET, OPTIONS, DELETE, PUT"
+  Header always set Access-Control-Allow-Headers "*"
 </IfModule>
+
+# BEGIN cPanel-generated php ini directives, do not edit
+# Manual editing of this file may result in unexpected behavior.
+# To make changes to this file, use the cPanel MultiPHP INI Editor (Home >> Software >> MultiPHP INI Editor)
+# For more information, read our documentation (https://go.cpanel.net/EA4ModifyINI)
+<IfModule php5_module>
+   php_flag asp_tags Off
+   php_flag display_errors Off
+   php_value max_execution_time 300
+   php_value max_input_time 600
+   php_value max_input_vars 3000
+   php_value memory_limit 256M
+   php_value post_max_size 150M
+   php_value session.gc_maxlifetime 1440
+   php_value session.save_path "/var/cpanel/php/sessions/ea-php56"
+   php_value upload_max_filesize 125M
+   php_flag zlib.output_compression Off
+   php_value always_populate_raw_post_data -1
+</IfModule>
+# END cPanel-generated php ini directives, do not edit
