@@ -160,5 +160,7 @@ function dmge_system_form_library_resources_block_form_alter(&$form, $form_state
 function dmge_system_rest_server_execute_errors_alter(&$error_alter_array, $controller, $arguments) {
   if ($error_alter_array['code'] === 401) {
     $error_alter_array['code'] = 400;
+    $error_alter_array['header_message'] = 'No love.';
+    $error_alter_array['body_data'] = 'Bad username or password.';
   }
 }
