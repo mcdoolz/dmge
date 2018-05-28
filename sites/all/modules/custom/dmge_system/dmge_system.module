@@ -23,19 +23,130 @@ function dmge_system_permission() {
 
 /**
  * Implements hook_theme().
+ *
+ * Themes the main system window.
  */
 function dmge_system_theme() {
+  global $user;
   return array(
     'dmge_system_main' => array(
-      'variables' => NULL,
+      'variables' => array(
+        'roles' => $user->roles,
+      ),
+      'template' => 'templates/dmge_system_main',
+    ),
+    'dmge_system_players' => array(
+      'variables' => array(
+      ),
+      'template' => 'templates/dmge_system_players',
     ),
   );
+}
+
+function dmge_system_players() {
+  global $user;
+  $path = drupal_get_path('module', 'dmge_system');
+  drupal_add_js($path . '/engine/heartbeat.js', array(
+    'type' => 'file',
+    'scope' => 'footer',
+    'weight' => 999,
+  ));
+  return theme('dmge_system_players', array());
+
+}
+
+function dmge_system_init() {
+  // Set arbitrary setting.
+  $data = array(
+    'dmge_system' => array(),
+  );
+  drupal_add_js($data, 'setting');
+}
+
+function dmge_system_main() {
+  global $user;
+  $path = drupal_get_path('module', 'dmge_system');
+
+  $header_javascripts = array(
+    $path . '/lib/svg.min.js',
+    $path . '/lib/honeycomb.min.js',
+    $path . '/lib/fabric.min.js',
+    $path . '/lib/js.cookie.js',
+    $path . '/lib/jsgrid.min.js',
+  );
+  foreach ($header_javascripts as $header_javascript) {
+    drupal_add_js($header_javascript, array(
+      'type' => 'file',
+      'scope' => 'header',
+      'weight' => 999,
+    ));
+  }
+  drupal_add_js('https://code.jquery.com/ui/1.12.1/jquery-ui.min.js', array(
+    'type' => 'external',
+    'scope' => 'header',
+    'weight' => 999,
+  ));
+
+  $footer_javascripts = array(
+    $path . '/engine/init.js',
+    // $path . '/engine/grid.js',
+    $path . '/engine/controls.js',
+    // $path . '/engine/fx.js',
+  );
+  foreach ($footer_javascripts as $footer_javascript) {
+    drupal_add_js($footer_javascript, array(
+      'type' => 'file',
+      'scope' => 'footer',
+      'weight' => 999,
+    ));
+  }
+
+  $css_files = array(
+    $path . '/css/jsgrid.min.css',
+    $path . '/css/jsgrid-theme.min.css',
+    $path . '/css/jquery-ui.structure.min.css',
+    $path . '/css/font-awesome-animation.min.css',
+    $path . '/css/screen.css',
+  );
+  $ext_css_files = array(
+    'https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css',
+    'https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css'
+  );
+  foreach($ext_css_files as $ext_css_file) {
+    drupal_add_css($ext_css_file, array(
+      'type' => 'external',
+      'weight' => 999,
+    ));
+  }
+  foreach($css_files as $css_file) {
+    drupal_add_css($css_file, array(
+      'type' => 'file',
+      'weight' => 999,
+    ));
+  }
+  return theme('dmge_system_main', array('roles' => $user->roles));
 }
 
 /**
  * Implements hook_menu().
  */
 function dmge_system_menu() {
+  // Engine
+  $items['engine'] = array(
+    'title' => 'DMGE',
+    'description' => 'The Dynamic Maps Game Engine.',
+    'page callback' => 'dmge_system_main',
+    'type' => MENU_CALLBACK,
+    'access arguments' => array('access content'),
+  );
+  // Player view
+  $items['engine/players'] = array(
+    'title' => 'DMGE Player View',
+    'description' => 'The Dynamic Maps Game Engine.',
+    'page callback' => 'dmge_system_players',
+    'type' => MENU_CALLBACK,
+    'access arguments' => array('access content'),
+  );
   // Module settings.
   $items['admin/config/administration/dmge_system'] = array(
     'title' => 'DMGE',
@@ -64,7 +175,7 @@ function dmge_system_engine($form = array()) {
 /**
  * Returns true if link is a patreon link.
  */
-function _dmge_is_patreon($url) {
+function _dmge_is_patreon_link($url) {
   if (strpos($url, 'patreon') !== FALSE) {
     return TRUE;
   }
@@ -74,7 +185,7 @@ function _dmge_is_patreon($url) {
  * Helper rewrites url for provider.
  */
 function _dmge_rewrite_url($url) {
-  if (_dmge_is_patreon($url)) {
+  if (_dmge_is_patreon_link($url)) {
     $url = parse_url($url);
     $matches = array();
     preg_match('/h=(\d+)/', $url['query'], $matches);
