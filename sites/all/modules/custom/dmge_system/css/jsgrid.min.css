@@ -1,0 +1,127 @@
+@charset "UTF-8";
+/*
+ * jsGrid v1.5.3 (http://js-grid.com)
+ * (c) 2016 Artem Tabalin
+ * Licensed under MIT (https://github.com/tabalinas/jsgrid/blob/master/LICENSE)
+ */
+/* line 7, ../sass/jsgrid.min.scss */
+.jsgrid {
+  position: relative;
+  overflow: hidden;
+  font-size: 1em;
+}
+
+/* line 7, ../sass/jsgrid.min.scss */
+.jsgrid, .jsgrid *, .jsgrid :after, .jsgrid :before {
+  box-sizing: border-box;
+}
+
+/* line 7, ../sass/jsgrid.min.scss */
+.jsgrid input, .jsgrid select, .jsgrid textarea {
+  font-size: 1em;
+}
+
+/* line 7, ../sass/jsgrid.min.scss */
+.jsgrid-grid-header {
+  overflow-x: hidden;
+  overflow-y: scroll;
+  -webkit-user-select: none;
+  -khtml-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  -o-user-select: none;
+  user-select: none;
+}
+
+/* line 7, ../sass/jsgrid.min.scss */
+.jsgrid-grid-body {
+  overflow-x: auto;
+  overflow-y: scroll;
+  -webkit-overflow-scrolling: touch;
+}
+
+/* line 7, ../sass/jsgrid.min.scss */
+.jsgrid-table {
+  width: 100%;
+  table-layout: fixed;
+  border-collapse: collapse;
+  border-spacing: 0;
+}
+
+/* line 7, ../sass/jsgrid.min.scss */
+.jsgrid-cell {
+  padding: .5em;
+}
+
+/* line 7, ../sass/jsgrid.min.scss */
+.jsgrid-header-cell, .jsgrid-сell {
+  box-sizing: border-box;
+}
+
+/* line 7, ../sass/jsgrid.min.scss */
+.jsgrid-align-left {
+  text-align: left;
+}
+
+/* line 7, ../sass/jsgrid.min.scss */
+.jsgrid-align-center, .jsgrid-align-center input, .jsgrid-align-center select, .jsgrid-align-center textarea {
+  text-align: center;
+}
+
+/* line 7, ../sass/jsgrid.min.scss */
+.jsgrid-align-right, .jsgrid-align-right input, .jsgrid-align-right select, .jsgrid-align-right textarea {
+  text-align: right;
+}
+
+/* line 7, ../sass/jsgrid.min.scss */
+.jsgrid-header-cell {
+  padding: .5em;
+}
+
+/* line 7, ../sass/jsgrid.min.scss */
+.jsgrid-edit-row input, .jsgrid-edit-row select, .jsgrid-edit-row textarea, .jsgrid-filter-row input, .jsgrid-filter-row select, .jsgrid-filter-row textarea, .jsgrid-insert-row input, .jsgrid-insert-row select, .jsgrid-insert-row textarea {
+  width: 100%;
+  padding: .3em .5em;
+}
+
+/* line 7, ../sass/jsgrid.min.scss */
+.jsgrid-edit-row input[type=checkbox], .jsgrid-filter-row input[type=checkbox], .jsgrid-insert-row input[type=checkbox] {
+  width: auto;
+}
+
+/* line 7, ../sass/jsgrid.min.scss */
+.jsgrid-selected-row .jsgrid-cell {
+  cursor: pointer;
+}
+
+/* line 7, ../sass/jsgrid.min.scss */
+.jsgrid-nodata-row .jsgrid-cell {
+  padding: .5em 0;
+  text-align: center;
+}
+
+/* line 7, ../sass/jsgrid.min.scss */
+.jsgrid-header-sort {
+  cursor: pointer;
+}
+
+/* line 7, ../sass/jsgrid.min.scss */
+.jsgrid-pager {
+  padding: .5em 0;
+}
+
+/* line 7, ../sass/jsgrid.min.scss */
+.jsgrid-pager-nav-button {
+  padding: .2em .6em;
+}
+
+/* line 7, ../sass/jsgrid.min.scss */
+.jsgrid-pager-nav-inactive-button {
+  display: none;
+  pointer-events: none;
+}
+
+/* line 7, ../sass/jsgrid.min.scss */
+.jsgrid-pager-page {
+  padding: .2em .6em;
+}

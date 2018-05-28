@@ -5,5 +5,5 @@ sites/*/settings*.php
 sites/*/files
 sites/*/private
 
-**.htaccess
+**htaccess
 **package-lock.json

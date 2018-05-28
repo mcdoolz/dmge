@@ -1,0 +1,670 @@
+(function ($, Drupal, window, document, undefined) {
+
+  var mainDocument = Drupal.mainDocument = document;
+
+  var mainView = Drupal.mainView = window;
+  var mainMap = Drupal.mainMap = new fabric.Canvas('map');
+  fabric.util.requestAnimFrame(function render() {
+    mainMap.renderAll();
+    fabric.util.requestAnimFrame(render);
+  });
+  var mainFOW = Drupal.mainFOW = $('#fow')[0];
+  localStorage.setItem("mainMap", mainMap);
+  localStorage.setItem("mainFOW", mainFOW);
+
+  mainMap.on('mouse:down', function(opt) {
+    var evt = opt.e;
+    if (evt.altKey === true) {
+      this.isDragging = true;
+      this.selection = false;
+      this.lastPosX = evt.clientX;
+      this.lastPosY = evt.clientY;
+    }
+  });
+  mainMap.on('mouse:move', function(opt) {
+    if (this.isDragging) {
+      var e = opt.e;
+      this.viewportTransform[4] += e.clientX - this.lastPosX;
+      this.viewportTransform[5] += e.clientY - this.lastPosY;
+      this.requestRenderAll();
+      this.lastPosX = e.clientX;
+      this.lastPosY = e.clientY;
+    }
+  });
+  mainMap.on('mouse:up', function(opt) {
+    this.isDragging = false;
+    this.selection = true;
+  });
+
+  mainMap.on('mouse:wheel', function(opt) {
+    var delta = opt.e.deltaY;
+    var zoom = mainMap.getZoom();
+    zoom = zoom + delta/200;
+    if (zoom > 20) {zoom = 20;}
+    if (zoom < 0.01) {zoom = 0.01;}
+    mainMap.zoomToPoint({ x: opt.e.offsetX, y: opt.e.offsetY }, zoom);
+    opt.e.preventDefault();
+    opt.e.stopPropagation();
+    var vpt = this.viewportTransform;
+    if (zoom < 400 / 1000) {
+      this.viewportTransform[4] = 200 - 1000 * zoom / 2;
+      this.viewportTransform[5] = 200 - 1000 * zoom / 2;
+    } else {
+      if (vpt[4] >= 0) {
+        this.viewportTransform[4] = 0;
+      } else if (vpt[4] < mainMap.getWidth() - 1000 * zoom) {
+        this.viewportTransform[4] = mainMap.getWidth() - 1000 * zoom;
+      }
+      if (vpt[5] >= 0) {
+        this.viewportTransform[5] = 0;
+      } else if (vpt[5] < mainMap.getHeight() - 1000 * zoom) {
+        this.viewportTransform[5] = mainMap.getHeight() - 1000 * zoom;
+      }
+    }
+  });
+
+  $(document).on('click', function(e) {
+    if ($(e.target).closest('#sidebar').length === 0) {
+      $('#sidebar').hide('slide', {direction:'right'});
+    }
+  });
+
+  /**
+   * No right click in the fow of war, it complicates matters.
+   */
+  $('#fow').contextmenu(function() {
+      return false;
+  });
+
+  /**
+   * Binding an event to a variable toggle.  Computer science in action.
+   */
+  var shifted = false;
+  $(document).on('keyup keydown', function(e){
+    shifted = e.shiftKey;
+  });
+
+  /**
+   * When we press a key, the world changes.
+   */
+  $(document).bind('keydown', function(e) {
+    if (e.which == 27) {
+      $('#sidebar').toggle('slide', {direction:'right'});
+    }
+    if (e.which == 81) {
+      __toggle = Drupal.howto.dialog('isOpen') ? 'close' : 'open';
+      Drupal.howto.dialog(__toggle);
+    }
+    if (e.which == 70) {
+      if (e.ctrlKey) {
+        __fow = localStorage.getItem('fow');
+      }
+    }
+    if (e.which == 86) {
+      if (e.ctrlKey) {
+        var playerView = Drupal.playerView = window.open('/engine/players');
+        console.log(playerView);
+        var playerViewInterval = setInterval(playerViewTimer, 1000);
+        var playerMap = Drupal.playerMap = playerView.document.getElementById('player_map');
+        var playerFOW = Drupal.playerFOW = playerView.document.getElementById('player_fow');
+        function playerViewTimer() {
+          // playerMap.innerHTML += 'works.';
+          // playerFOW.innerHTML += 'works.';
+        }
+      }
+    }
+    if (e.which == 90) {
+      if (e.ctrlKey) {
+        $('#grid_wrapper').removeClass();
+        $('#grid_wrapper').addClass('active grid_drag');
+        $('#grid_wrapper').draggable({disabled: false});
+      }
+      if (e.shiftKey) {
+        $('#grid_wrapper').removeClass();
+        $('#grid_wrapper').draggable({disabled: true});
+      }
+    }
+    if (e.which == 88) {
+      if (e.ctrlKey) {
+        $('#grid_wrapper').removeClass();
+        $('#grid_wrapper').draggable({disabled: true});
+        $('#grid_wrapper').addClass('active grid_marking');
+      }
+      if (e.shiftKey) {
+        $('#grid_wrapper').removeClass();
+      }
+    }
+    if (e.which == 8) {
+      e.preventDefault();
+      $('#grid_wrapper').removeClass();
+      $('#grid_wrapper').draggable('disable');
+      if (e.ctrlKey) {
+        $('.map_token').remove();
+      }
+    }
+  });
+
+  /**
+   * Helper gets opacity from the grid and returns percentile.
+   */
+  function get_opacity(thing) {
+    _opacity = thing.val();
+    _opacity = _opacity / 100;
+    return _opacity;
+  }
+
+  /**
+   * Sets the map wrapper as resizeable.  I'm Canadian.  There's an e.  Deal with it.
+   */
+  // $('#map_wrapper').resizable({
+  //   containment: 'body',
+  //   stop: function(event, ui) {
+  //     _width = $(this).width();
+  //     _height = $(this).height();
+  //     init_fow(_height, _width);
+  //     set_grid();
+  //   }
+  // });
+
+  /**
+   * Get the hash of a link and reveal the appropriate div by id.
+   */
+  $('#menu a').on('touchend click', function(event) {
+    event.stopPropagation();
+    event.preventDefault();
+    var hash = this.hash.substr(1);
+    $('#' + hash).toggle('slide', {direction:'left'});
+  });
+
+  /**
+   * WELL IS IT?!
+   */
+  function MOBILE() {
+    if( /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) ) {
+     return true;
+    }
+    return false;
+  }
+
+  /**
+   * Open sesame.
+   */
+  $('#wrench').on('touchend click', function(event) {
+    event.stopPropagation();
+    event.preventDefault();
+    $('#sidebar').toggle('slide', {direction:'right'});
+  }).one('click', function() {
+    $('#wrench').removeClass('newbie');
+  });
+
+  /**
+   * Grid type selected?  Set the grid per the options.
+   */
+  $('input[name=map_grid_type]').change(function() {
+    set_grid();
+  });
+
+  /**
+   * Grid resized?  Set the grid per the options.
+   */
+  $('#map_grid_size').change(function() {
+    set_grid();
+  });
+
+  /**
+   * Input vs change, change fires after, input fires with each.
+   */
+  $('#map_grid_opacity').on('input', function() {
+    $('#grid_wrapper').css('opacity', get_opacity($('#map_grid_opacity')));
+  });
+
+  $('#fow_opacity').on('input', function() {
+    $('#fow_wrapper').css('opacity', get_opacity($('#fow_opacity')));
+  });
+
+  /**
+   * Fog On!
+   */
+  $("#fow_toggle").change(function() {
+    $('canvas[id^=fow]').toggleClass('active', this.checked);
+    $('#cursor').toggleClass('active', this.checked);
+    if ($('canvas[id^=fow]').hasClass('active')) {
+      _width = $('#map_wrapper').width();
+      _height = $('#map_wrapper').height();
+      init_fow(_height, _width);
+    }
+  }).change();
+
+  /**
+   * Create the cursor div to hold the svgs for the cursor.
+   */
+  $('body').append('<div id="cursor"></div>');
+
+  // svg maker, make me some svgs.
+  fow_brush = SVG('cursor');
+  fow_brush_cursor = fow_brush.circle($('#fow_brush_size').val()).fill('white').stroke({ color: 'black', width: 1}).opacity(0.33);
+  fow_brush_feather_cursor = fow_brush.circle($('#fow_brush_feather_size').val()).fill('white').stroke({ color: 'black', width: 1}).opacity(0.33);
+
+  // one brush for each.
+  __brush = $('#fow_brush_size');
+  __feather = $('#fow_brush_feather_size');
+
+  // I feel like jquery probably creates me two event handlers each with a switch that can only result in one direction, butt fuck it, this is a prototype.
+  $('#fow_brush_size, #fow_brush_feather_size').on('input', function() {
+    switch (this.id) {
+      case 'fow_brush_size':
+        if (parseInt(__brush.val()) >= parseInt(__feather.val())) {
+          __feather.val(parseInt(__brush.val()) + 1);
+        }
+        break;
+      case 'fow_brush_feather_size':
+        if (parseInt(__feather.val()) <= parseInt(__brush.val())) {
+          __brush.val(parseInt(__feather.val()) - 1);
+        }
+        break;
+      default:
+
+    }
+    // Cursor uses Cx and Cy.  I knew this, and still lost ten minutes to it.
+    $(fow_brush_cursor)[0].attr({
+      'r': __brush.val()/2,
+      'cx': __feather.val()/2,
+      'cy': __feather.val()/2
+    });
+    $(fow_brush_feather_cursor)[0].attr({
+      'r': __feather.val()/2,
+      'cx': __feather.val()/2,
+      'cy': __feather.val()/2
+    });
+    // SVG is in relative space, div is in page space.  We'll affect the div thanks.
+    $('#cursor').css({
+      'width': $(fow_brush_feather_cursor)[0].attr('r') * 2,
+      'height': $(fow_brush_feather_cursor)[0].attr('r') * 2,
+    });
+  }).trigger('input');
+
+  /**
+   * The function of cursor truth.  Now that we have a cursor.
+   */
+  $(window).mousemove(function(event) {
+    _r = $(fow_brush_feather_cursor)[0].attr('r');
+    _x = event.pageX - _r;
+    _y = event.pageY - _r;
+    $('#cursor').css('top', _y);
+    $('#cursor').css('left', _x);
+  });
+
+  /**
+   * Don't reinvent the wheel.
+   * https://stackoverflow.com/a/8260383/4942292
+   */
+  function get_youtube_code(url) {
+      var regExp = /^.*((youtu.be\/)|(v\/)|(\/u\/\w\/)|(embed\/)|(watch\?))\??v?=?([^#\&\?]*).*/;
+      var match = url.match(regExp);
+      return (match&&match[7].length==11)? match[7] : false;
+  }
+  $("input[name=map_type_options]").change(function(event) {
+    _option = event.target;
+    $(".map_type_property").hide();
+    switch (_option.id) {
+      case 'map_embed_option':
+        $('#map_embed_wrapper').show();
+        break;
+      case 'map_file_option':
+        $('#map_filename_wrapper').show();
+    }
+  }).change();
+
+  /**
+   * Set iframe tag.
+   */
+  function do_pdf(_url) {
+    $('#map_innerwrapper').html('<iframe src="' + _url + '" frameborder="0" allowfullscreen></iframe>');
+  }
+
+  /**
+   * Make and inject YouTube embed.
+   */
+  function do_youtube(_url) {
+    var _code;
+    _code = get_youtube_code(_url);
+
+    if (!_code) {
+      alert("YouTube only please.");
+    }
+    else {
+      $('#map_innerwrapper').html('<iframe src="https://www.youtube.com/embed/' + _code + '?version=3&controls=0&disablekb=1&showinfo=0&rel=0&autoplay=1&loop=1&playlist=' + _code + '" frameborder="0" allowfullscreen></iframe>');
+    }
+  }
+
+  /**
+   * Let's make us ah awnliiiiine veedeo.
+   */
+  $('#map_embed_submit').on('touchend click', function(event) {
+    event.stopPropagation();
+    event.preventDefault();
+    do_youtube($('#map_embed').val());
+  });
+
+  $('.map_authors_maps a').on('touchend click', function(event){
+    event.stopPropagation();
+    event.preventDefault();
+    do_youtube(this.href);
+  });
+
+  /**
+  * When a file is selected, we check it and add the appropriate tag to the map wrapper.
+  */
+  $('#map_filename').change(function() {
+    var _file = this.files[0];
+    _url = window.URL.createObjectURL(_file);
+    ext = getExtension(_file.name)
+    ext = ext.toLowerCase();
+
+    switch (ext) {
+      case 'pdf':
+        do_pdf(_url);
+        break;
+
+      case 'jpg':
+      case 'jpeg':
+      case 'gif':
+      case 'bmp':
+      case 'png':
+        doVideo();
+        fabric.Image.fromURL(_url, function(img){
+          mainMap.clear();
+          mainMap.add(img);
+        });
+        break;
+
+      case 'm4v':
+        ext = 'x-m4v'
+        doVideo(_url, ext);
+      case 'mpg':
+      case 'mp4':
+        doVideo(_url, ext);
+        break;
+
+    default:
+     items = ['You look great, by the way :)', 'You look very nice today.  I hope you\'re well.', 'That tickled.', 'I wish all my friends looked as good as you :)'];
+     var item = items[Math.floor(Math.random()*items.length)];
+     alert('Sorry, I don\'t know what you are trying to load.\n\n' + item);
+     break;
+    }
+
+    function doVideo(_url, ext) {
+      if (!_url) {
+        $('#map_video').remove();
+      }
+      $('#map_video_wrapper').html('<video loop autoplay id="map_video"><source src="' + _url + '" type="video/' + ext + '"></video>');
+      $('#map_video').on('loadeddata', function() {
+        __map_wrapper = $('#map_wrapper');
+        __map = $('#map')[0];
+        if (__map.videoHeight) {
+          __map_wrapper.css('height', __map.videoHeight);
+          __map_wrapper.css('width', __map.videoWidth);
+        }
+      });
+      _video = $('#map_video')[0];
+      fabric.Image.fromURL(_url, function(_video){
+        mainMap.clear();
+        mainMap.add(_video);
+      });
+    }
+
+  });
+
+  /**
+   * On mouse wheel scroll, roll numbers in number inputs.
+   */
+  $('input[type="number"]').bind('wheel', function(event) {
+
+    if (event.originalEvent.deltaY < 0) {
+      this.value = parseInt(this.value) + 1;
+    } else {
+      if (parseInt(this.value) > 0) {
+        this.value = parseInt(this.value) - 1;
+      }
+    }
+    $(this).change();
+    $(this).trigger('input');
+    return false;
+  });
+
+  /**
+   * Inactivity detection.
+   */
+
+  var timeoutInMiliseconds = 1000;
+  var timeoutId;
+
+  function startTimer() {
+    // window.setTimeout returns an Id that can be used to start and stop a timer
+    timeoutId = window.setTimeout(doInactive, timeoutInMiliseconds)
+    $('#wrench').show('slide', {direction:'right'});
+    $('#cursor').removeClass('hideBrush');
+  }
+
+  function resetTimer() {
+    window.clearTimeout(timeoutId);
+    startTimer();
+  }
+
+  function doInactive() {
+    $('#wrench').hide('slide', {direction:'right'});
+    $('#cursor').addClass('hideBrush');
+  }
+
+  function setupTimers () {
+    document.addEventListener("mousemove", resetTimer, false);
+    document.addEventListener("mousedown", resetTimer, false);
+    document.addEventListener("keypress", resetTimer, false);
+    document.addEventListener("touchmove", resetTimer, false);
+
+    startTimer();
+  }
+
+  $(document).ready(function(){
+    setupTimers();
+  });
+
+  /**
+   * Quick helper to return the extension.
+   */
+  function getExtension(filename) {
+      var parts = filename.split('.');
+      return parts[parts.length - 1];
+  }
+
+  $(".inputValue").change(function(event) {
+  	var element = $(event.target);
+  	var key = element.attr("data-key");
+  	var unit = element.attr("data-unit");
+  	var value = element.val();
+
+  	if (key) {
+  		currentKey = key;
+  		element.data("exactValue", value);
+  		transformUnits(key, unit, value);
+  	}
+  	calculate(currentKey);
+  });
+
+  var __dmge_veteran = Cookies.get('DMGE_Veteran');
+
+  if (!__dmge_veteran) {
+    $('#wrench').addClass('newbie');
+    Cookies.set('DMGE_Veteran', 'true');
+  }
+
+  Cookies.remove('DMGE_Veteran');
+
+  function init_fow(__height, __width){
+    var fow = $('#fow'),
+        ctx = fow[0].getContext( '2d' ),
+        r1 = $('#fow_brush_size').val(),
+        r2 = $('#fow_brush_feather_size').val(),
+        dragging = false;
+
+    fow.attr('height', __height).attr('width', __width);
+    ctx.fillStyle = 'rgba( 0, 0, 0, 1 )';
+    ctx.fillRect( 0, 0, __width, __height );
+
+    $('#fow').on('mousedown', function() {
+      dragging = true;
+    });
+    $('#fow').on('mouseup', function() {
+      dragging = false;
+      localStorage.setItem('mainFOW', mainFOW.toDataURL());
+    });
+
+    $('#fow').on('mousemove', function(ev, ev2){
+      if (dragging) {
+        r1 = $('#fow_brush_size').val()/2;
+        r2 = $('#fow_brush_feather_size').val()/2;
+
+        ev2 && ( ev = ev2 );
+
+        var pX = ev.pageX,
+            pY = ev.pageY;
+
+        var radGrd = ctx.createRadialGradient( pX, pY, r1, pX, pY, r2 );
+        radGrd.addColorStop(0, 'rgba( 0, 0, 0,  1 )' );
+        radGrd.addColorStop(0.25, 'rgba( 0, 0, 0, .1 )' );
+        radGrd.addColorStop(1, 'rgba( 0, 0, 0, 0 )' );
+
+        if (shifted !== false) {
+          ctx.globalCompositeOperation="source-over";
+        } else {
+          ctx.globalCompositeOperation = 'destination-out';
+        }
+
+        ctx.fillStyle = radGrd;
+        ctx.fillRect( pX - r2, pY - r2, r2*2, r2*2 );
+      };
+    });
+  }
+
+  function set_grid(_size) {
+
+    var __map = $('#map_wrapper');
+    var __grid_wrapper = $('#grid_wrapper');
+    var _mWidth = __map.width();
+    var _mHeight = __map.height();
+
+    $('#grid_settings').addClass('loading');
+    console.time();
+    __grid_wrapper.empty();
+    draw = SVG('grid_wrapper');
+
+    _type = $('input[name=map_grid_type]:checked').val();
+
+    if (_type !== 'None') {
+
+      __grid_wrapper.css('opacity', get_opacity($('#map_grid_opacity')));
+
+      if (!_size) {
+        var _size = parseInt($('#map_grid_size').val());
+      }
+
+      var _width = _mWidth;
+      var _height = _mHeight;
+
+      var _rows = (_height / _size);
+      var _cols = (_width / _size);
+
+      var __gridoptions = {size: _size};
+
+      // Single option switch sets an otherwise default.
+      switch (_type) {
+        case 'H_Hex':
+        __gridoptions.orientation = 'Flat';
+          break;
+      }
+      const Hex = Honeycomb.extendHex(__gridoptions);
+
+      Grid = Honeycomb.defineGrid(Hex)
+
+      _rows = (_height / _size);
+      _cols = (_width / _size);
+
+    if (_type === 'H_Hex' || _type === 'V_Hex') {
+      corners = Hex().corners();
+      hexSymbol = draw.symbol()
+        .polygon(corners.map(({ x, y }) => `${x}, ${y}`))
+        .fill('none')
+        .stroke({ width: 1, color: 'white' });
+
+      const __grid = Grid.rectangle({ width: _cols*0.66, height: _rows*0.66 });
+
+      __grid.forEach(hex => {
+        const {x, y} = hex.toPoint();
+
+        draw.use(hexSymbol).translate(x, y).click(function(e) {
+          if (!$('#grid_wrapper').is('.grid_marking')) {
+            return;
+          }
+          draw.polygon(corners.map(({x, y}) => `${x},${y}`))
+          .translate(x, y)
+          .stroke({ width: 1, color: 'white' })
+          .fill(getRandomColor())
+          .attr('class', 'map_token map_mark')
+          .click(function(e) {
+            $(e.target).remove();
+          });
+        });
+
+      });
+
+    }
+
+    if (_type === 'Quad') {
+      quadSymbol = draw.rect(_size, _size).fill('none')
+      .stroke({ width: 1, color: 'white' })
+      .fill('none');
+
+      const __grid = Grid.rectangle({ width: _cols, height: _rows });
+
+      __grid.forEach(hex => {
+        _x = hex.x*_size;
+        _y = hex.y*_size;
+        draw.use(quadSymbol).translate(_x, _y).click(function(e) {
+          if (!$('#grid_wrapper').is('.grid_marking')) {
+            return;
+          }
+          draw.rect(_size, _size)
+          .stroke({ width: 1, color: 'white' })
+          .fill(getRandomColor())
+          .attr('class', 'map_token map_mark')
+          .translate(hex.x*_size, hex.y*_size)
+          .click(function(e) {
+            $(e.target).remove();
+          });
+        });
+      });
+    }
+  } else {
+      __grid_wrapper.empty();
+    }
+    console.timeEnd();
+    __grid_wrapper.css({
+      'top': __map.css('top'),
+      'left': __map.css('left'),
+      'width': _mWidth,
+      'height': _mHeight,
+    });
+    $('#grid_settings').removeClass('loading');
+  }
+
+
+  function getRandomColor() {
+    var letters = '0123456789ABCDEF';
+    var color = '#';
+    for (var i = 0; i < 6; i++) {
+      color += letters[Math.floor(Math.random() * 16)];
+    }
+    return color;
+  }
+
+})(jQuery, Drupal, this, this.document);
