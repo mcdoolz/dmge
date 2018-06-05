@@ -19,13 +19,13 @@
 							<div class="table-col">
 								Select predefined format:<br/>
 								<ul class="formValueList">
-									<li><a onclick="setAspectRatio(3840,2160)">4K Ultra HD (3840&times;2160) <span class="arbox ar177">16:9</span></a></li>
-									<li><a onclick="setAspectRatio(1920,1080)">Full HD (1920&times;1080) <span class="arbox ar177">16:9</span></a></li>
-									<li><a onclick="setAspectRatio(1280,720)">HD-Ready (1280&times;720) <span class="arbox ar177">16:9</span></a></li>
-									<li><a onclick="setAspectRatio(1920,1200)">WUXGA (1920&times;1200) <span class="arbox ar239">16:10</span></a></li>
+									<li><a id="setAspectRatio_3840_2160">4K Ultra HD (3840&times;2160) <span class="arbox ar177">16:9</span></a></li>
+									<li><a id="setAspectRatio_1920_1080">Full HD (1920&times;1080) <span class="arbox ar177">16:9</span></a></li>
+									<li><a id="setAspectRatio_1280_720">HD-Ready (1280&times;720) <span class="arbox ar177">16:9</span></a></li>
+									<li><a id="setAspectRatio_1920_1200">WUXGA (1920&times;1200) <span class="arbox ar239">16:10</span></a></li>
 
-									<li><a onclick="setAspectRatio(4,3)">NTSC/PAL <span class="arbox ar133">4:3</span></a></li>
-									<li><a onclick="setAspectRatio(239,100)">Anamorphic <span class="arbox ar239">2.39:1</span></a></li>
+									<li><a id="setAspectRatio_4_3">NTSC/PAL <span class="arbox ar133">4:3</span></a></li>
+									<li><a id="setAspectRatio_239_100">Anamorphic <span class="arbox ar239">2.39:1</span></a></li>
 								</ul>
 							</div>
 						</div>
@@ -47,7 +47,7 @@
 								/ <input type="number" step="0.1" id="diagonalIn" name="diagonalIn" data-key="d" data-unit="in" class="inputValue"/> inches
 							</div>
 							<div class="table-col">
-								<button onclick="calculate('d')" type="button">Calculate</button>
+								<button id="calculate_d" type="button">Calculate</button>
 							</div>
 						</div>
 						<div class="table-row">
@@ -57,7 +57,7 @@
 								/ <input type="number" step="0.1" id="widthIn" name="widthIn" data-key="w" data-unit="in" class="inputValue"/> inches
 							</div>
 							<div class="table-col">
-								<button onclick="calculate('w')" type="button">Calculate</button>
+								<button id="calculate_w" type="button">Calculate</button>
 							</div>
 						</div>
 						<div class="table-row">
@@ -67,7 +67,7 @@
 								/ <input type="number" step="0.1" id="heightIn" name="heightIn" data-key="h" data-unit="in" class="inputValue"/> inches
 							</div>
 							<div class="table-col">
-								<button onclick="calculate('h')" type="button">Calculate</button>
+								<button id="calculate_h" type="button">Calculate</button>
 							</div>
 						</div>
 					</div>
