@@ -49,6 +49,11 @@ ol
   position: absolute
   height: 100%
   width: 100%
+  pointer-events: none
+  opacity: 0.5
+
+#player_fow
+  opacity: 1
 
 video
   display: none
@@ -63,6 +68,7 @@ video
       display: none
       &.active
         cursor: none
+        pointer-events: all
         display: block
 
 .hideBrush
@@ -178,7 +184,8 @@ output
   position: fixed
   top: 0
   right: 0
-  width: auto
+  width: 50%
+  min-width: 300px
   display: none
   background: white
   z-index: 1000

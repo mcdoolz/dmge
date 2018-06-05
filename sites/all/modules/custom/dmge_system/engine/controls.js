@@ -3,11 +3,16 @@
   var mainDocument = Drupal.mainDocument = document;
 
   var mainView = Drupal.mainView = window;
-  var mainMap = Drupal.mainMap = new fabric.Canvas('map');
+  var mainMap = Drupal.mainMap = new fabric.Canvas('map', {
+    hoverCursor: 'pointer',
+    selection: true
+  });
+
   fabric.util.requestAnimFrame(function render() {
     mainMap.renderAll();
     fabric.util.requestAnimFrame(render);
   });
+
   var mainFOW = Drupal.mainFOW = $('#fow')[0];
   localStorage.setItem("mainMap", mainMap);
   localStorage.setItem("mainFOW", mainFOW);
@@ -352,6 +357,13 @@
     do_youtube(this.href);
   });
 
+function do_image(img) {
+  fabric.Image.fromURL(_url, function(img) {
+    mainMap.clear();
+    mainMap.add(img);
+  });
+}
+
   /**
   * When a file is selected, we check it and add the appropriate tag to the map wrapper.
   */
@@ -371,19 +383,16 @@
       case 'gif':
       case 'bmp':
       case 'png':
-        doVideo();
-        fabric.Image.fromURL(_url, function(img){
-          mainMap.clear();
-          mainMap.add(img);
-        });
+        do_video();
+        do_image(_url, ext);
         break;
 
       case 'm4v':
         ext = 'x-m4v'
-        doVideo(_url, ext);
+        do_video(_url, ext);
       case 'mpg':
       case 'mp4':
-        doVideo(_url, ext);
+        do_video(_url, ext);
         break;
 
     default:
@@ -393,7 +402,7 @@
      break;
     }
 
-    function doVideo(_url, ext) {
+    function do_video(_url, ext) {
       if (!_url) {
         $('#map_video').remove();
       }
@@ -667,4 +676,256 @@
     return color;
   }
 
-})(jQuery, Drupal, this, this.document);
+  // file_load
+  $('#file_load').click(function() {
+    loadFile($('#file'));
+  })
+  $('#file').change(function(){
+    loadFile($(this));
+  })
+
+  function loadFile(file){
+    var files = file.prop("files")
+    $.each(files, function () {
+      _file = this;
+      _url = window.URL.createObjectURL(_file);
+      $("#files").jsGrid("insertItem", { 'Filename': _file.name, 'Title': _url, 'Type': 'Animated', 'Thumbnail': _url }).done(function() {
+        $(this).stop().css("background-color", "green").animate({ backgroundColor: "none"}, 500);
+      });
+    });
+  }
+
+  $("#file_preview_dialog").dialog({
+    autoOpen: false,
+    modal: true,
+    position: {
+      my: "center",
+      at: "center",
+      of: $("#files_settings")
+    }
+  });
+
+  // Fashion the file grid.
+  $('#files').jsGrid({
+    height: '400px',
+    width: '100%',
+
+    filtering: true,
+    editing: false,
+    sorting: true,
+    paging: true,
+    autoload: true,
+
+    pageSize: 15,
+    pageButtonCount: 5,
+
+    deleteConfirm: 'Remove?',
+
+    fields: [
+      { name: 'Bulk Op', type: 'checkbox' },
+      { name: 'Filename', type: 'text', width: '25%' },
+      { name: 'Address', type: 'text', width: '25%' },
+      { name: 'Type', type: 'select', items: ['Static', 'Animated'] },
+      { name: 'Thumbnail',
+        itemTemplate: function(val, item) {
+          return $('<img>').attr('src', val).css({ height: 50, width: 50 }).on('click', function() {
+            $('#file_preview').attr('src', item.Thumbnail);
+            $('#file_preview_dialog').dialog('open');
+          });
+        },
+        insertTemplate: function() {
+            var insertControl = this.insertControl = $('<input>').prop('type', 'file');
+            return insertControl;
+        },
+        insertValue: function() {
+            return this.insertControl[0].files[0];
+        },
+        align: 'center',
+        width: 120
+      },
+      { name: 'Add',
+        itemTemplate: function(val, item) {
+          return $('<button>').html('<i class="fa fa-puzzle-piece" aria-hidden="true"></i> Add').attr({'class': 'file_add_to_canvas'}).css({ 'display': 'block' }).on('click', function() {
+            do_image(val);
+          });
+        },
+        align: 'center',
+        width: 120
+      },
+      { type: 'control',
+        editButton: false
+      }
+    ]
+    });
+
+  function make_video_thumbnail(_url) {
+    var __video  = document.getElementById(_url);
+    var __canvas = document.createElement('canvas');
+    __canvas.width  = __video.videoWidth;
+    __canvas.height = __video.videoHeight;
+    var __ctx = __canvas.getContext('2d');
+    __ctx.drawImage(__video, 0, 0);
+    return __canvas.toDataURL('image/jpeg');
+  }
+
+  function calculate_grid(_w, _h) {
+    let _size = _w / 72;
+    console.log(_size);
+    return _size;
+  }
+
+  /**
+   * TV size calculator stolen from http://screen-size.info
+   */
+
+  var UNITS = ["cm", "in"];
+  var currentKey = null;
+
+  $('#calculate_d').click(function(e){
+  	calculateByDiagonal();
+    let _size = calculate_grid($('#widthIn').val(),$('#heightIn').val())
+    set_grid(_size);
+  });
+  $('#calculate_w').click(function(e){
+  	calculateByWidth();
+  });
+  $('#calculate_h').click(function(e){
+  	calculateByHeight();
+  });
+
+  function findInput(key, unit) {
+  	return $("*[data-key="+key+"]").filter("*[data-unit="+unit+"]");
+  }
+
+  function setAspectRatio(width, height) {
+  	$("#aspectRatioWidth").val(width);
+  	$("#aspectRatioHeight").val(height);
+
+  	calculate(currentKey);
+  }
+  $('#setAspectRatio_3840_2160').click(function() {
+    setAspectRatio(3840,2160);
+  });
+  $('#setAspectRatio_1280_720').click(function() {
+    setAspectRatio(1280,720);
+  });
+  $('#setAspectRatio_1920_1200').click(function() {
+    setAspectRatio(1920,1200);
+  });
+  $('#setAspectRatio_4_3').click(function() {
+    setAspectRatio(4,3);
+  });
+  $('#setAspectRatio_239_100').click(function() {
+    setAspectRatio(239,100);
+  });
+
+  function cmToInch(value) {
+  	return value / 2.54;
+  }
+
+  function inchToCm(value) {
+  	return value * 2.54;
+  }
+
+  function calculateDiagonal(width, height) {
+  	return Math.sqrt(Math.pow(width, 2) + Math.pow(height, 2));
+  }
+
+  function transformUnits(key, unit, value) {
+  	var element, transfomredValue;
+  	if (unit === "cm") {
+  		element = findInput(key, "in");
+  		transfomredValue = cmToInch(value);
+  	} else if (unit === "in") {
+  		element = findInput(key, "cm");
+  		transfomredValue = inchToCm(value);
+  	}
+  	element.data("exactValue", transfomredValue);
+  	element.val(transfomredValue.toFixed(1));
+  }
+
+  function calculate(key) {
+  	switch (key) {
+  		case "d":
+  			calculateByDiagonal();
+  			break;
+  		case "w":
+  			calculateByWidth();
+  			break;
+  		case "h":
+  			calculateByHeight();
+  			break;
+  	}
+    _resolution_width = $("#aspectRatioWidth").val();
+    _screen_width = $('#widthIn').val();
+    _size = _resolution_width / _screen_width;
+    set_grid(_size);
+  }
+
+  function calculateByDiagonal() {
+  	var aspectRatioWidth = $("#aspectRatioWidth").val();
+  	var aspectRatioHeight = $("#aspectRatioHeight").val();
+  	var aspectRatioDiagonal = calculateDiagonal(aspectRatioWidth, aspectRatioHeight);
+
+  	for (var i in UNITS) {
+  		var unit = UNITS[i];
+  		var inputElement = findInput("d", unit);
+  		var diagonal = inputElement.data("exactValue") || inputElement.val();
+
+  		if (diagonal > 0) {
+  			var factor = diagonal / aspectRatioDiagonal;
+  			var width = aspectRatioWidth * factor;
+  			var height = aspectRatioHeight * factor;
+
+  			findInput("w", unit).val(width.toFixed(1)).data("exactValue", width);
+  			findInput("h", unit).val(height.toFixed(1)).data("exactValue", height);
+
+  		}
+  	}
+  }
+
+  function calculateByWidth() {
+  	var aspectRatioWidth = $("#aspectRatioWidth").val();
+  	var aspectRatioHeight = $("#aspectRatioHeight").val();
+  	var aspectRatioDiagonal = calculateDiagonal(aspectRatioWidth, aspectRatioHeight);
+
+  	for (var i in UNITS) {
+  		var unit = UNITS[i];
+  		var inputElement = findInput("w", unit);
+  		var width = inputElement.data("exactValue") || inputElement.val();
+
+  		if (width > 0) {
+  			var factor = width / aspectRatioWidth;
+  			var diagonal = aspectRatioDiagonal * factor;
+  			var height = aspectRatioHeight * factor;
+
+  			findInput("d", unit).val(diagonal.toFixed(1)).data("exactValue", diagonal);
+  			findInput("h", unit).val(height.toFixed(1)).data("exactValue", height);
+
+  		}
+  	}
+  }
+
+  function calculateByHeight() {
+  	var aspectRatioWidth = $("#aspectRatioWidth").val();
+  	var aspectRatioHeight = $("#aspectRatioHeight").val();
+  	var aspectRatioDiagonal = calculateDiagonal(aspectRatioWidth, aspectRatioHeight);
+
+  	for (var i in UNITS) {
+  		var unit = UNITS[i];
+  		var inputElement = findInput("h", unit);
+  		var height = inputElement.data("exactValue") || inputElement.val();
+
+  		if (height > 0) {
+  			var factor = height / aspectRatioHeight;
+  			var diagonal = aspectRatioDiagonal * factor;
+  			var width = aspectRatioWidth * factor;
+
+  			findInput("d", unit).val(diagonal.toFixed(1)).data("exactValue", diagonal);
+  			findInput("w", unit).val(width.toFixed(1)).data("exactValue", width);
+
+  		}
+  	}
+  }
+
+}(jQuery, Drupal, this, this.document));

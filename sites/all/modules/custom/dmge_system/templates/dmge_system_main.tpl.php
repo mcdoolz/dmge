@@ -1,61 +1,100 @@
+<?php
+/**
+ * Sidebar inclusion.
+ */
+$incept_date = new \DateTime('2018-02-13');
+$today = new \DateTime;
+$age = $incept_date->diff($today)->days;
+?>
+<div id="about" class="dialog" title="How to use the DMGE">
+  <h4>How to Use</h4>
+  <ol>
+    <li>Click Choose File and select an image or video to use as a map, or select Online Video and paste the URL of a YouTube video.</li>
+    <li>Click and drag the corner of the map to scale it to your liking.  Zoom out using your browsers control if you need more space.</li>
+    <li>If the Fog of War is enabled, left click drag to remove the fog, hold shift to repaint it.  Use the slider to change the opacity.</li>
+  </ol>
+  <h4>Tips &amp; Tricks</h4>
+  <ol>
+    <li>Press Ctrl-Z to reposition the grid.  Shift-Z clears dragging mode.</li>
+    <li>Press Ctrl-X to mark the grid before scrolling it, so you can track where your miniatures were.  Shift-X clears marking mode.</li>
+    <li>Press Backspace to clear marking or dragging mode.</li>
+    <li>Press Ctrl-Backspace to clear all marks.</li>
+    <li>Zoom out and in by holding Ctrl and rolling your scroll wheel.  You can scale your map larger then the available space this way.</li>
+    <li>If you lose the ability to interact with the board in some way, click the wrench and your mouse should start reacting.</li>
+  </ol>
+  <p>Crafted with <i class="fa fa-heart"></i> by Dooley P.<br>
+  This is Alphaware (<?php print $age;?> days old).<br>
+  Report problems to <a href="mailto:icanfly@digitalforge.ca">icanfly@digitalforge.ca</a><br>
+  Code was lifted from various sources, or written personally.</p>
+</div>
 
 <div id="dmge">
   <div id="grid_wrapper"></div>
   <div id="wrench"><div id="wrench_innerwrapper"><i class="fa fa-wrench"></i></div></div>
+  <div id="file_preview_dialog" title="Preview">
+    <img id="file_preview" />
+    <button id="file_dialog_add_to_canvas" class="file_add_to_canvas" type="button">
+      <i class="fa fa-puzzle-piece" aria-hidden="true"></i> Add
+    </button>
+  </div>
   <div id="sidebar">
-    <?php
-    /**
-     * Sidebar inclusion.
-     */
-    $incept_date = new \DateTime('2018-02-13');
-    $today = new \DateTime;
-    $age = $incept_date->diff($today)->days;
-    ?>
-    <div id="about" class="dialog" title="How to use the DMGE">
-      <p>Crafted with <i class="fa fa-heart"></i> by Dooley P.<br>
-        This is Alphaware (<?php print $age;?> days old).<br>
-        Report problems to <a href="mailto:icanfly@digitalforge.ca">icanfly@digitalforge.ca</a><br>
-        Code was lifted from various sources, or written personally.</p>
-        <h4>How to Use</h4>
-        <ol>
-          <li>Click Choose File and select an image or video to use as a map, or select Online Video and paste the URL of a YouTube video.</li>
-          <li>Click and drag the corner of the map to scale it to your liking.  Zoom out using your browsers control if you need more space.</li>
-          <li>If the Fog of War is enabled, left click drag to remove the fog, hold shift to repaint it.  Use the slider to change the opacity.</li>
-        </ol>
-        <h4>Tips &amp; Tricks</h4>
-        <ol>
-          <li>Press Ctrl-Z to reposition the grid.  Shift-Z clears dragging mode.</li>
-          <li>Press Ctrl-X to mark the grid before scrolling it, so you can track where your miniatures were.  Shift-X clears marking mode.</li>
-          <li>Press Backspace to clear marking or dragging mode.</li>
-          <li>Press Ctrl-Backspace to clear all marks.</li>
-          <li>Zoom out and in by holding Ctrl and rolling your scroll wheel.  You can scale your map larger then the available space this way.</li>
-          <li>If you lose the ability to interact with the board in some way, click the wrench and your mouse should start reacting.</li>
-        </ol>
-      </div>
     <div id="sidebar_innerwrapper">
-      <div id="interface">
-        <h2>Configuration</h2>
+      <div id="menu">
+        <ul>
+          <li><a href="#files_settings">Files</a></li>
+          <li><a href="#fow_settings">Fog</a></li>
+          <li><a href="#map_settings">Map</a></li>
+          <li><a href="#grid_settings">Grid</a></li>
+          <li><a href="#paint_box">Painters Box</a></li>
+          <li><a href="#rulers">Rulers &amp; Templates</a></li>
+        </ul>
+      </div>
+      <div id="files_settings">
+        <h2>Files</h2>
+        <div id="files_storage_path">
+          <div id="files_storage_path"><label for="files_storage_path_configure">Select Resource Folder</label>
+          <input id="files_storage_path_configure" type="file" webkitdirectory directory multiple/></div>
+          <div id="files_storage_path_description">Select the folder in which you wish to save your compiled maps.</div>
+        </div>
+        <div id="files_wrapper">
+          <h4>Files</h4>
+          <div id="files"></div>
+          <form method="post">
+            <input id="file" type="file" multiple />
+            <input id="file_load" type="button" value="Load File" />
+            <select id="file_functions">
+              <options>
+                <option>--Bulk Ops--</option>
+                <option>Remove</option>
+              </options>
+            </select>
+            <input id="file_bulkop" type="button" value="Do Bulk Op" />
+          </form>
+        </div>
+      </div>
         <div id="map_settings">
           <div class="map_property">
-            <div class="map_grid_type">
+            <div class="map_source_type">
               <label for="map_embed_option">Online Video</label>
               <input type="radio" id="map_embed_option" name="map_type_options" value="embed" />
             </div>
-            <div class="map_grid_type">
+            <div class="map_source_type">
               <label for="map_file_option">Local File</label>
               <input type="radio" id="map_file_option" name="map_type_options" value="file" checked="checked">
             </div>
           </div>
-          <div id="map_embed_wrapper" class="map_type_property">
-            <label for="map_embed">Paste the URL to a Video</label>
-            <form><input type="text" id="map_embed"><input type="submit" id="map_embed_submit"></form>
-            <p><sup>Currently recognizes YouTube videos only.  Back the Kickstarter to make the full tool happen!</sup></p>
-          </div>
-          <div id="map_filename_wrapper" class="map_type_property">
-            <label for="map_filename">Select a file</label>
-            <input type="file" id="map_filename" title="Select a video, or image from your computer">
-            <p><sup>Browsers typically top out at 200 megabytes for videos.<br>
-              jpg, gif, png, bmp, pdf, m4v, mp4, mpg :: Email for more formats.</sup></p>
+          <div id="map_source">
+            <div id="map_embed_wrapper" class="map_type_property">
+              <label for="map_embed">Paste the URL to a Video</label>
+              <form><input type="text" id="map_embed"><input type="submit" id="map_embed_submit"></form>
+              <p><sup>Currently recognizes YouTube videos only.</sup></p>
+            </div>
+            <div id="map_filename_wrapper" class="map_type_property">
+              <label for="map_filename">Select a file</label>
+              <input type="file" id="map_filename" title="Select a video, or image from your computer">
+              <p><sup>Browsers typically top out at 200 megabytes for videos.<br>
+                jpg, gif, png, bmp, pdf, m4v, mp4, mpg :: Email for more formats.</sup></p>
+            </div>
           </div>
         </div>
         <div id="fow_settings">
@@ -77,12 +116,32 @@
             <input type="number" id="fow_brush_feather_size" value="300">
           </div>
         </div>
+
+        <div id="paint_box">
+          <h4>Painters Box</h4>
+          <input class="painting_control" type="button" id="painting_toggle" />
+          <input class="painting_control" type="range" id="painting_brushsize" />
+          <input class="painting_control" type="color" id="painting_colour" />
+          <div class="painting_control_group">
+            <input class="painting_control" type="number" id="painting_stroke_width" />
+            <input class="painting_control" type="color" id="painting_stroke_colour" />
+          </div>
+          <input class="painting_control" type="color" id="painting_colour" />
+          <select class="painting_control" id="painting_toolselect">
+            <option value="select">Select</option>
+            <option value="brush">Brush</option>
+            <option value="circle">Circle</option>
+            <option value="square">Square</option>
+            <option value="line">Line</option>
+          </select>
+        </div>
+
         <div id="grid_settings">
           <h3>Grid Settings</h3>
 
           <div id="map_grid_type">
-            <!-- <h4>Auto Grid</h4> -->
-            <?php // require_once('./conversion.php'); ?>
+            <h4>Auto Grid</h4>
+            <?php require_once(dirname( __FILE__) . '/../includes/autogrid.inc'); ?>
             <h4>Grid Type</h4>
 
             <div class="map_grid_type">
@@ -114,7 +173,7 @@
           </div>
 
         </div>
-      </div>
+
     </div>
   </div>
   <div id="fow_wrapper">

@@ -22,6 +22,7 @@
 
   Drupal.howto = $('#about');
   Drupal.howto.dialog({
+    autoOpen: false,
     modal: true,
     draggable: true,
     hide: { effect: "fade", duration: 250 },
