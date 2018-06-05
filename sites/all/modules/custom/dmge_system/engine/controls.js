@@ -359,10 +359,13 @@
 
 function do_image(img) {
   fabric.Image.fromURL(_url, function(img) {
-    mainMap.clear();
     mainMap.add(img);
   });
 }
+
+$('#map_clear').click(function() {
+  mainMap.clear();
+});
 
   /**
   * When a file is selected, we check it and add the appropriate tag to the map wrapper.
@@ -768,164 +771,30 @@ function do_image(img) {
     return __canvas.toDataURL('image/jpeg');
   }
 
-  function calculate_grid(_w, _h) {
-    let _size = _w / 72;
-    console.log(_size);
-    return _size;
-  }
-
   /**
-   * TV size calculator stolen from http://screen-size.info
+   * Calculate screen.
    */
+  let _screen_width = screen.width,
+    _screen_height = screen.height,
+    _screen_x = $("#first").val(_screen_width),
+    _screen_y = $("#second").val(_screen_height);
+  $('#screen_calculate').click(function() {
+  	let _screen_x = $("#screen_x").val(),
+  	_screen_y = $("#screen_y").val(),
+  	inch = $("#screen_inch").val(),
+  	result = $("#screen_result"),
+  	sqroot = +(_screen_x * _screen_x) + +(_screen_y * _screen_y);
 
-  var UNITS = ["cm", "in"];
-  var currentKey = null;
-
-  $('#calculate_d').click(function(e){
-  	calculateByDiagonal();
-    let _size = calculate_grid($('#widthIn').val(),$('#heightIn').val())
-    set_grid(_size);
+  	if (_screen_x == 0)
+  		result.val("Missing horizontal resolution");
+  	else if (_screen_y == 0)
+  		result.val("Missing vertical resolution");
+  	else if (inch == 0)
+  		result.val("Missing screen size")
+  	else
+      _result = (Math.sqrt(sqroot) / inch).toFixed(2);
+  		result.val(_result);
+      $('#map_grid_size').val(_result);
+      set_grid(_result);
   });
-  $('#calculate_w').click(function(e){
-  	calculateByWidth();
-  });
-  $('#calculate_h').click(function(e){
-  	calculateByHeight();
-  });
-
-  function findInput(key, unit) {
-  	return $("*[data-key="+key+"]").filter("*[data-unit="+unit+"]");
-  }
-
-  function setAspectRatio(width, height) {
-  	$("#aspectRatioWidth").val(width);
-  	$("#aspectRatioHeight").val(height);
-
-  	calculate(currentKey);
-  }
-  $('#setAspectRatio_3840_2160').click(function() {
-    setAspectRatio(3840,2160);
-  });
-  $('#setAspectRatio_1280_720').click(function() {
-    setAspectRatio(1280,720);
-  });
-  $('#setAspectRatio_1920_1200').click(function() {
-    setAspectRatio(1920,1200);
-  });
-  $('#setAspectRatio_4_3').click(function() {
-    setAspectRatio(4,3);
-  });
-  $('#setAspectRatio_239_100').click(function() {
-    setAspectRatio(239,100);
-  });
-
-  function cmToInch(value) {
-  	return value / 2.54;
-  }
-
-  function inchToCm(value) {
-  	return value * 2.54;
-  }
-
-  function calculateDiagonal(width, height) {
-  	return Math.sqrt(Math.pow(width, 2) + Math.pow(height, 2));
-  }
-
-  function transformUnits(key, unit, value) {
-  	var element, transfomredValue;
-  	if (unit === "cm") {
-  		element = findInput(key, "in");
-  		transfomredValue = cmToInch(value);
-  	} else if (unit === "in") {
-  		element = findInput(key, "cm");
-  		transfomredValue = inchToCm(value);
-  	}
-  	element.data("exactValue", transfomredValue);
-  	element.val(transfomredValue.toFixed(1));
-  }
-
-  function calculate(key) {
-  	switch (key) {
-  		case "d":
-  			calculateByDiagonal();
-  			break;
-  		case "w":
-  			calculateByWidth();
-  			break;
-  		case "h":
-  			calculateByHeight();
-  			break;
-  	}
-    _resolution_width = $("#aspectRatioWidth").val();
-    _screen_width = $('#widthIn').val();
-    _size = _resolution_width / _screen_width;
-    set_grid(_size);
-  }
-
-  function calculateByDiagonal() {
-  	var aspectRatioWidth = $("#aspectRatioWidth").val();
-  	var aspectRatioHeight = $("#aspectRatioHeight").val();
-  	var aspectRatioDiagonal = calculateDiagonal(aspectRatioWidth, aspectRatioHeight);
-
-  	for (var i in UNITS) {
-  		var unit = UNITS[i];
-  		var inputElement = findInput("d", unit);
-  		var diagonal = inputElement.data("exactValue") || inputElement.val();
-
-  		if (diagonal > 0) {
-  			var factor = diagonal / aspectRatioDiagonal;
-  			var width = aspectRatioWidth * factor;
-  			var height = aspectRatioHeight * factor;
-
-  			findInput("w", unit).val(width.toFixed(1)).data("exactValue", width);
-  			findInput("h", unit).val(height.toFixed(1)).data("exactValue", height);
-
-  		}
-  	}
-  }
-
-  function calculateByWidth() {
-  	var aspectRatioWidth = $("#aspectRatioWidth").val();
-  	var aspectRatioHeight = $("#aspectRatioHeight").val();
-  	var aspectRatioDiagonal = calculateDiagonal(aspectRatioWidth, aspectRatioHeight);
-
-  	for (var i in UNITS) {
-  		var unit = UNITS[i];
-  		var inputElement = findInput("w", unit);
-  		var width = inputElement.data("exactValue") || inputElement.val();
-
-  		if (width > 0) {
-  			var factor = width / aspectRatioWidth;
-  			var diagonal = aspectRatioDiagonal * factor;
-  			var height = aspectRatioHeight * factor;
-
-  			findInput("d", unit).val(diagonal.toFixed(1)).data("exactValue", diagonal);
-  			findInput("h", unit).val(height.toFixed(1)).data("exactValue", height);
-
-  		}
-  	}
-  }
-
-  function calculateByHeight() {
-  	var aspectRatioWidth = $("#aspectRatioWidth").val();
-  	var aspectRatioHeight = $("#aspectRatioHeight").val();
-  	var aspectRatioDiagonal = calculateDiagonal(aspectRatioWidth, aspectRatioHeight);
-
-  	for (var i in UNITS) {
-  		var unit = UNITS[i];
-  		var inputElement = findInput("h", unit);
-  		var height = inputElement.data("exactValue") || inputElement.val();
-
-  		if (height > 0) {
-  			var factor = height / aspectRatioHeight;
-  			var diagonal = aspectRatioDiagonal * factor;
-  			var width = aspectRatioWidth * factor;
-
-  			findInput("d", unit).val(diagonal.toFixed(1)).data("exactValue", diagonal);
-  			findInput("w", unit).val(width.toFixed(1)).data("exactValue", width);
-
-  		}
-  	}
-  }
-
 }(jQuery, Drupal, this, this.document));
