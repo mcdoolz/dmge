@@ -73,6 +73,7 @@ $age = $incept_date->diff($today)->days;
         </div>
       </div>
         <div id="map_settings">
+          <button id="map_clear">Clear Map</button>
           <div class="map_property">
             <div class="map_source_type">
               <label for="map_embed_option">Online Video</label>
@@ -140,8 +141,6 @@ $age = $incept_date->diff($today)->days;
           <h3>Grid Settings</h3>
 
           <div id="map_grid_type">
-            <h4>Auto Grid</h4>
-            <?php require_once(dirname( __FILE__) . '/../includes/autogrid.inc'); ?>
             <h4>Grid Type</h4>
 
             <div class="map_grid_type">
@@ -165,6 +164,19 @@ $age = $incept_date->diff($today)->days;
             <label for="map_grid_size">Grid Size</label>
             <input type="number" id="map_grid_size" value="20" />
             <p><sup>Lower sizes take longer to process.</sup></p>
+          </div>
+          <div class="map_grid_property">
+            <div id="map_grid_auto">
+              <label for="screen_x">Width Pixels</label>
+              <input placeholder="1920" type="text" id="screen_x"/><br />
+              <label for="screen_y">Height Pixels</label>
+              <input placeholder="1080" type="text" id="screen_y" /><br />
+              <label for="screen_inch">Screen Inches</label>
+              <input type="text" placeholder="40" id="screen_inch" /><br />
+              <label for="screen_result">PPI</label>
+              <input type="text" disabled value="" id="screen_result"/><br />
+              <button id="screen_calculate">Calculate</button>
+            </div>
           </div>
 
           <div class="map_grid_property">

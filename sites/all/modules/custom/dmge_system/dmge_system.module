@@ -89,10 +89,7 @@ function dmge_system_main() {
 
   $footer_javascripts = array(
     $path . '/engine/init.js',
-    // $path . '/engine/grid.js',
     $path . '/engine/controls.js',
-    // $path . '/engine/calculate.js',
-    // $path . '/engine/fx.js',
   );
   foreach ($footer_javascripts as $footer_javascript) {
     drupal_add_js($footer_javascript, array(

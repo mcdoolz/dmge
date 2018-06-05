@@ -89,6 +89,7 @@ article, aside, details, figcaption, figure, footer, header, hgroup, main, menu,
 body {
   margin: 0;
   padding: 0;
+  background: black;
 }
 
 /* line 29, ../sass/screen.sass */
