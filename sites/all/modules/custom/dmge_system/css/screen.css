@@ -302,12 +302,17 @@ output {
   display: block;
 }
 /* line 179, ../sass/screen.sass */
+#menu ul, #menu li, #menu ul li {
+  margin: 0;
+  padding: 0;
+}
+/* line 182, ../sass/screen.sass */
 #menu a {
   font-size: 32px;
   padding: 16px;
 }
 
-/* line 183, ../sass/screen.sass */
+/* line 186, ../sass/screen.sass */
 #sidebar {
   top: 0;
   right: 0;
@@ -321,18 +326,18 @@ output {
   z-index: 1000;
   height: 100%;
 }
-/* line 195, ../sass/screen.sass */
+/* line 198, ../sass/screen.sass */
 #sidebar.active {
   display: block;
 }
 
-/* line 198, ../sass/screen.sass */
+/* line 201, ../sass/screen.sass */
 #sidebar_innerwrapper {
-  padding: 20px 20px 80px 20px;
+  padding: 20px 20px 80px 80px;
   height: 100%;
 }
 
-/* line 202, ../sass/screen.sass */
+/* line 205, ../sass/screen.sass */
 #sidebar_tray {
   position: fixed;
   bottom: 0;
