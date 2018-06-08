@@ -54,8 +54,10 @@
 
   function map_reset_zoom() {
     let canvases = [map_canvas, grid_canvas, fow_canvas];
+    _map_x = map_canvas.lastPosX;
+    _map_y = map_canvas.lastPosY;
     canvases.forEach(function(e){
-      e.zoomToPoint();
+      e.zoomToPoint(_map_x, _map_y, 1);
     });
     let _size = parseInt($('#map_grid_size').val());
     _size = _size * map_canvas.getZoom();
@@ -349,23 +351,21 @@
    * Make and inject YouTube embed.
    */
   function do_youtube(_url) {
-    let yttag = $('#yt_video');
-    if (!yttag) {
-      yttag = $('<video />', {
-        id: 'yt_video',
+    let yttag = $('<video />', {
+        class: 'yt_video',
         src: _url,
         type: 'video/mp4',
-        controls: false,
+        control: false,
         autoplay: true,
         loop: true
       });
     }
     $('#map_video_wrapper').html(yttag);
-    var ytvideo = new fabric.Image(yttag, {
+    let ytvideo = new fabric.Image(yttag, {
       left: 0,
       top: 0,
-      originX: 'left',
-      originY: 'top'
+      originX: 'center',
+      originY: 'center'
     });
     map_canvas.add(ytvideo);
   }
