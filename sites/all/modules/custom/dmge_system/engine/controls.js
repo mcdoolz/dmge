@@ -368,6 +368,28 @@
       originY: 'center'
     });
     map_canvas.add(ytvideo);
+    return make_video_thumbnail(_url);
+  }
+
+  function do_video(_url, ext) {
+    let videotag = $('<video />', {
+      class: 'map_video',
+      src: _url,
+      type: 'video/' + ext,
+      control: false,
+      autoplay: true,
+      loop: true
+    });
+    $('#map_video_wrapper').html(videotag);
+
+    var map_video = new fabric.Image(videotag, {
+      originX: 'left',
+      originY: 'top',
+      left: 0,
+      top: 0
+    });
+    map_canvas.add(map_video);
+    return make_video_thumbnail(_url);
   }
 
   /**
@@ -413,8 +435,7 @@ $('#map_clear').click(function() {
   $('#map_filename').change(function() {
     var _file = this.files[0];
     _url = window.URL.createObjectURL(_file);
-    ext = getExtension(_file.name)
-    ext = ext.toLowerCase();
+    ext = getExtension(_file.name);
 
     switch (ext) {
       case 'pdf':
@@ -443,44 +464,6 @@ $('#map_clear').click(function() {
      var item = items[Math.floor(Math.random()*items.length)];
      alert('Sorry, I don\'t know what you are trying to load.\n\n' + item);
      break;
-    }
-
-    function do_video(_url, ext) {
-
-      if (!videotag) {
-        videotag = $('<video />', {
-          class: 'map_video',
-          src: _url,
-          type: 'video/' + ext,
-          controls: false,
-          autoplay: true,
-          loop: true
-        });
-      }
-      $('#map_video_wrapper').html(videotag);
-
-      var map_video = new fabric.Image(videotag, {
-        originX: 'left',
-        originY: 'top',
-        left: 0,
-        top: 0
-      });
-      map_canvas.add(map_video);
-
-      // $('#map_video_wrapper').html('<video loop autoplay id="map_video"><source src="' + _url + '" type="video/' + ext + '"></video>');
-      // $('#map_video').on('loadeddata', function() {
-      //   __map_wrapper = $('#map_wrapper');
-      //   __map = $('#map')[0];
-      //   if (__map.videoHeight) {
-      //     __map_wrapper.css('height', __map.videoHeight);
-      //     __map_wrapper.css('width', __map.videoWidth);
-      //   }
-      // });
-      // _video = $('#map_video')[0];
-      // fabric.Image.fromURL(_url, function(_video){
-      //   map_canvas.clear();
-      //   map_canvas.add(_video);
-      // });
     }
 
   });
@@ -543,8 +526,10 @@ $('#map_clear').click(function() {
    * Quick helper to return the extension.
    */
   function getExtension(filename) {
-      var parts = filename.split('.');
-      return parts[parts.length - 1];
+      let parts = filename.split('.');
+      let ext = parts[parts.length - 1]
+      ext = ext.toLowerCase();
+      return ext;
   }
 
   $(".inputValue").change(function(event) {
@@ -763,7 +748,38 @@ $('#map_clear').click(function() {
     $.each(files, function () {
       _file = this;
       _url = window.URL.createObjectURL(_file);
-      $("#files").jsGrid("insertItem", { 'Filename': _file.name, 'Title': _url, 'Type': 'Animated', 'Thumbnail': _url }).done(function() {
+      _thumbnail = _url;
+      ext = getExtension(_url);
+
+      switch (ext) {
+        case 'pdf':
+          do_pdf(_url);
+          break;
+
+        case 'jpg':
+        case 'jpeg':
+        case 'gif':
+        case 'bmp':
+        case 'png':
+          do_image(_url, ext);
+          break;
+
+        case 'm4v':
+          ext = 'x-m4v'
+          _thumbnail = do_video(_url, ext);
+        case 'mpg':
+        case 'mp4':
+          _thumbnail = do_video(_url, ext);
+          break;
+
+      default:
+       items = ['You look great, by the way :)', 'You look very nice today.  I hope you\'re well.', 'That tickled.', 'I wish all my friends looked as good as you :)'];
+       var item = items[Math.floor(Math.random()*items.length)];
+       alert('Sorry, I don\'t know what you are trying to load.\n\n' + item);
+       break;
+      }
+
+      $("#files").jsGrid("insertItem", { 'Filename': _file.name, 'Title': _url, 'Type': 'Animated', 'Thumbnail': _thumbnail }).done(function() {
         $(this).stop().css("background-color", "green").animate({ backgroundColor: "none"}, 500);
       });
     });
