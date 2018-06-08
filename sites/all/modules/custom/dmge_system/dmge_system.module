@@ -361,8 +361,9 @@ function _dmge_system_get_youtube_url($url = ""){
     $g[0]['error'] = true;
     $g[0]['instagram'] = "egy.js";
     $g[0]['apiMadeBy'] = 'El-zahaby';
-    // return drupal_json_output($g);
-    return json_encode($g, JSON_PRETTY_PRINT);
+    drupal_json_output($g);
+    // drupal_add_http_header('Content-Type', 'application/json');
+    // return json_encode($g, JSON_PRETTY_PRINT);
 
   } else {
 
@@ -385,7 +386,8 @@ function _dmge_system_get_youtube_url($url = ""){
       }
       $g[] = $h;
     }
-    // return drupal_json_output($g);
-    return json_encode($g, JSON_PRETTY_PRINT);
+    drupal_json_output($g);
+    // drupal_add_http_header('Content-Type', 'application/json');
+    // return json_encode($g, JSON_PRETTY_PRINT);
   }
 }
