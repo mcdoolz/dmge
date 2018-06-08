@@ -51,6 +51,25 @@ function dmge_system_players() {
     'scope' => 'footer',
     'weight' => 999,
   ));
+  $css_files = array(
+    $path . '/css/players.css',
+  );
+  $ext_css_files = array(
+    'https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css',
+    // 'https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css'
+  );
+  foreach($ext_css_files as $ext_css_file) {
+    drupal_add_css($ext_css_file, array(
+      'type' => 'external',
+      'weight' => 999,
+    ));
+  }
+  foreach($css_files as $css_file) {
+    drupal_add_css($css_file, array(
+      'type' => 'file',
+      'weight' => 999,
+    ));
+  }
   return theme('dmge_system_players', array());
 
 }

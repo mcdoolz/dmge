@@ -27,26 +27,25 @@ $age = $incept_date->diff($today)->days;
   Report problems to <a href="mailto:icanfly@digitalforge.ca">icanfly@digitalforge.ca</a><br>
   Code was lifted from various sources, or written personally.</p>
 </div>
+<div id="file_preview_dialog" title="Preview">
+  <img id="file_preview" />
+  <button id="file_dialog_add_to_canvas" class="file_add_to_canvas" type="button">
+    <i class="fa fa-puzzle-piece" aria-hidden="true"></i> Add
+  </button>
+</div>
 
 <div id="dmge">
-  <div id="grid_wrapper"></div>
   <div id="wrench"><div id="wrench_innerwrapper"><i class="fa fa-wrench"></i></div></div>
-  <div id="file_preview_dialog" title="Preview">
-    <img id="file_preview" />
-    <button id="file_dialog_add_to_canvas" class="file_add_to_canvas" type="button">
-      <i class="fa fa-puzzle-piece" aria-hidden="true"></i> Add
-    </button>
-  </div>
   <div id="sidebar">
     <div id="sidebar_innerwrapper">
       <div id="menu">
         <ul>
-          <li><a href="#files_settings">Files</a></li>
-          <li><a href="#fow_settings">Fog</a></li>
-          <li><a href="#map_settings">Map</a></li>
-          <li><a href="#grid_settings">Grid</a></li>
-          <li><a href="#paint_box">Painters Box</a></li>
-          <li><a href="#rulers">Rulers &amp; Templates</a></li>
+          <li><a href="#map_settings" title="Map"><i class="fas fa-map"></i></a></li>
+          <li><a href="#files_settings" title="Files"><i class="fas fa-file"></i></a></li>
+          <li><a href="#fow_settings" title="Fog of War"><i class="fas fa-eye"></i></a></li>
+          <li><a href="#grid_settings" title="Grid"><i class="fas fa-th"></i></a></li>
+          <li><a href="#paint_box" title="Painters Box"><i class="fas fa-paint-brush"></i></a></li>
+          <li><a href="#rulers" title="Rulers &amp; Templates"><i class="fas fa-ruler"></i></a></li>
         </ul>
       </div>
       <div id="files_settings">
@@ -73,7 +72,6 @@ $age = $incept_date->diff($today)->days;
         </div>
       </div>
         <div id="map_settings">
-          <button id="map_clear">Clear Map</button>
           <div class="map_property">
             <div class="map_source_type">
               <label for="map_embed_option">Online Video</label>
@@ -164,6 +162,11 @@ $age = $incept_date->diff($today)->days;
             <label for="map_grid_size">Grid Size</label>
             <input type="number" id="map_grid_size" value="20" />
             <p><sup>Lower sizes take longer to process.</sup></p>
+            <div class="map_grid_property">
+              <label for="map_grid_display_size">Grid Size at Scale</label>
+              <input type="number" disabled id="map_grid_display_size" value="" />
+              <p><sup>This is the grid in pixels with your zoom level considered (Reset Zoom with Ctrl-Z or Ctrl-R).</sup></p>
+            </div>
           </div>
           <div class="map_grid_property">
             <div id="map_grid_auto">
@@ -174,7 +177,7 @@ $age = $incept_date->diff($today)->days;
               <label for="screen_inch">Screen Inches</label>
               <input type="text" placeholder="40" id="screen_inch" /><br />
               <label for="screen_result">PPI</label>
-              <input type="text" disabled value="" id="screen_result"/><br />
+              <input type="text" disabled id="screen_result" value="" /><br />
               <button id="screen_calculate">Calculate</button>
             </div>
           </div>
@@ -186,7 +189,19 @@ $age = $incept_date->diff($today)->days;
 
         </div>
 
+        <div id="sidebar_tray">
+          <div class="sidebar_tray_category" id="map_tray">
+            <div class="sidebar_tray_section" id="map_tray_zoom">
+              <button id="map_reset_zoom" class="sidebar_tray_button">Reset Zoom</button>
+              <button id="map_clear" class="sidebar_tray_button">Clear Map</button>
+              <button id="player_view_open" class="sidebar_tray_button">Player View</button>
+            </div>
+          </div>
+        </div>
     </div>
+  </div>
+  <div id="grid_wrapper">
+    <canvas width="1280" height="720" id="grid" class="grid_canvas"></canvas>
   </div>
   <div id="fow_wrapper">
     <canvas width="1280" height="720" id="fow" class="fow_canvas"></canvas>

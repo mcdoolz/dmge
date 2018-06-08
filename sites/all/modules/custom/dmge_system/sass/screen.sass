@@ -20,11 +20,12 @@ $g: 20px
     pointer-events: none
 
 body
-  margin: 0
-  padding: 0
-  // font-family: 'Roboto', sans-serif
-  // color: black
-  background: black
+  &, &.admin-menu
+    margin: 0 !important
+    padding: 0
+    // font-family: 'Roboto', sans-serif
+    // color: black
+    background: black
 
 h1, h2, h3, h4, h5, h6
   // font-family: 'Passion One', cursive
@@ -52,9 +53,6 @@ ol
   pointer-events: none
   opacity: 0.5
 
-#player_fow
-  opacity: 1
-
 video
   display: none
 
@@ -64,12 +62,28 @@ video
     top: 0px
     left: 0px
     z-index: 100
+    width: 100%
+    height: 100%
+    &.grid_canvas
+      z-index: 500
     &.fow_canvas
       display: none
+      z-index: 150
       &.active
         cursor: none
         pointer-events: all
         display: block
+
+#grid_wrapper
+  position: absolute
+  top: 0
+  left: 0
+  width: 100%
+  height: 100%
+  z-index: 500
+  pointer-events: none
+  &.grid_marking
+    pointer-events: all
 
 .hideBrush
   opacity: 0
@@ -102,33 +116,6 @@ video
   display: inline-block
   white-space: nowrap
   margin: 0 $g $g 0
-
-#grid_wrapper
-  position: absolute
-  top: 0
-  left: 0
-  width: 100%
-  height: 100%
-  z-index: 500
-  pointer-events: none
-  &.grid_marking
-    pointer-events: all
-    path, rect, polygon
-      pointer-events: all
-      stroke: red !important
-    use
-      &:hover
-        rect, path, polygon
-          fill: black !important
-  &.grid_drag
-    pointer-events: all
-    path, rect, polygon
-      pointer-events: all
-      stroke: blue !important
-    use
-      &:hover
-        rect, path, polygon
-          fill: black !important
 
 #map_file_settings, #fow_settings, #grid_settings
   padding: $g 0
@@ -196,5 +183,10 @@ output
     display: block
 
 #sidebar_innerwrapper
-  padding: $g
+  padding: $g $g $g*4 $g
   height: 100%
+
+#sidebar_tray
+  position: fixed
+  bottom: 0
+  text-align: left

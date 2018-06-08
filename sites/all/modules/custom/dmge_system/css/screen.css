@@ -85,44 +85,44 @@ article, aside, details, figcaption, figure, footer, header, hgroup, main, menu,
   pointer-events: none;
 }
 
-/* line 22, ../sass/screen.sass */
-body {
-  margin: 0;
+/* line 23, ../sass/screen.sass */
+body, body.admin-menu {
+  margin: 0 !important;
   padding: 0;
   background: black;
 }
 
-/* line 29, ../sass/screen.sass */
+/* line 30, ../sass/screen.sass */
 h1, h2, h3, h4, h5, h6 {
   margin: 0 0 10px;
 }
 
-/* line 33, ../sass/screen.sass */
+/* line 34, ../sass/screen.sass */
 p {
   line-height: 1.5em;
   margin: 0 0 10px;
 }
 
-/* line 37, ../sass/screen.sass */
+/* line 38, ../sass/screen.sass */
 sup {
   font-size: 0.7em;
 }
 
-/* line 40, ../sass/screen.sass */
+/* line 41, ../sass/screen.sass */
 ul, ol {
   margin: 0 0 20px;
 }
 
-/* line 42, ../sass/screen.sass */
+/* line 43, ../sass/screen.sass */
 ol {
   padding: 0 0 0 20px;
 }
-/* line 44, ../sass/screen.sass */
+/* line 45, ../sass/screen.sass */
 ol li {
   list-style: decimal;
 }
 
-/* line 47, ../sass/screen.sass */
+/* line 48, ../sass/screen.sass */
 #fow_wrapper {
   z-index: 101;
   position: absolute;
@@ -132,83 +132,37 @@ ol li {
   opacity: 0.5;
 }
 
-/* line 55, ../sass/screen.sass */
-#player_fow {
-  opacity: 1;
-}
-
-/* line 58, ../sass/screen.sass */
+/* line 56, ../sass/screen.sass */
 video {
   display: none;
 }
 
-/* line 62, ../sass/screen.sass */
+/* line 60, ../sass/screen.sass */
 #dmge canvas {
   position: absolute;
   top: 0px;
   left: 0px;
   z-index: 100;
+  width: 100%;
+  height: 100%;
 }
 /* line 67, ../sass/screen.sass */
-#dmge canvas.fow_canvas {
-  display: none;
+#dmge canvas.grid_canvas {
+  z-index: 500;
 }
 /* line 69, ../sass/screen.sass */
+#dmge canvas.fow_canvas {
+  display: none;
+  z-index: 150;
+}
+/* line 72, ../sass/screen.sass */
 #dmge canvas.fow_canvas.active {
   cursor: none;
   pointer-events: all;
   display: block;
 }
 
-/* line 74, ../sass/screen.sass */
-.hideBrush {
-  opacity: 0;
-}
-/* line 76, ../sass/screen.sass */
-.fow_canvas .hideBrush {
-  cursor: pointer !important;
-}
-
-/* line 79, ../sass/screen.sass */
-.active {
-  display: block;
-}
-
-/* line 82, ../sass/screen.sass */
-#map_wrapper {
-  z-index: 100;
-  position: absolute;
-  height: 100%;
-  width: 100%;
-}
-/* line 87, ../sass/screen.sass */
-#map_wrapper img {
-  width: 100%;
-  max-width: 100%;
-  height: 100%;
-  max-height: 100%;
-}
-/* line 92, ../sass/screen.sass */
-#map_wrapper iframe {
-  width: 100%;
-  height: 100%;
-  object-fit: fill;
-}
-
-/* line 97, ../sass/screen.sass */
-.map_grid_type, .map_grid_property, .fow_brush_property {
-  position: relative;
-  margin: 0 0 20px;
-}
-
-/* line 101, ../sass/screen.sass */
-.map_grid_type {
-  display: inline-block;
-  white-space: nowrap;
-  margin: 0 20px 20px 0;
-}
-
-/* line 106, ../sass/screen.sass */
+/* line 77, ../sass/screen.sass */
 #grid_wrapper {
   position: absolute;
   top: 0;
@@ -218,45 +172,71 @@ video {
   z-index: 500;
   pointer-events: none;
 }
-/* line 114, ../sass/screen.sass */
+/* line 85, ../sass/screen.sass */
 #grid_wrapper.grid_marking {
   pointer-events: all;
 }
-/* line 116, ../sass/screen.sass */
-#grid_wrapper.grid_marking path, #grid_wrapper.grid_marking rect, #grid_wrapper.grid_marking polygon {
-  pointer-events: all;
-  stroke: red !important;
+
+/* line 88, ../sass/screen.sass */
+.hideBrush {
+  opacity: 0;
 }
-/* line 121, ../sass/screen.sass */
-#grid_wrapper.grid_marking use:hover rect, #grid_wrapper.grid_marking use:hover path, #grid_wrapper.grid_marking use:hover polygon {
-  fill: black !important;
-}
-/* line 123, ../sass/screen.sass */
-#grid_wrapper.grid_drag {
-  pointer-events: all;
-}
-/* line 125, ../sass/screen.sass */
-#grid_wrapper.grid_drag path, #grid_wrapper.grid_drag rect, #grid_wrapper.grid_drag polygon {
-  pointer-events: all;
-  stroke: blue !important;
-}
-/* line 130, ../sass/screen.sass */
-#grid_wrapper.grid_drag use:hover rect, #grid_wrapper.grid_drag use:hover path, #grid_wrapper.grid_drag use:hover polygon {
-  fill: black !important;
+/* line 90, ../sass/screen.sass */
+.fow_canvas .hideBrush {
+  cursor: pointer !important;
 }
 
-/* line 133, ../sass/screen.sass */
+/* line 93, ../sass/screen.sass */
+.active {
+  display: block;
+}
+
+/* line 96, ../sass/screen.sass */
+#map_wrapper {
+  z-index: 100;
+  position: absolute;
+  height: 100%;
+  width: 100%;
+}
+/* line 101, ../sass/screen.sass */
+#map_wrapper img {
+  width: 100%;
+  max-width: 100%;
+  height: 100%;
+  max-height: 100%;
+}
+/* line 106, ../sass/screen.sass */
+#map_wrapper iframe {
+  width: 100%;
+  height: 100%;
+  object-fit: fill;
+}
+
+/* line 111, ../sass/screen.sass */
+.map_grid_type, .map_grid_property, .fow_brush_property {
+  position: relative;
+  margin: 0 0 20px;
+}
+
+/* line 115, ../sass/screen.sass */
+.map_grid_type {
+  display: inline-block;
+  white-space: nowrap;
+  margin: 0 20px 20px 0;
+}
+
+/* line 120, ../sass/screen.sass */
 #map_file_settings, #fow_settings, #grid_settings {
   padding: 20px 0;
   position: relative;
 }
 
-/* line 137, ../sass/screen.sass */
+/* line 124, ../sass/screen.sass */
 input[type=range] {
   width: auto;
 }
 
-/* line 140, ../sass/screen.sass */
+/* line 127, ../sass/screen.sass */
 output {
   background: darkred;
   width: 40px;
@@ -270,7 +250,7 @@ output {
   pointer-events: none;
 }
 
-/* line 152, ../sass/screen.sass */
+/* line 139, ../sass/screen.sass */
 #wrench {
   position: fixed;
   top: 0;
@@ -283,16 +263,16 @@ output {
   background: white;
   cursor: pointer;
 }
-/* line 163, ../sass/screen.sass */
+/* line 150, ../sass/screen.sass */
 #wrench:hover {
   background: black;
   color: white;
 }
-/* line 167, ../sass/screen.sass */
+/* line 154, ../sass/screen.sass */
 #wrench.newbie #wrench_innerwrapper {
   animation: wrench 2.5s ease infinite;
 }
-/* line 169, ../sass/screen.sass */
+/* line 156, ../sass/screen.sass */
 #wrench.newbie:before {
   position: absolute;
   content: "";
@@ -308,7 +288,7 @@ output {
   animation: horizontal 2s ease-in-out infinite;
 }
 
-/* line 183, ../sass/screen.sass */
+/* line 170, ../sass/screen.sass */
 #sidebar {
   position: fixed;
   top: 0;
@@ -322,13 +302,20 @@ output {
   overflow: hidden;
   overflow-y: scroll;
 }
-/* line 195, ../sass/screen.sass */
+/* line 182, ../sass/screen.sass */
 #sidebar.active {
   display: block;
 }
 
-/* line 198, ../sass/screen.sass */
+/* line 185, ../sass/screen.sass */
 #sidebar_innerwrapper {
-  padding: 20px;
+  padding: 20px 20px 80px 20px;
   height: 100%;
+}
+
+/* line 189, ../sass/screen.sass */
+#sidebar_tray {
+  position: fixed;
+  bottom: 0;
+  text-align: left;
 }

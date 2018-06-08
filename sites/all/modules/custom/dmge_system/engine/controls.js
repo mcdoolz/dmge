@@ -1,69 +1,98 @@
 (function ($, Drupal, window, document, undefined) {
 
   var mainDocument = Drupal.mainDocument = document;
-
   var mainView = Drupal.mainView = window;
-  var mainMap = Drupal.mainMap = new fabric.Canvas('map', {
+
+  var grid_canvas = Drupal.grid = new fabric.Canvas('grid', {
+    hoverCursor: 'pointer',
+    selection: true
+  });
+  var map_canvas = Drupal.__map = new fabric.Canvas('map', {
+    hoverCursor: 'pointer',
+    selection: true
+  });
+  var fow_canvas = Drupal.fow = new fabric.Canvas('fow', {
     hoverCursor: 'pointer',
     selection: true
   });
 
   fabric.util.requestAnimFrame(function render() {
-    mainMap.renderAll();
+    map_canvas.renderAll();
+    grid_canvas.renderAll();
     fabric.util.requestAnimFrame(render);
   });
 
   var mainFOW = Drupal.mainFOW = $('#fow')[0];
-  localStorage.setItem("mainMap", mainMap);
+  localStorage.setItem("map_canvas", map_canvas);
   localStorage.setItem("mainFOW", mainFOW);
 
-  mainMap.on('mouse:down', function(opt) {
+  map_canvas.on('mouse:down', function(opt) {
     var evt = opt.e;
     if (evt.altKey === true) {
       this.isDragging = true;
       this.selection = false;
-      this.lastPosX = evt.clientX;
-      this.lastPosY = evt.clientY;
+      grid_canvas.lastPosX = this.lastPosX = evt.clientX;
+      grid_canvas.lastPosY = this.lastPosY = evt.clientY;
     }
   });
-  mainMap.on('mouse:move', function(opt) {
+  map_canvas.on('mouse:move', function(opt) {
     if (this.isDragging) {
       var e = opt.e;
-      this.viewportTransform[4] += e.clientX - this.lastPosX;
-      this.viewportTransform[5] += e.clientY - this.lastPosY;
+      grid_canvas.viewportTransform[4] = this.viewportTransform[4] += e.clientX - this.lastPosX;
+      grid_canvas.viewportTransform[5] = this.viewportTransform[5] += e.clientY - this.lastPosY;
       this.requestRenderAll();
-      this.lastPosX = e.clientX;
-      this.lastPosY = e.clientY;
+      grid_canvas.requestRenderAll();
+      grid_canvas.lastPosX = this.lastPosX = e.clientX;
+      grid_canvas.lastPosY = this.lastPosY = e.clientY;
     }
   });
-  mainMap.on('mouse:up', function(opt) {
+  map_canvas.on('mouse:up', function(opt) {
     this.isDragging = false;
     this.selection = true;
   });
 
-  mainMap.on('mouse:wheel', function(opt) {
+
+  function map_reset_zoom() {
+    map_canvas.zoomToPoint();
+  }
+
+  /**
+   * Helper to set zoom across all canvases.
+   */
+  function map_zoom(opt, zoom) {
+    let canvases = [map_canvas, grid_canvas, fow_canvas];
+    canvases.forEach(function(e){
+      e.zoomToPoint({ x: opt.e.offsetX, y: opt.e.offsetY }, zoom);
+    });
+    let _size = parseInt($('#map_grid_size').val());
+    _size = _size * map_canvas.getZoom();
+    $('#map_grid_display_size').val(_size);
+  }
+
+  map_canvas.on('mouse:wheel', function(opt) {
     var delta = opt.e.deltaY;
-    var zoom = mainMap.getZoom();
+    var zoom = map_canvas.getZoom();
     zoom = zoom + delta/200;
-    if (zoom > 20) {zoom = 20;}
-    if (zoom < 0.01) {zoom = 0.01;}
-    mainMap.zoomToPoint({ x: opt.e.offsetX, y: opt.e.offsetY }, zoom);
+    if (zoom > 10) {zoom = 10;}
+    if (zoom < 1) {zoom = 1;}
+    map_zoom(opt, zoom);
+
     opt.e.preventDefault();
     opt.e.stopPropagation();
     var vpt = this.viewportTransform;
     if (zoom < 400 / 1000) {
-      this.viewportTransform[4] = 200 - 1000 * zoom / 2;
-      this.viewportTransform[5] = 200 - 1000 * zoom / 2;
+      grid_canvas.viewportTransform[4] = this.viewportTransform[4] = 200 - 1000 * zoom / 2;
+      grid_canvas.viewportTransform[5] = this.viewportTransform[5] = 200 - 1000 * zoom / 2;
     } else {
       if (vpt[4] >= 0) {
-        this.viewportTransform[4] = 0;
-      } else if (vpt[4] < mainMap.getWidth() - 1000 * zoom) {
-        this.viewportTransform[4] = mainMap.getWidth() - 1000 * zoom;
+        grid_canvas.viewportTransform[4] = this.viewportTransform[4] = 0;
+      } else if (vpt[4] < map_canvas.getWidth() - 1000 * zoom) {
+        grid_canvas.viewportTransform[4] = this.viewportTransform[4] = map_canvas.getWidth() - 1000 * zoom;
       }
       if (vpt[5] >= 0) {
-        this.viewportTransform[5] = 0;
-      } else if (vpt[5] < mainMap.getHeight() - 1000 * zoom) {
-        this.viewportTransform[5] = mainMap.getHeight() - 1000 * zoom;
+        grid_canvas.viewportTransform[5] = this.viewportTransform[5] = 0;
+      } else if (vpt[5] < map_canvas.getHeight() - 1000 * zoom) {
+        grid_canvas.viewportTransform[5] = this.viewportTransform[5] = map_canvas.getHeight() - 1000 * zoom;
       }
     }
   });
@@ -107,33 +136,25 @@
     }
     if (e.which == 86) {
       if (e.ctrlKey) {
-        var playerView = Drupal.playerView = window.open('/engine/players');
-        console.log(playerView);
-        var playerViewInterval = setInterval(playerViewTimer, 1000);
-        var playerMap = Drupal.playerMap = playerView.document.getElementById('player_map');
-        var playerFOW = Drupal.playerFOW = playerView.document.getElementById('player_fow');
-        function playerViewTimer() {
-          // playerMap.innerHTML += 'works.';
-          // playerFOW.innerHTML += 'works.';
-        }
+        player_view_open();
       }
     }
     if (e.which == 90) {
       if (e.ctrlKey) {
-        $('#grid_wrapper').removeClass();
-        $('#grid_wrapper').addClass('active grid_drag');
-        $('#grid_wrapper').draggable({disabled: false});
+        // $('#grid_wrapper').removeClass();
+        // $('#grid_wrapper').addClass('active grid_canvas_drag');
+        // $('#grid_wrapper').draggable({disabled: false});
       }
       if (e.shiftKey) {
-        $('#grid_wrapper').removeClass();
-        $('#grid_wrapper').draggable({disabled: true});
+        // $('#grid_wrapper').removeClass();
+        // $('#grid_wrapper').draggable({disabled: true});
       }
     }
     if (e.which == 88) {
       if (e.ctrlKey) {
         $('#grid_wrapper').removeClass();
-        $('#grid_wrapper').draggable({disabled: true});
-        $('#grid_wrapper').addClass('active grid_marking');
+        // $('#grid_wrapper').draggable({disabled: true});
+        $('#grid_wrapper').addClass('active grid_canvas_marking');
       }
       if (e.shiftKey) {
         $('#grid_wrapper').removeClass();
@@ -142,7 +163,7 @@
     if (e.which == 8) {
       e.preventDefault();
       $('#grid_wrapper').removeClass();
-      $('#grid_wrapper').draggable('disable');
+      // $('#grid_wrapper').draggable('disable');
       if (e.ctrlKey) {
         $('.map_token').remove();
       }
@@ -150,7 +171,7 @@
   });
 
   /**
-   * Helper gets opacity from the grid and returns percentile.
+   * Helper gets opacity from the grid_canvas and returns percentile.
    */
   function get_opacity(thing) {
     _opacity = thing.val();
@@ -159,26 +180,17 @@
   }
 
   /**
-   * Sets the map wrapper as resizeable.  I'm Canadian.  There's an e.  Deal with it.
-   */
-  // $('#map_wrapper').resizable({
-  //   containment: 'body',
-  //   stop: function(event, ui) {
-  //     _width = $(this).width();
-  //     _height = $(this).height();
-  //     init_fow(_height, _width);
-  //     set_grid();
-  //   }
-  // });
-
-  /**
    * Get the hash of a link and reveal the appropriate div by id.
    */
-  $('#menu a').on('touchend click', function(event) {
+  $('#menu a').each(function() {
+    var hash = this.hash.substr(1);
+    $('#' + hash).hide();
+  }).on('touchend click', function(event) {
     event.stopPropagation();
     event.preventDefault();
     var hash = this.hash.substr(1);
-    $('#' + hash).toggle('slide', {direction:'left'});
+    $(this).toggleClass('active');
+    $('#' + hash).toggle('slide', {direction:'up'});
   });
 
   /**
@@ -203,14 +215,14 @@
   });
 
   /**
-   * Grid type selected?  Set the grid per the options.
+   * Grid type selected?  Set the grid_canvas per the options.
    */
   $('input[name=map_grid_type]').change(function() {
     set_grid();
   });
 
   /**
-   * Grid resized?  Set the grid per the options.
+   * Grid resized?  Set the grid_canvas per the options.
    */
   $('#map_grid_size').change(function() {
     set_grid();
@@ -359,12 +371,12 @@
 
 function do_image(img) {
   fabric.Image.fromURL(_url, function(img) {
-    mainMap.add(img);
+    map_canvas.add(img);
   });
 }
 
 $('#map_clear').click(function() {
-  mainMap.clear();
+  map_canvas.clear();
 });
 
   /**
@@ -420,8 +432,8 @@ $('#map_clear').click(function() {
       });
       _video = $('#map_video')[0];
       fabric.Image.fromURL(_url, function(_video){
-        mainMap.clear();
-        mainMap.add(_video);
+        map_canvas.clear();
+        map_canvas.add(_video);
       });
     }
 
@@ -529,6 +541,10 @@ $('#map_clear').click(function() {
     $('#fow').on('mouseup', function() {
       dragging = false;
       localStorage.setItem('mainFOW', mainFOW.toDataURL());
+      localStorage.setItem('mainFOW_size', JSON.stringify({
+        'width': $('#fow').width(),
+        'height': $('#fow').height()
+      }));
     });
 
     $('#fow').on('mousemove', function(ev, ev2){
@@ -565,10 +581,10 @@ $('#map_clear').click(function() {
     var _mWidth = __map.width();
     var _mHeight = __map.height();
 
-    $('#grid_settings').addClass('loading');
+    // $('#grid_settings').addClass('loading');
     console.time();
-    __grid_wrapper.empty();
-    draw = SVG('grid_wrapper');
+    // __grid_wrapper.empty();
+    // draw = SVG('grid_wrapper');
 
     _type = $('input[name=map_grid_type]:checked').val();
 
@@ -632,43 +648,52 @@ $('#map_clear').click(function() {
     }
 
     if (_type === 'Quad') {
-      quadSymbol = draw.rect(_size, _size).fill('none')
-      .stroke({ width: 1, color: 'white' })
-      .fill('none');
-
       const __grid = Grid.rectangle({ width: _cols, height: _rows });
+      grid_canvas.clear();
 
       __grid.forEach(hex => {
-        _x = hex.x*_size;
-        _y = hex.y*_size;
-        draw.use(quadSymbol).translate(_x, _y).click(function(e) {
-          if (!$('#grid_wrapper').is('.grid_marking')) {
-            return;
-          }
-          draw.rect(_size, _size)
-          .stroke({ width: 1, color: 'white' })
-          .fill(getRandomColor())
-          .attr('class', 'map_token map_mark')
-          .translate(hex.x*_size, hex.y*_size)
-          .click(function(e) {
-            $(e.target).remove();
-          });
-        });
+
+        let _props = {
+          left: hex.x*_size,
+          top: hex.y*_size,
+          width: _size,
+          height: _size,
+          stroke: 'white',
+          strokeWidth: 1,
+          fill: '',
+          originX: 'left',
+          originY: 'top',
+          centeredRotation: true,
+          selectable: false,
+          objectCaching: false
+        };
+
+        let quadSymbol = new fabric.Rect(_props);
+
+        grid_canvas.add(quadSymbol);
+
+      });
+      grid_canvas.renderAll();
+      grid_canvas.on('mouse:down', function(e) {
+        if (!$('#grid_wrapper').is('.grid_marking')) {
+          return;
+        }
+        _props.left = e.target.left;
+        _props.top = e.target.top;
+        _props.fill = getRandomColor();
+        let highlightSymbol = new fabric.Rect(_props);
+        highlightSymbol.on('selected', function(e) {
+          console.log(e);
+          grid_canvas.remove(e);
+        })
+        grid_canvas.add(highlightSymbol);
       });
     }
   } else {
-      __grid_wrapper.empty();
-    }
-    console.timeEnd();
-    __grid_wrapper.css({
-      'top': __map.css('top'),
-      'left': __map.css('left'),
-      'width': _mWidth,
-      'height': _mHeight,
-    });
-    $('#grid_settings').removeClass('loading');
+    grid_canvas.clear();
   }
-
+    console.timeEnd();
+  }
 
   function getRandomColor() {
     var letters = '0123456789ABCDEF';
@@ -703,12 +728,12 @@ $('#map_clear').click(function() {
     modal: true,
     position: {
       my: "center",
-      at: "center",
-      of: $("#files_settings")
+      at: "top",
+      of: $('#map_wrapper')
     }
   });
 
-  // Fashion the file grid.
+  // Fashion the file grid_canvas.
   $('#files').jsGrid({
     height: '400px',
     width: '100%',
@@ -778,6 +803,7 @@ $('#map_clear').click(function() {
     _screen_height = screen.height,
     _screen_x = $("#first").val(_screen_width),
     _screen_y = $("#second").val(_screen_height);
+
   $('#screen_calculate').click(function() {
   	let _screen_x = $("#screen_x").val(),
   	_screen_y = $("#screen_y").val(),
@@ -793,8 +819,27 @@ $('#map_clear').click(function() {
   		result.val("Missing screen size")
   	else
       _result = (Math.sqrt(sqroot) / inch).toFixed(2);
+      if (!_result) {
+        return;
+      }
   		result.val(_result);
       $('#map_grid_size').val(_result);
       set_grid(_result);
   });
+
+  $('#player_view_open').click(function() {
+    player_view_open();
+  });
+
+  function player_view_open() {
+    var playerView = Drupal.playerView = window.open('/engine/players');
+    var playerViewInterval = setInterval(playerViewTimer, 1000);
+    var playerMap = Drupal.playerMap = playerView.document.getElementById('player_map');
+    var playerFOW = Drupal.playerFOW = playerView.document.getElementById('player_fow');
+    function playerViewTimer() {
+      // playerMap.innerHTML += 'works.';
+      // playerFOW.innerHTML += 'works.';
+    }
+  }
+
 }(jQuery, Drupal, this, this.document));

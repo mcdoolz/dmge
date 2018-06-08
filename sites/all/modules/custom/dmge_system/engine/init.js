@@ -16,7 +16,8 @@
 
   Drupal.behaviors.dmge_init = {
     attach: function(context, settings) {
-      $('body').prepend('<div id="memory"><div id="memory_available"></div><div id="memory_used"></div></div>');
+      // $('body').prepend('<div id="memory"><div id="memory_available"></div><div id="memory_used"></div></div>');
+      $('canvas').height($(window).height()).width($(window).width());
     }
   }
 
