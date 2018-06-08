@@ -362,8 +362,8 @@
     event.preventDefault();
     $.get('/engine/youtube?url=' + $('#map_embed').val(), null, function(response) {
       // $('html').html(response);
-      console.log(response);
-      response = JSON.parse(response);
+      // console.log(response);
+      console.log(response[0].url);
     });
   });
 
