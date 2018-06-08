@@ -379,6 +379,7 @@
     $.get('/engine/youtube?url=' + $('#map_embed').val(), null, function(response) {
       if (response[0]) {
         if (response[0].url) {
+          console.log(response[0].url);
           do_youtube(response[0].url);
         }
       }
