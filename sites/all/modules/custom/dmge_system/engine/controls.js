@@ -135,7 +135,7 @@
       }
     }
     if (e.which == 86) {
-      if (e.ctrlKey) {
+      if ((e.ctrlKey) && (e.shiftKey)) {
         player_view_open();
       }
     }
