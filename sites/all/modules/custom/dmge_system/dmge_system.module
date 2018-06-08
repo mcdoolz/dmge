@@ -324,7 +324,12 @@ function dmge_system_theme_registry_alter(&$theme_registry) {
  * Helper to get YouTube URL.
  */
 function _dmge_system_get_youtube_url($url = ""){
-  var_dump($_GET);
+  if (!empty($_GET)) {
+    if (empty($_GET['url'])) {
+      return;
+    }
+    $url = $_GET['url'];
+  }
   if (empty($url)) {
     return;
   }
