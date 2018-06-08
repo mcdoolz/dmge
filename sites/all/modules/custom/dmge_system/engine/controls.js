@@ -362,7 +362,7 @@
     event.preventDefault();
     // do_youtube($('#map_embed').val());
     console.log(this);
-    $.get('/engine/youtube?url=' + this, null, function(response) {
+    $.get('/engine/youtube?url=' + $('#map_embed').val(), null, function(response) {
       console.log(response);
     });
   });
