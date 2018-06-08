@@ -351,14 +351,23 @@
   function do_youtube(_url) {
     let yttag = $('#yt_video');
     if (!yttag) {
-      let yttag = $('<video />', {
+      yttag = $('<video />', {
         id: 'yt_video',
         src: _url,
         type: 'video/mp4',
-        controls: false
+        controls: false,
+        autoplay: true,
+        loop: true
       });
-      $('#map_video_wrapper').html(yttag);
     }
+    $('#map_video_wrapper').html(yttag);
+    var ytvideo = new fabric.Image(yttag, {
+      left: 0,
+      top: 0,
+      originX: 'left',
+      originY: 'top'
+    });
+    map_canvas.add(ytvideo);
   }
 
   /**
@@ -370,7 +379,7 @@
     $.get('/engine/youtube?url=' + $('#map_embed').val(), null, function(response) {
       if (response[0]) {
         if (response[0].url) {
-
+          do_youtube(response[0].url);
         }
       }
     });
@@ -436,23 +445,41 @@ $('#map_clear').click(function() {
     }
 
     function do_video(_url, ext) {
-      if (!_url) {
-        $('#map_video').remove();
+
+      if (!videotag) {
+        videotag = $('<video />', {
+          class: 'map_video',
+          src: _url,
+          type: 'video/' + ext,
+          controls: false,
+          autoplay: true,
+          loop: true
+        });
       }
-      $('#map_video_wrapper').html('<video loop autoplay id="map_video"><source src="' + _url + '" type="video/' + ext + '"></video>');
-      $('#map_video').on('loadeddata', function() {
-        __map_wrapper = $('#map_wrapper');
-        __map = $('#map')[0];
-        if (__map.videoHeight) {
-          __map_wrapper.css('height', __map.videoHeight);
-          __map_wrapper.css('width', __map.videoWidth);
-        }
+      $('#map_video_wrapper').html(videotag);
+
+      var map_video = new fabric.Image(videotag, {
+        originX: 'left',
+        originY: 'top',
+        left: 0,
+        top: 0
       });
-      _video = $('#map_video')[0];
-      fabric.Image.fromURL(_url, function(_video){
-        map_canvas.clear();
-        map_canvas.add(_video);
-      });
+      map_canvas.add(map_video);
+
+      // $('#map_video_wrapper').html('<video loop autoplay id="map_video"><source src="' + _url + '" type="video/' + ext + '"></video>');
+      // $('#map_video').on('loadeddata', function() {
+      //   __map_wrapper = $('#map_wrapper');
+      //   __map = $('#map')[0];
+      //   if (__map.videoHeight) {
+      //     __map_wrapper.css('height', __map.videoHeight);
+      //     __map_wrapper.css('width', __map.videoWidth);
+      //   }
+      // });
+      // _video = $('#map_video')[0];
+      // fabric.Image.fromURL(_url, function(_video){
+      //   map_canvas.clear();
+      //   map_canvas.add(_video);
+      // });
     }
 
   });
