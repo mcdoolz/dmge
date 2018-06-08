@@ -175,7 +175,6 @@ function dmge_system_menu() {
   $items['engine/youtube'] = array(
     'title' => 'Ajax callback for YouTube URLs.',
     'page callback' => '_dmge_system_get_youtube_url',
-    'page arguments' => array(1),
     'access arguments' => array('access content'),
     'type' => MENU_CALLBACK,
   );
