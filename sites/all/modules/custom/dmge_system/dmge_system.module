@@ -332,14 +332,12 @@ function _dmge_system_get_youtube_url($url = ""){
   if (empty($url)) {
     return;
   }
-  parse_str( parse_url( $url, PHP_URL_QUERY ), $vars );
+  parse_str(parse_url($url, PHP_URL_QUERY), $vars);
   $id = $vars['v'];
   if (empty($id)) {
     return;
   }
   $dt = file_get_contents('https://www.youtube.com/get_video_info?video_id=' . $id . '&el=embedded&ps=default&eurl=&gl=US&hl=en');
-  var_dump($dt);
-  return;
 
   if (strpos($dt, 'status=fail') !== false) {
 
