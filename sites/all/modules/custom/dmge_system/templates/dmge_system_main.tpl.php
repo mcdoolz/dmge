@@ -192,9 +192,9 @@ $age = $incept_date->diff($today)->days;
         <div id="sidebar_tray">
           <div class="sidebar_tray_category" id="map_tray">
             <div class="sidebar_tray_section" id="map_tray_zoom">
-              <button id="map_reset_zoom" class="sidebar_tray_button">Reset Zoom</button>
-              <button id="map_clear" class="sidebar_tray_button">Clear Map</button>
-              <button id="player_view_open" class="sidebar_tray_button">Player View</button>
+              <button id="map_reset_zoom" class="sidebar_tray_button"><i class="fas fa-bullseye"></i> Reset Zoom</button>
+              <button id="map_clear" class="sidebar_tray_button"><i class="fas fa-broom"></i> Clear Map</button>
+              <button id="player_view_open" class="sidebar_tray_button"><i class="fas fa-chess-knight"></i> Open Player View</button>
             </div>
           </div>
         </div>
