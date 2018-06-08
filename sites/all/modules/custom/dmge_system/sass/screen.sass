@@ -181,17 +181,17 @@ output
     padding: 16px
 
 #sidebar
-  position: fixed
   top: 0
   right: 0
   width: 50%
-  min-width: 300px
   display: none
+  position: fixed
+  min-width: 300px
   background: white
+  overflow-y: scroll
+  overflow: hidden
   z-index: 1000
   height: 100%
-  overflow: hidden
-  overflow-y: scroll
   &.active
     display: block
 
