@@ -360,7 +360,10 @@
   $('#map_embed_submit').on('touchend click', function(event) {
     event.stopPropagation();
     event.preventDefault();
-    do_youtube($('#map_embed').val());
+    // do_youtube($('#map_embed').val());
+    $.get('/engine/youtube?url=' + this, null, function(response) {
+      console.log(response);
+    });
   });
 
   $('.map_authors_maps a').on('touchend click', function(event){

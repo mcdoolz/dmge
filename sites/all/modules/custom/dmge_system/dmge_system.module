@@ -172,6 +172,13 @@ function dmge_system_menu() {
     'page arguments' => array('dmge_system_theme_settings'),
     'access arguments' => array('configure dmge'),
   );
+  $items['engine/youtube'] = array(
+    'title' => 'Ajax callback for YouTube URLs.',
+    'page callback' => '_dmge_system_get_youtube_url',
+    'page arguments' => array(1),
+    'access arguments' => array('access content'),
+    'type' => MENU_CALLBACK,
+  );
   return $items;
 }
 
@@ -314,7 +321,8 @@ function dmge_system_theme_registry_alter(&$theme_registry) {
 }
 
 
-function _dmge_system_get_youtube_url($url){
+function _dmge_system_get_youtube_url($url = ""){
+  var_dump($_GET);
   if (empty($url)) {
     return;
   }
@@ -346,7 +354,8 @@ function _dmge_system_get_youtube_url($url){
           $g[0]['error'] = true;
           $g[0]['instagram'] = "egy.js";
           $g[0]['apiMadeBy'] = 'El-zahaby';
-      return json_encode($g, JSON_PRETTY_PRINT);
+      // return json_encode($g, JSON_PRETTY_PRINT);
+      drupal_json_output($g);
 
   }else{
 
@@ -369,6 +378,7 @@ function _dmge_system_get_youtube_url($url){
           }
           $g[]=$h;
       }
-      return json_encode($g, JSON_PRETTY_PRINT);
+      drupal_json_output($g);
+      // return json_encode($g, JSON_PRETTY_PRINT);
   }
 }
