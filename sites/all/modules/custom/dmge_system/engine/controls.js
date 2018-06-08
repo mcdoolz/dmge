@@ -362,15 +362,14 @@
     event.preventDefault();
     $.get('/engine/youtube?url=' + $('#map_embed').val(), null, function(response) {
       $('body').html(response);
-      console.log(response);
     });
   });
 
-  $('.map_authors_maps a').on('touchend click', function(event){
-    event.stopPropagation();
-    event.preventDefault();
-    do_youtube(this.href);
-  });
+  // $('.map_authors_maps a').on('touchend click', function(event){
+  //   event.stopPropagation();
+  //   event.preventDefault();
+  //   do_youtube(this.href);
+  // });
 
 function do_image(img) {
   fabric.Image.fromURL(_url, function(img) {

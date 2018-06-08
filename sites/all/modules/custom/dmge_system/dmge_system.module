@@ -362,7 +362,8 @@ function _dmge_system_get_youtube_url($url = ""){
     $g[0]['instagram'] = "egy.js";
     $g[0]['apiMadeBy'] = 'El-zahaby';
     // return drupal_json_output($g);
-    return json_encode($g, JSON_PRETTY_PRINT);
+    // return json_encode($g, JSON_PRETTY_PRINT);
+    return $g;
 
   } else {
 
@@ -386,6 +387,7 @@ function _dmge_system_get_youtube_url($url = ""){
       $g[] = $h;
     }
     // return drupal_json_output($g);
-    return json_encode($g, JSON_PRETTY_PRINT);
+    // return json_encode($g, JSON_PRETTY_PRINT);
+    return $g;
   }
 }
