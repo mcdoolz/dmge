@@ -353,9 +353,9 @@
     if (!yttag) {
       let yttag = $('<video />', {
         id: 'yt_video',
-        source.src: _url,
+        src: _url,
         type: 'video/mp4',
-        control: true
+        controls: false
       });
       $('#map_video_wrapper').html(yttag);
     }
