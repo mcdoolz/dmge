@@ -787,7 +787,7 @@ $('#map_clear').click(function() {
         editButton: false
       }
     ]
-    });
+  });
 
   function make_video_thumbnail(_url) {
     var __video  = document.getElementById(_url);
