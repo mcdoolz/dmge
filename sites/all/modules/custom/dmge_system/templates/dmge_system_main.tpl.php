@@ -6,6 +6,7 @@ $incept_date = new \DateTime('2018-02-13');
 $today = new \DateTime;
 $age = $incept_date->diff($today)->days;
 ?>
+<div id="dmge">
 <div id="about" class="dialog" title="How to use the DMGE">
   <h4>How to Use</h4>
   <ol>
@@ -34,72 +35,66 @@ $age = $incept_date->diff($today)->days;
   </button>
 </div>
 
-<div id="dmge">
   <div id="wrench"><div id="wrench_innerwrapper"><i class="fa fa-wrench"></i></div></div>
   <div id="sidebar">
     <div id="sidebar_innerwrapper">
       <div id="menu">
         <ul>
-          <!-- <li><a href="#map_settings" title="Map"><i class="fas fa-map"></i></a></li> -->
+          <li><a href="#map_settings" title="Map"><i class="fas fa-map"></i></a></li>
           <li><a href="#files_settings" title="Files"><i class="fas fa-file"></i></a></li>
           <li><a href="#fow_settings" title="Fog of War"><i class="fas fa-eye"></i></a></li>
           <li><a href="#grid_settings" title="Grid"><i class="fas fa-th"></i></a></li>
           <li><a href="#paint_box" title="Painters Box"><i class="fas fa-paint-brush"></i></a></li>
-          <li><a href="#rulers" title="Rulers &amp; Templates"><i class="fas fa-ruler"></i></a></li>
+          <li><a href="#rulers" title="Rulers &amp; Templates"><i class="fas fa-pencil-ruler"></i></a></li>
         </ul>
       </div>
-      <div id="files_settings">
-        <h2>Files</h2>
-        <div id="files_storage_path">
-          <div id="files_storage_path"><label for="files_storage_path_configure">Select Resource Folder</label>
-          <input id="files_storage_path_configure" type="file" webkitdirectory directory multiple/></div>
-          <div id="files_storage_path_description">Select the folder in which you wish to save your compiled maps.</div>
-        </div>
-        <div id="files_wrapper">
-          <h4>Files</h4>
-          <div id="files"></div>
-          <form method="post">
-            <input id="file" type="file" multiple />
-            <input id="file_load" type="button" value="Load File" />
-            <select id="file_functions">
-              <options>
-                <option>--Bulk Ops--</option>
-                <option>Remove</option>
-              </options>
-            </select>
-            <input id="file_bulkop" type="button" value="Do Bulk Op" />
-          </form>
-          <label for="map_embed">Paste the URL to a Video</label>
-          <form><input type="text" id="map_embed"><input type="submit" id="map_embed_submit"></form>
-          <p><sup>Currently recognizes YouTube videos only.</sup></p>
-        </div>
-      </div>
-        <!-- <div id="map_settings">
-          <div class="map_property">
-            <div class="map_source_type">
-              <label for="map_embed_option">Online Video</label>
-              <input type="radio" id="map_embed_option" name="map_type_options" value="embed" />
-            </div>
-            <div class="map_source_type">
-              <label for="map_file_option">Local File</label>
-              <input type="radio" id="map_file_option" name="map_type_options" value="file" checked="checked">
-            </div>
+
+      <div id="sidebar_sections">
+
+        <div id="files_settings" class="sidebar_section">
+          <h2>Files</h2>
+          <div id="files_wrapper">
+            <h4>Files</h4>
+            <div id="files"></div>
+            <form method="post">
+              <input id="file" type="file" multiple />
+              <input id="file_load" type="button" value="Load File" />
+              <select id="file_functions">
+                <options>
+                  <option>--Bulk Ops--</option>
+                  <option>Remove</option>
+                </options>
+              </select>
+              <input id="file_bulkop" type="button" value="Do Bulk Op" />
+            </form>
+            <label for="map_embed">Paste the URL to a Video</label>
+            <form><input type="text" id="map_embed"><input type="submit" id="map_embed_submit"></form>
+            <p><sup>Currently recognizes YouTube videos only.</sup></p>
           </div>
-          <div id="map_source">
-            <div id="map_embed_wrapper" class="map_type_property">
-              <label for="map_embed">Paste the URL to a Video</label>
-              <form><input type="text" id="map_embed"><input type="submit" id="map_embed_submit"></form>
-              <p><sup>Currently recognizes YouTube videos only.</sup></p>
-            </div>
-            <div id="map_filename_wrapper" class="map_type_property">
-              <label for="map_filename">Select a file</label>
-              <input type="file" id="map_filename" title="Select a video, or image from your computer">
-              <p><sup>Browsers typically top out at 200 megabytes for videos.<br>
-                jpg, gif, png, bmp, pdf, m4v, mp4, mpg :: Email for more formats.</sup></p>
-            </div>
+          <div id="files_storage_path">
+            <div id="files_storage_path"><label for="files_storage_path_configure">Select Resource Folder</label>
+            <input id="files_storage_path_configure" type="file" webkitdirectory directory multiple/></div>
+            <div id="files_storage_path_description">Select the folder in which you wish to save your compiled maps.</div>
           </div>
-        </div> -->
-        <div id="fow_settings">
+        </div>
+
+        <div id="map_settings" class="sidebar_section">
+          <div class="map_setting">
+            <h3>Map Settings</h3>
+            <label for="map_name">Map Name</label>
+            <input type="text" id="map_name" placeholder="Untitled" />
+          </div>
+          <div class="map_setting">
+            <h4>Map Size</h4>
+            <p>Defaults to your screen resolution.<br />Press F11 for Full Screen.</p>
+            <label for="map_width">Width</label>
+            <input type="number" id="map_width" />
+            <label for="map_height">Height</label>
+            <input type="number" id="map_height" />
+          </div>
+        </div>
+
+        <div id="fow_settings" class="sidebar_section">
           <h3>Fog of War Settings</h3>
           <div class="fow_brush_property">
             <label for="fow_toggle">Fog of War</label>
@@ -119,16 +114,14 @@ $age = $incept_date->diff($today)->days;
           </div>
         </div>
 
-        <div id="paint_box">
-          <h4>Painters Box</h4>
-          <input class="painting_control" type="button" id="painting_toggle" />
-          <input class="painting_control" type="range" id="painting_brushsize" />
-          <input class="painting_control" type="color" id="painting_colour" />
-          <div class="painting_control_group">
-            <input class="painting_control" type="number" id="painting_stroke_width" />
-            <input class="painting_control" type="color" id="painting_stroke_colour" />
+        <div id="paint_box" class="sidebar_section">
+          <h3>Painters Box</h3>
+          <label for="painting_toggle">Painting Mode</label>
+          <input class="painting_control" type="checkbox" id="painting_toggle" />
+          <div id="painting_brush_settings">
+            <input class="painting_control" type="range" id="painting_brushsize" />
+            <input class="painting_control" type="color" id="painting_colour" />
           </div>
-          <input class="painting_control" type="color" id="painting_colour" />
           <select class="painting_control" id="painting_toolselect">
             <option value="select">Select</option>
             <option value="brush">Brush</option>
@@ -138,11 +131,25 @@ $age = $incept_date->diff($today)->days;
           </select>
         </div>
 
-        <div id="grid_settings">
+        <div id="rulers" class="sidebar_section">
+          <h3>Rulers &amp; Templates</h3>
+          <label for="template_types">Template Type</label>
+          <div id="template_types">
+            <button class="template_type" id="template_circle"><i class="fas fa-circle"></i> Radius</button>
+            <button class="template_type" id="template_square"><i class="fas fa-square-full"></i> Cube</button>
+            <button class="template_type" id="template_triangle"><i class="css-triangle"></i> Cone</button>
+          </div>
+          <div class="template_controls" id="template_controls">
+            <label for="template_colour">Template Size</label>
+            <input type="color" id="template_colour" />
+          </div>
+        </div>
+
+        <div id="grid_settings" class="sidebar_section">
           <h3>Grid Settings</h3>
 
           <div id="map_grid_type">
-            <h4>Grid Type</h4>
+            <h3>Grid Type</h3>
 
             <div class="map_grid_type">
               <label for="quad_grid">Quad</label>
@@ -179,7 +186,7 @@ $age = $incept_date->diff($today)->days;
               <input placeholder="1080" type="text" id="screen_y" /><br />
               <label for="screen_inch">Screen Inches</label>
               <input type="text" placeholder="40" id="screen_inch" /><br />
-              <label for="screen_result">PPI</label>
+              <label for="screen_result" title="Pixels Per Inch">PPI</label>
               <input type="text" disabled id="screen_result" value="" /><br />
               <button id="screen_calculate">Calculate</button>
             </div>
@@ -192,9 +199,13 @@ $age = $incept_date->diff($today)->days;
 
         </div>
 
+      </div>
+
         <div id="sidebar_tray">
           <div class="sidebar_tray_category" id="map_tray">
             <div class="sidebar_tray_section" id="map_tray_zoom">
+              <button id="save_map"class="sidebar_tray_button"><i class="fas fa-save"></i> Save</button>
+              <button id="fullscreener" class="sidebar_tray_button"><i class="fas fa-desktop"></i> Fullscreen</button>
               <button id="map_reset_zoom" class="sidebar_tray_button"><i class="fas fa-bullseye"></i> Reset Zoom</button>
               <button id="map_clear" class="sidebar_tray_button"><i class="fas fa-eraser"></i> Clear Map</button>
               <button id="player_view_open" class="sidebar_tray_button"><i class="fas fa-chess-knight"></i> Open Player View</button>
@@ -214,4 +225,7 @@ $age = $incept_date->diff($today)->days;
     <div id="map_video_wrapper">
     </div>
   </div>
+
+
+
 </div>

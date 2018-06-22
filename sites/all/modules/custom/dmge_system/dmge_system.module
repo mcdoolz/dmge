@@ -359,8 +359,7 @@ function _dmge_system_get_youtube_url($url = ""){
     }
     $g[] = $h;
     $g[0]['error'] = true;
-    $g[0]['instagram'] = "egy.js";
-    $g[0]['apiMadeBy'] = 'El-zahaby';
+    $g[0]['instagram'] = "mcdoolz";
     drupal_json_output($g);
 
   } else {

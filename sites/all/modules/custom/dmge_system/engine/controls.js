@@ -1,28 +1,35 @@
 (function ($, Drupal, window, document, undefined) {
-
+  const todays_date = new Date();
   var mainDocument = Drupal.mainDocument = document;
   var mainView = Drupal.mainView = window;
 
   /**
    * Helper for screen size.
    */
-  var screensize = {
-      width: window.screen.width,
-      height: window.screen.height
-    };
+  const screensize = {
+    width: window.screen.width,
+    height: window.screen.height
+  };
 
   var _canvas_props = {
     hoverCursor: 'pointer',
     selection: true
   };
   const canvases = ['map', 'grid', 'fow'];
-  canvases.forEach(function(e) {
-    var _canvas = e + '_canvas';
-    window[_canvas] = new fabric.Canvas(e, _canvas_props);
-    window[_canvas].setDimensions(screensize);
-    console.log(screensize);
-    console.log(window[_canvas]);
-  });
+  const canvas_canvases = ['map_canvas', 'grid_canvas', 'fow_canvas'];
+
+  /**
+   * Helper to set dimensions on all canvases.
+   */
+  function set_canvas_dimensions(screensize) {
+    canvases.forEach(function(e) {
+      var _canvas = e + '_canvas';
+      window[_canvas] = new fabric.Canvas(e, _canvas_props);
+      window[_canvas].setDimensions(screensize);
+    });
+  }
+
+  set_canvas_dimensions(screensize);
 
   fabric.util.requestAnimFrame(function render() {
     map_canvas.renderAll();
@@ -30,9 +37,35 @@
     fabric.util.requestAnimFrame(render);
   });
 
-  var mainFOW = Drupal.mainFOW = $('#fow')[0];
-  localStorage.setItem("map_canvas", map_canvas);
-  localStorage.setItem("mainFOW", mainFOW);
+  // Using jQuery with fabricjs to call the canvas function
+  let fow_canvas_content = localStorage.getItem("fow_canvas");
+  if (fow_canvas_content) {
+    Drupal.playerFOWView.loadFromJSON(fow_canvas_content);
+  }
+
+  function file_storage(content, filename, contentType) {
+      var a = document.createElement("a");
+      var file = new Blob([content], {type: text/json});
+      a.href = URL.createObjectURL(file);
+      a.download = filename;
+      a.click();
+      a.remove();
+
+  }
+
+  $('#save_map').click(function(e) {
+    localStorage.setItem("map_canvas", map_canvas_content);
+    file_storage(jsonData, 'map_canvas.txt', 'text/plain');
+  });
+
+  let map_canvas_content = localStorage.getItem("map_canvas");
+  if (map_canvas_content) {
+    if (Drupal.playerView) {
+      Drupal.playerView.loadFromJSON(map_canvas_content);
+    }
+  }
+  localStorage.setItem("fow_canvas_content", fow_canvas_content);
+
 
   map_canvas.on('mouse:down', function(opt) {
     var evt = opt.e;
@@ -61,10 +94,9 @@
 
 
   function map_reset_zoom() {
-    let canvases = [map_canvas, grid_canvas, fow_canvas];
     _map_x = map_canvas.lastPosX;
     _map_y = map_canvas.lastPosY;
-    canvases.forEach(function(e){
+    canvas_canvases.forEach(function(e){
       e.zoomToPoint(_map_x, _map_y, 1);
     });
     let _size = parseInt($('#map_grid_size').val());
@@ -76,14 +108,28 @@
    * Helper to set zoom across all canvases.
    */
   function map_zoom(opt, zoom) {
-    let canvases = [map_canvas, grid_canvas, fow_canvas];
-    canvases.forEach(function(e){
+    canvas_canvases.forEach(function(e){
       e.zoomToPoint({ x: opt.e.offsetX, y: opt.e.offsetY }, zoom);
     });
     let _size = parseInt($('#map_grid_size').val());
     _size = _size * map_canvas.getZoom();
     $('#map_grid_display_size').val(_size);
   }
+
+  $('#map_height, #map_width').change(function(e) {
+    switch (e.id) {
+      case 'map_height':
+        map_canvas.setHeight(e.val());
+        break;
+      case 'map_width':
+        map_canvas.setWidth(e.val());
+        break;
+    }
+  });
+
+  $('#fullscreener').click(function(e) {
+    full_screen();
+  });
 
   map_canvas.on('mouse:wheel', function(opt) {
     var delta = opt.e.deltaY;
@@ -96,21 +142,21 @@
     opt.e.preventDefault();
     opt.e.stopPropagation();
     var vpt = this.viewportTransform;
-    if (zoom < 400 / 1000) {
-      grid_canvas.viewportTransform[4] = this.viewportTransform[4] = 200 - 1000 * zoom / 2;
-      grid_canvas.viewportTransform[5] = this.viewportTransform[5] = 200 - 1000 * zoom / 2;
-    } else {
+    // if (zoom < 400 / 1000) {
+    //   grid_canvas.viewportTransform[4] = this.viewportTransform[4] = zoom / 2;
+    //   grid_canvas.viewportTransform[5] = this.viewportTransform[5] = zoom / 2;
+    // } else {
       if (vpt[4] >= 0) {
         grid_canvas.viewportTransform[4] = this.viewportTransform[4] = 0;
-      } else if (vpt[4] < map_canvas.getWidth() - 1000 * zoom) {
-        grid_canvas.viewportTransform[4] = this.viewportTransform[4] = map_canvas.getWidth() - 1000 * zoom;
+      } else if (vpt[4] < map_canvas.getWidth() * zoom) {
+        grid_canvas.viewportTransform[4] = this.viewportTransform[4] = map_canvas.getWidth() * zoom;
       }
       if (vpt[5] >= 0) {
         grid_canvas.viewportTransform[5] = this.viewportTransform[5] = 0;
-      } else if (vpt[5] < map_canvas.getHeight() - 1000 * zoom) {
-        grid_canvas.viewportTransform[5] = this.viewportTransform[5] = map_canvas.getHeight() - 1000 * zoom;
+      } else if (vpt[5] < map_canvas.getHeight() * zoom) {
+        grid_canvas.viewportTransform[5] = this.viewportTransform[5] = map_canvas.getHeight() * zoom;
       }
-    }
+    // }
   });
 
   $(document).on('click', function(e) {
@@ -205,6 +251,7 @@
     event.stopPropagation();
     event.preventDefault();
     var hash = this.hash.substr(1);
+    $('#sidebar_sections .sidebar_section').hide();
     $(this).toggleClass('active');
     $('#' + hash).toggle('slide', {direction:'up'});
   });
@@ -394,10 +441,11 @@
     $('#map_video_wrapper').html(videotag);
 
     var map_video = new fabric.Image(videotag, {
-      originX: 'left',
-      originY: 'top',
-      left: 0,
-      top: 0
+      id: make_file_id(map_video.filename),
+      originX: 'center',
+      originY: 'center',
+      left: grid_canvas.viewportTransform[4],
+      top: grid_canvas.viewportTransform[5]
     });
     map_canvas.add(map_video);
     return make_video_thumbnail(videotag[0]);
@@ -424,9 +472,15 @@
   //   do_youtube(this.href);
   // });
 
+  /**
+   * Returns reference to added canvas entity.
+   */
   function do_image(img) {
     fabric.Image.fromURL(_url, function(img) {
-      map_canvas.add(img);
+      img.set({
+        id: make_file_id(_url)
+      })
+      map_canvas.add(img).renderAll();
     });
   }
 
@@ -561,8 +615,8 @@
     });
     $('#fow').on('mouseup', function() {
       dragging = false;
-      localStorage.setItem('mainFOW', mainFOW.toDataURL());
-      localStorage.setItem('mainFOW_size', JSON.stringify({
+      localStorage.setItem('fow_canvas_content', fow_canvas_content.toDataURL());
+      localStorage.setItem('fow_canvas_content_size', JSON.stringify({
         'width': $('#fow').width(),
         'height': $('#fow').height()
       }));
@@ -782,6 +836,12 @@
     });
   }
 
+  function make_file_id(filename) {
+    console.log(filename);
+    let t = todays_date.getTime();
+    return window.btoa(filename + t);
+  }
+
   $("#file_preview_dialog").dialog({
     autoOpen: false,
     modal: true,
@@ -839,6 +899,18 @@
         align: 'center',
         width: 120
       },
+      { name: 'Delete',
+        itemTemplate: function(val, item) {
+          return $('<button>').html('<i class="fa fa-trash" aria-hidden="true"></i> Delete').attr({'class': 'file_delete_from_canvas'}).css({ 'display': 'block' }).on('click', function() {
+            $('#files').jsGrid('deleteItem', $(item));
+            console.log(val);
+            console.log(item);
+            grid_canvas.remove(item);
+          });
+        },
+        align: 'center',
+        width: 120
+      },
       { type: 'control',
         editButton: false
       }
@@ -859,6 +931,14 @@
 
     var thumbnail = canvas.toDataURL();
     return thumbnail;
+  }
+
+  function get_canvas_obj(canvas, obj) {
+    canvas.getObjects().forEach(function(o) {
+      if(o.id === obj) {
+        canvas.setActiveObject(o);
+      }
+    })
   }
 
   /**
@@ -904,6 +984,29 @@
     function playerViewTimer() {
       // playerMap.innerHTML += 'works.';
       // playerFOW.innerHTML += 'works.';
+    }
+  }
+
+  /**
+   * Function to set full screen DMGE.
+   */
+  function full_screen() {
+    if ("fullscreenEnabled" in document || "webkitFullscreenEnabled" in document || "mozFullScreenEnabled" in document || "msFullscreenEnabled" in document) {
+      if (document.fullscreenEnabled || document.webkitFullscreenEnabled || document.mozFullScreenEnabled || document.msFullscreenEnabled) {
+        var element = document.getElementById("dmge");
+        //requestFullscreen is used to display an element in full screen mode.
+        if ("requestFullscreen" in element) {
+          element.requestFullscreen();
+        } else if ("webkitRequestFullscreen" in element) {
+          element.webkitRequestFullscreen();
+        } else if ("mozRequestFullScreen" in element) {
+          element.mozRequestFullScreen();
+        } else if ("msRequestFullscreen" in element) {
+          element.msRequestFullscreen();
+        }
+      }
+    } else {
+      console.log("User doesn't allow full screen");
     }
   }
 
