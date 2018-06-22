@@ -3,17 +3,25 @@
   var mainDocument = Drupal.mainDocument = document;
   var mainView = Drupal.mainView = window;
 
-  var grid_canvas = Drupal.grid = new fabric.Canvas('grid', {
+  /**
+   * Helper for screen size.
+   */
+  var screensize = {
+      width: window.screen.width,
+      height: window.screen.height
+    };
+
+  var _canvas_props = {
     hoverCursor: 'pointer',
     selection: true
-  });
-  var map_canvas = Drupal.__map = new fabric.Canvas('map', {
-    hoverCursor: 'pointer',
-    selection: true
-  });
-  var fow_canvas = Drupal.fow = new fabric.Canvas('fow', {
-    hoverCursor: 'pointer',
-    selection: true
+  };
+  const canvases = ['map', 'grid', 'fow'];
+  canvases.forEach(function(e) {
+    var _canvas = e + '_canvas';
+    window[_canvas] = new fabric.Canvas(e, _canvas_props);
+    window[_canvas].setDimensions(screensize);
+    console.log(screensize);
+    console.log(window[_canvas]);
   });
 
   fabric.util.requestAnimFrame(function render() {
@@ -352,14 +360,15 @@
    */
   function do_youtube(_url) {
     let yttag = $('<video />', {
-        class: 'yt_video',
-        src: _url,
-        type: 'video/mp4',
-        control: false,
-        autoplay: true,
-        loop: true
-      });
-    }
+      class: 'yt_video',
+      src: _url,
+      type: 'video/mp4',
+      control: false,
+      autoplay: true,
+      loop: true,
+      muted: true,
+    });
+
     $('#map_video_wrapper').html(yttag);
     let ytvideo = new fabric.Image(yttag, {
       left: 0,
@@ -368,17 +377,19 @@
       originY: 'center'
     });
     map_canvas.add(ytvideo);
-    return make_video_thumbnail(_url);
+    return make_video_thumbnail(yttag[0]);
   }
 
   function do_video(_url, ext) {
     let videotag = $('<video />', {
-      class: 'map_video',
-      src: _url,
       type: 'video/' + ext,
+      class: 'map_video',
       control: false,
       autoplay: true,
-      loop: true
+      loop: true,
+      src: _url,
+      muted: true,
+      muted: 'muted'
     });
     $('#map_video_wrapper').html(videotag);
 
@@ -389,7 +400,7 @@
       top: 0
     });
     map_canvas.add(map_video);
-    return make_video_thumbnail(_url);
+    return make_video_thumbnail(videotag[0]);
   }
 
   /**
@@ -401,7 +412,6 @@
     $.get('/engine/youtube?url=' + $('#map_embed').val(), null, function(response) {
       if (response[0]) {
         if (response[0].url) {
-          console.log(response[0].url);
           do_youtube(response[0].url);
         }
       }
@@ -414,58 +424,19 @@
   //   do_youtube(this.href);
   // });
 
-function do_image(img) {
-  fabric.Image.fromURL(_url, function(img) {
-    map_canvas.add(img);
+  function do_image(img) {
+    fabric.Image.fromURL(_url, function(img) {
+      map_canvas.add(img);
+    });
+  }
+
+  $('#map_reset_zoom').click(function() {
+    map_reset_zoom();
   });
-}
 
-$('#map_reset_zoom').click(function() {
-  map_reset_zoom();
-});
-
-$('#map_clear').click(function() {
-  map_canvas.clear();
-  fow_canvas.clear();
-});
-
-  /**
-  * When a file is selected, we check it and add the appropriate tag to the map wrapper.
-  */
-  $('#map_filename').change(function() {
-    var _file = this.files[0];
-    _url = window.URL.createObjectURL(_file);
-    ext = getExtension(_file.name);
-
-    switch (ext) {
-      case 'pdf':
-        do_pdf(_url);
-        break;
-
-      case 'jpg':
-      case 'jpeg':
-      case 'gif':
-      case 'bmp':
-      case 'png':
-        do_video();
-        do_image(_url, ext);
-        break;
-
-      case 'm4v':
-        ext = 'x-m4v'
-        do_video(_url, ext);
-      case 'mpg':
-      case 'mp4':
-        do_video(_url, ext);
-        break;
-
-    default:
-     items = ['You look great, by the way :)', 'You look very nice today.  I hope you\'re well.', 'That tickled.', 'I wish all my friends looked as good as you :)'];
-     var item = items[Math.floor(Math.random()*items.length)];
-     alert('Sorry, I don\'t know what you are trying to load.\n\n' + item);
-     break;
-    }
-
+  $('#map_clear').click(function() {
+    map_canvas.clear();
+    fow_canvas.clear();
   });
 
   /**
@@ -530,6 +501,25 @@ $('#map_clear').click(function() {
       let ext = parts[parts.length - 1]
       ext = ext.toLowerCase();
       return ext;
+  }
+
+  /**
+   * Make a polygon.
+   * Stolen from https://stackoverflow.com/questions/29319677/fabric-js-geometric-shapes
+   */
+  function regularPolygonPoints(sideCount,radius){
+    var sweep = (Math.PI * 2) / sideCount;
+    var cx = radius;
+    var cy = radius;
+    var points = [];
+    for(var i=0; i < sideCount; i++){
+      var x = cx + radius * Math.cos(i * sweep);
+      var y = cy + radius * Math.sin(i * sweep);
+      points.push({
+        x:x, y:y
+      });
+    }
+    return(points);
   }
 
   $(".inputValue").change(function(event) {
@@ -609,8 +599,6 @@ $('#map_clear').click(function() {
 
     var __map = $('#map_wrapper');
     var __grid_wrapper = $('#grid_wrapper');
-    var _mWidth = __map.width();
-    var _mHeight = __map.height();
 
     // $('#grid_settings').addClass('loading');
     console.time();
@@ -627,8 +615,8 @@ $('#map_clear').click(function() {
         var _size = parseInt($('#map_grid_size').val());
       }
 
-      var _width = _mWidth;
-      var _height = _mHeight;
+      var _width = screensize.width;
+      var _height = screensize.height;
 
       var _rows = (_height / _size);
       var _cols = (_width / _size);
@@ -648,81 +636,87 @@ $('#map_clear').click(function() {
       _rows = (_height / _size);
       _cols = (_width / _size);
 
-    if (_type === 'H_Hex' || _type === 'V_Hex') {
-      corners = Hex().corners();
-      hexSymbol = draw.symbol()
-        .polygon(corners.map(({ x, y }) => `${x}, ${y}`))
-        .fill('none')
-        .stroke({ width: 1, color: 'white' });
+      const __grid = Grid.rectangle({width: _cols, height: _rows});
 
-      const __grid = Grid.rectangle({ width: _cols*0.66, height: _rows*0.66 });
+      if (_type === 'H_Hex' || _type === 'V_Hex') {
+        var _points = regularPolygonPoints(6, _size);
+        var corners = Hex().corners();
 
-      __grid.forEach(hex => {
-        const {x, y} = hex.toPoint();
+        grid_canvas.clear();
+        __grid.forEach(hex => {
 
-        draw.use(hexSymbol).translate(x, y).click(function(e) {
+          const {x, y} = hex.toPoint();
+          var _corners = corners.map(({x, y}) => `${x}, ${y}`);
+
+          let _props = {
+            angle: 0,
+            left: x,
+            top: y,
+            width: _size,
+            height: _size,
+            stroke: 'white',
+            strokeWidth: 1,
+            fill: '',
+            originX: 'center',
+            originY: 'center',
+            centeredRotation: true,
+            selectable: false,
+            objectCaching: false
+          };
+
+          let hexSymbol = new fabric.Polygon(corners, _props, false);
+
+          grid_canvas.add(hexSymbol);
+
+        });
+
+      }
+
+      if (_type === 'Quad') {
+        const __grid = Grid.rectangle({ width: _cols, height: _rows });
+        grid_canvas.clear();
+
+        __grid.forEach(hex => {
+
+          let _props = {
+            left: hex.x*_size,
+            top: hex.y*_size,
+            width: _size,
+            height: _size,
+            stroke: 'white',
+            strokeWidth: 1,
+            fill: '',
+            originX: 'center',
+            originY: 'center',
+            centeredRotation: true,
+            selectable: false,
+            objectCaching: false
+          };
+
+          let quadSymbol = new fabric.Rect(_props);
+
+          grid_canvas.add(quadSymbol);
+
+        });
+        grid_canvas.renderAll();
+        grid_canvas.on('mouse:down', function(e) {
           if (!$('#grid_wrapper').is('.grid_marking')) {
             return;
           }
-          draw.polygon(corners.map(({x, y}) => `${x},${y}`))
-          .translate(x, y)
-          .stroke({ width: 1, color: 'white' })
-          .fill(getRandomColor())
-          .attr('class', 'map_token map_mark')
-          .click(function(e) {
-            $(e.target).remove();
-          });
+          _props.left = e.target.left;
+          _props.top = e.target.top;
+          _props.fill = getRandomColor();
+          let highlightSymbol = new fabric.Rect(_props);
+          highlightSymbol.on('selected', function(e) {
+            console.log(e);
+            grid_canvas.remove(e);
+          })
+          grid_canvas.add(highlightSymbol);
         });
-
-      });
-
-    }
-
-    if (_type === 'Quad') {
-      const __grid = Grid.rectangle({ width: _cols, height: _rows });
+      }
+    } else {
       grid_canvas.clear();
-
-      __grid.forEach(hex => {
-
-        let _props = {
-          left: hex.x*_size,
-          top: hex.y*_size,
-          width: _size,
-          height: _size,
-          stroke: 'white',
-          strokeWidth: 1,
-          fill: '',
-          originX: 'left',
-          originY: 'top',
-          centeredRotation: true,
-          selectable: false,
-          objectCaching: false
-        };
-
-        let quadSymbol = new fabric.Rect(_props);
-
-        grid_canvas.add(quadSymbol);
-
-      });
-      grid_canvas.renderAll();
-      grid_canvas.on('mouse:down', function(e) {
-        if (!$('#grid_wrapper').is('.grid_marking')) {
-          return;
-        }
-        _props.left = e.target.left;
-        _props.top = e.target.top;
-        _props.fill = getRandomColor();
-        let highlightSymbol = new fabric.Rect(_props);
-        highlightSymbol.on('selected', function(e) {
-          console.log(e);
-          grid_canvas.remove(e);
-        })
-        grid_canvas.add(highlightSymbol);
-      });
     }
-  } else {
-    grid_canvas.clear();
-  }
     console.timeEnd();
   }
 
@@ -749,7 +743,8 @@ $('#map_clear').click(function() {
       _file = this;
       _url = window.URL.createObjectURL(_file);
       _thumbnail = _url;
-      ext = getExtension(_url);
+      _type = 'Static';
+      ext = getExtension(_file.name);
 
       switch (ext) {
         case 'pdf':
@@ -766,9 +761,11 @@ $('#map_clear').click(function() {
 
         case 'm4v':
           ext = 'x-m4v'
+          _type = 'Animated';
           _thumbnail = do_video(_url, ext);
         case 'mpg':
         case 'mp4':
+          _type = 'Animated';
           _thumbnail = do_video(_url, ext);
           break;
 
@@ -779,7 +776,7 @@ $('#map_clear').click(function() {
        break;
       }
 
-      $("#files").jsGrid("insertItem", { 'Filename': _file.name, 'Title': _url, 'Type': 'Animated', 'Thumbnail': _thumbnail }).done(function() {
+      $("#files").jsGrid("insertItem", { 'Filename': _file.name, 'Title': _url, 'Type': _type, 'Thumbnail': _thumbnail }).done(function() {
         $(this).stop().css("background-color", "green").animate({ backgroundColor: "none"}, 500);
       });
     });
@@ -848,14 +845,20 @@ $('#map_clear').click(function() {
     ]
   });
 
-  function make_video_thumbnail(_url) {
-    var __video  = document.getElementById(_url);
-    var __canvas = document.createElement('canvas');
-    __canvas.width  = __video.videoWidth;
-    __canvas.height = __video.videoHeight;
-    var __ctx = __canvas.getContext('2d');
-    __ctx.drawImage(__video, 0, 0);
-    return __canvas.toDataURL('image/jpeg');
+  function make_video_thumbnail(video) {
+    var canvas = document.createElement('canvas');
+    var _canvas = $(canvas);
+    var _video = $(video);
+    // canvas.width = _video[0].videoWidth;
+    // canvas.height = _video[0].videoHeight;
+    canvas.width = 1920;
+    canvas.height = 1080;
+
+    var ctx = canvas.getContext('2d')
+                    .drawImage(video, 0, 0, canvas.width, canvas.height);
+
+    var thumbnail = canvas.toDataURL();
+    return thumbnail;
   }
 
   /**

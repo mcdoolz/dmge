@@ -40,7 +40,7 @@ $age = $incept_date->diff($today)->days;
     <div id="sidebar_innerwrapper">
       <div id="menu">
         <ul>
-          <li><a href="#map_settings" title="Map"><i class="fas fa-map"></i></a></li>
+          <!-- <li><a href="#map_settings" title="Map"><i class="fas fa-map"></i></a></li> -->
           <li><a href="#files_settings" title="Files"><i class="fas fa-file"></i></a></li>
           <li><a href="#fow_settings" title="Fog of War"><i class="fas fa-eye"></i></a></li>
           <li><a href="#grid_settings" title="Grid"><i class="fas fa-th"></i></a></li>
@@ -69,9 +69,12 @@ $age = $incept_date->diff($today)->days;
             </select>
             <input id="file_bulkop" type="button" value="Do Bulk Op" />
           </form>
+          <label for="map_embed">Paste the URL to a Video</label>
+          <form><input type="text" id="map_embed"><input type="submit" id="map_embed_submit"></form>
+          <p><sup>Currently recognizes YouTube videos only.</sup></p>
         </div>
       </div>
-        <div id="map_settings">
+        <!-- <div id="map_settings">
           <div class="map_property">
             <div class="map_source_type">
               <label for="map_embed_option">Online Video</label>
@@ -95,7 +98,7 @@ $age = $incept_date->diff($today)->days;
                 jpg, gif, png, bmp, pdf, m4v, mp4, mpg :: Email for more formats.</sup></p>
             </div>
           </div>
-        </div>
+        </div> -->
         <div id="fow_settings">
           <h3>Fog of War Settings</h3>
           <div class="fow_brush_property">
@@ -193,7 +196,7 @@ $age = $incept_date->diff($today)->days;
           <div class="sidebar_tray_category" id="map_tray">
             <div class="sidebar_tray_section" id="map_tray_zoom">
               <button id="map_reset_zoom" class="sidebar_tray_button"><i class="fas fa-bullseye"></i> Reset Zoom</button>
-              <button id="map_clear" class="sidebar_tray_button"><i class="fas fa-broom"></i> Clear Map</button>
+              <button id="map_clear" class="sidebar_tray_button"><i class="fas fa-eraser"></i> Clear Map</button>
               <button id="player_view_open" class="sidebar_tray_button"><i class="fas fa-chess-knight"></i> Open Player View</button>
             </div>
           </div>
