@@ -336,10 +336,25 @@ output {
 #sidebar_tray {
   position: fixed;
   bottom: 0;
-  text-align: left;
+  text-align: center;
+}
+/* line 205, ../sass/screen.sass */
+#sidebar_tray button, #sidebar_tray input[type="button"] {
+  display: inline-block;
+}
+/* line 207, ../sass/screen.sass */
+#sidebar_tray button, #sidebar_tray button:visited, #sidebar_tray input[type="button"], #sidebar_tray input[type="button"]:visited {
+  background: white;
+  border: none;
+  padding: 20px;
+}
+/* line 211, ../sass/screen.sass */
+#sidebar_tray button:hover, #sidebar_tray button:active, #sidebar_tray input[type="button"]:hover, #sidebar_tray input[type="button"]:active {
+  background: black;
+  color: white;
 }
 
-/* line 205, ../sass/screen.sass */
+/* line 215, ../sass/screen.sass */
 .css-triangle {
   display: block;
   float: left;

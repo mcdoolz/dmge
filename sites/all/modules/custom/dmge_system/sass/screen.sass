@@ -199,8 +199,18 @@ output
 
 #sidebar_tray
   position: fixed
+
   bottom: 0
-  text-align: left
+  text-align: center
+  button, input[type="button"]
+    display: inline-block
+    &, &:visited
+      background: white
+      border: none
+      padding: 20px
+    &:hover, &:active
+      background: black
+      color: white
 
 .css-triangle
   display: block
