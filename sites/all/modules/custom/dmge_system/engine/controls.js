@@ -478,7 +478,7 @@
   /**
    * Returns reference to added canvas entity.
    */
-  function do_image(img) {
+  function do_image(_url) {
     fabric.Image.fromURL(_url, function(img) {
       img.set({
         id: make_file_id(_url)
@@ -793,7 +793,7 @@
     loadFile($(this));
   })
 
-  function loadFile(file){
+  function loadFile(file) {
     var files = file.prop("files")
     $.each(files, function () {
       let _file = this;
@@ -914,8 +914,15 @@
       },
       { name: 'Add',
         itemTemplate: function(val, item) {
-          return $('<button>').html('<i class="fa fa-puzzle-piece" aria-hidden="true"></i> Add').attr({'class': 'file_add_to_canvas'}).css({ 'display': 'block' }).on('click', function() {
-            do_image(val);
+          return $('<button>').html('<i class="fa fa-puzzle-piece" aria-hidden="true"></i> Add').attr({'class': 'file_add_to_canvas'}).css({ 'display': 'block' }).on('click', function(e) {
+            switch(item.Type) {
+              case 'Animated' :
+                do_video(val);
+              break;
+              case 'Static' :
+                do_image(val);
+              break;
+            }
           });
         },
         align: 'center',
