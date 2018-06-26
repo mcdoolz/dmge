@@ -7,37 +7,40 @@ $today = new \DateTime;
 $age = $incept_date->diff($today)->days;
 ?>
 <div id="dmge">
-<div id="about" class="dialog" title="How to use the DMGE">
-  <h4>How to Use</h4>
-  <ol>
-    <li>Click Choose File and select an image or video to use as a map, or select Online Video and paste the URL of a YouTube video.</li>
-    <li>Click and drag the corner of the map to scale it to your liking.  Zoom out using your browsers control if you need more space.</li>
-    <li>If the Fog of War is enabled, left click drag to remove the fog, hold shift to repaint it.  Use the slider to change the opacity.</li>
-  </ol>
-  <h4>Tips &amp; Tricks</h4>
-  <ol>
-    <li>Press Ctrl-Z to reposition the grid.  Shift-Z clears dragging mode.</li>
-    <li>Press Ctrl-X to mark the grid before scrolling it, so you can track where your miniatures were.  Shift-X clears marking mode.</li>
-    <li>Press Backspace to clear marking or dragging mode.</li>
-    <li>Press Ctrl-Backspace to clear all marks.</li>
-    <li>Zoom out and in by holding Ctrl and rolling your scroll wheel.  You can scale your map larger then the available space this way.</li>
-    <li>If you lose the ability to interact with the board in some way, click the wrench and your mouse should start reacting.</li>
-  </ol>
-  <p>Crafted with <i class="fa fa-heart"></i> by Dooley P.<br>
-  This is Alphaware (<?php print $age;?> days old).<br>
-  Report problems to <a href="mailto:icanfly@digitalforge.ca">icanfly@digitalforge.ca</a><br>
-  Code was lifted from various sources, or written personally.</p>
-</div>
-<div id="file_preview_dialog" title="Preview">
-  <img id="file_preview" />
-  <button id="file_dialog_add_to_canvas" class="file_add_to_canvas" type="button">
-    <i class="fa fa-puzzle-piece" aria-hidden="true"></i> Add
-  </button>
-</div>
+  <div id="about" class="dialog" title="How to use the DMGE">
+    <h4>How to Use</h4>
+    <ol>
+      <li>Click Choose File and select an image or video to use as a map, or select Online Video and paste the URL of a YouTube video.</li>
+      <li>Click and drag the corner of the map to scale it to your liking.  Zoom out using your browsers control if you need more space.</li>
+      <li>If the Fog of War is enabled, left click drag to remove the fog, hold shift to repaint it.  Use the slider to change the opacity.</li>
+    </ol>
+    <h4>Tips &amp; Tricks</h4>
+    <ol>
+      <li>Press Ctrl-Z to reposition the grid.  Shift-Z clears dragging mode.</li>
+      <li>Press Ctrl-X to mark the grid before scrolling it, so you can track where your miniatures were.  Shift-X clears marking mode.</li>
+      <li>Press Backspace to clear marking or dragging mode.</li>
+      <li>Press Ctrl-Backspace to clear all marks.</li>
+      <li>Zoom out and in by holding Ctrl and rolling your scroll wheel.  You can scale your map larger then the available space this way.</li>
+      <li>If you lose the ability to interact with the board in some way, click the wrench and your mouse should start reacting.</li>
+    </ol>
+    <p>Crafted with <i class="fa fa-heart"></i> by Dooley P.<br>
+    This is Alphaware (<?php print $age;?> days old).<br>
+    Report problems to <a href="mailto:icanfly@digitalforge.ca">icanfly@digitalforge.ca</a><br>
+    Code was lifted from various sources, or written personally.</p>
+  </div>
+
+  <div id="file_preview_dialog" title="Preview">
+    <img id="file_preview" />
+    <button id="file_dialog_add_to_canvas" class="file_add_to_canvas" type="button">
+      <i class="fa fa-puzzle-piece" aria-hidden="true"></i> Add
+    </button>
+  </div>
 
   <div id="wrench"><div id="wrench_innerwrapper"><i class="fa fa-wrench"></i></div></div>
+
   <div id="sidebar">
     <div id="sidebar_innerwrapper">
+
       <div id="menu">
         <ul>
           <li><a href="#map_settings" title="Map"><i class="fas fa-map"></i></a></li>
@@ -82,15 +85,18 @@ $age = $incept_date->diff($today)->days;
           <div class="map_setting">
             <h3>Map Settings</h3>
             <label for="map_name">Map Name</label>
-            <input type="text" id="map_name" placeholder="Untitled" />
+            <input type="text" id="map_name" placeholder="Untitled" class="ui-corner-all" />
           </div>
           <div class="map_setting">
             <h4>Map Size</h4>
             <p>Defaults to your screen resolution.<br />Press F11 for Full Screen.</p>
             <label for="map_width">Width</label>
-            <input type="number" id="map_width" />
+            <input type="number" id="map_width" class="ui-corner-all" />
             <label for="map_height">Height</label>
-            <input type="number" id="map_height" />
+            <input type="number" id="map_height" class="ui-corner-all" />
+            <br />
+            <button id="map_dim_submit" class="ui-button ui-widget ui-corner-all">Set Map Dimensions</button>
+
           </div>
         </div>
 
@@ -201,27 +207,30 @@ $age = $incept_date->diff($today)->days;
 
       </div>
 
-        <div id="sidebar_tray">
-          <button id="save_map"class="sidebar_tray_button"><i class="fas fa-save"></i> Save</button>
-          <button id="fullscreener" class="sidebar_tray_button"><i class="fas fa-desktop"></i> Fullscreen</button>
-          <button id="map_reset_zoom" class="sidebar_tray_button"><i class="fas fa-bullseye"></i> Reset Zoom</button>
-          <button id="map_clear" class="sidebar_tray_button"><i class="fas fa-eraser"></i> Clear Map</button>
-          <button id="player_view_open" class="sidebar_tray_button"><i class="fas fa-chess-knight"></i> Player View</button>
-        </div>
+      <div id="sidebar_tray">
+        <button id="save_map"class="sidebar_tray_button"><i class="fas fa-save"></i> Save</button>
+        <button id="fullscreener" class="sidebar_tray_button"><i class="fas fa-desktop"></i> Fullscreen</button>
+        <button id="map_reset_zoom" class="sidebar_tray_button"><i class="fas fa-bullseye"></i> Reset Zoom</button>
+        <button id="map_clear" class="sidebar_tray_button"><i class="fas fa-eraser"></i> Clear Map</button>
+        <button id="player_view_open" class="sidebar_tray_button"><i class="fas fa-chess-knight"></i> Player View</button>
+      </div>
+
     </div>
-  </div>
-  <div id="grid_wrapper">
-    <canvas width="1280" height="720" id="grid" class="grid_canvas"></canvas>
-  </div>
-  <div id="fow_wrapper">
-    <canvas width="1280" height="720" id="fow" class="fow_canvas"></canvas>
-  </div>
-  <div id="map_wrapper">
-    <canvas width="1280" height="720" id="map" class="map_canvas"></canvas>
-    <div id="map_video_wrapper">
-    </div>
+
   </div>
 
-
+  <div id="canvases_wrapper">
+    <div id="grid_wrapper">
+      <canvas id="grid" class="grid_canvas"></canvas>
+    </div>
+    <div id="fow_wrapper">
+      <canvas id="fow" class="fow_canvas"></canvas>
+    </div>
+    <div id="map_wrapper">
+      <canvas id="map" class="map_canvas"></canvas>
+      <div id="map_video_wrapper">
+      </div>
+    </div>
+  </div>
 
 </div>

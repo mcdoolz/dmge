@@ -20,6 +20,7 @@ $g: 20px
     pointer-events: none
 
 body
+  overflow: hidden
   &, &.admin-menu
     margin: 0 !important
     padding: 0
@@ -52,16 +53,16 @@ ol
   opacity: 0.5
 
 video
-  display: none
+  // display: none
 
 #dmge
+  #canvases_wrapper
+    // overflow: hidden
   canvas
     position: absolute
     top: 0px
     left: 0px
     z-index: 100
-    width: auto !important
-    height: auto !important
     &.grid_canvas
       z-index: 500
     &.fow_canvas
@@ -103,7 +104,7 @@ video
     object-fit: fill
 
 #map_video_wrapper
-  display: none
+  // display: none
 
 .map_grid_type, .map_grid_property, .fow_brush_property
   position: relative

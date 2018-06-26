@@ -4,6 +4,21 @@
   var mainView = Drupal.mainView = window;
 
   /**
+   * Hash code helper.
+   * https://stackoverflow.com/a/7616484/4942292
+   */
+  String.prototype.hashCode = function() {
+    var hash = 0, i, chr;
+    if (this.length === 0) return hash;
+    for (i = 0; i < this.length; i++) {
+      chr   = this.charCodeAt(i);
+      hash  = ((hash << 5) - hash) + chr;
+      hash |= 0; // Convert to 32bit integer
+    }
+    return hash;
+  };
+
+  /**
    * Helper for screen size.
    */
   const screensize = {
@@ -12,8 +27,11 @@
   };
 
   var _canvas_props = {
+    renderOnAddRemove: false,
     hoverCursor: 'pointer',
-    selection: true
+    skipTargetFind: false,
+    skipOffscreen: false,
+    selection: false
   };
   const canvases = ['map', 'grid', 'fow'];
   const canvas_canvases = ['map_canvas', 'grid_canvas', 'fow_canvas'];
@@ -21,19 +39,33 @@
   /**
    * Helper to set dimensions on all canvases.
    */
-  function set_canvas_dimensions(screensize) {
+  function set_canvas_dimensions(_screensize) {
+    if (!_screensize) {
+      let _screensize = screensize;
+    }
     canvases.forEach(function(e) {
-      var _canvas = e + '_canvas';
-      window[_canvas] = new fabric.Canvas(e, _canvas_props);
-      window[_canvas].setDimensions(screensize);
+      let _canvas = e + '_canvas';
+      if (!window[_canvas]) {
+        window[_canvas] = new fabric.Canvas(e, _canvas_props);
+        map_canvas.selection = true;
+        map_canvas.skipTargetFind = false;
+      }
+      window[_canvas].setWidth(screensize.width);
+      window[_canvas].setHeight(screensize.height);
     });
   }
 
   set_canvas_dimensions(screensize);
 
+  function update_canvases() {
+    canvases.forEach(function(e) {
+      let _canvas = e + '_canvas';
+      window[_canvas].renderAll();
+    });
+  }
+
   fabric.util.requestAnimFrame(function render() {
     map_canvas.renderAll();
-    grid_canvas.renderAll();
     fabric.util.requestAnimFrame(render);
   });
 
@@ -43,14 +75,16 @@
     Drupal.playerFOWView.loadFromJSON(fow_canvas_content);
   }
 
+  /**
+   * Helper assigns json to txt and link, then clicks for download.
+   */
   function file_storage(content, filename, contentType) {
-      var a = document.createElement("a");
-      var file = new Blob([content], {type: text/json});
-      a.href = URL.createObjectURL(file);
-      a.download = filename;
-      a.click();
-      a.remove();
-
+    var a = document.createElement("a");
+    var file = new Blob([content], {type: text/json});
+    a.href = URL.createObjectURL(file);
+    a.download = filename;
+    a.click();
+    a.remove();
   }
 
   $('#save_map').click(function(e) {
@@ -67,97 +101,82 @@
   localStorage.setItem("fow_canvas_content", fow_canvas_content);
 
 
-  map_canvas.on('mouse:down', function(opt) {
-    var evt = opt.e;
-    if (evt.altKey === true) {
-      this.isDragging = true;
-      this.selection = false;
-      grid_canvas.lastPosX = this.lastPosX = evt.clientX;
-      grid_canvas.lastPosY = this.lastPosY = evt.clientY;
-    }
-  });
-  map_canvas.on('mouse:move', function(opt) {
-    if (this.isDragging) {
-      var e = opt.e;
-      grid_canvas.viewportTransform[4] = this.viewportTransform[4] += e.clientX - this.lastPosX;
-      grid_canvas.viewportTransform[5] = this.viewportTransform[5] += e.clientY - this.lastPosY;
-      this.requestRenderAll();
-      grid_canvas.requestRenderAll();
-      grid_canvas.lastPosX = this.lastPosX = e.clientX;
-      grid_canvas.lastPosY = this.lastPosY = e.clientY;
-    }
-  });
-  map_canvas.on('mouse:up', function(opt) {
-    this.isDragging = false;
-    this.selection = true;
+  var clicked = false, clickY, clickX;
+  $(document).on({
+      'mousemove': function(e) {
+        clicked && updateScrollPos(e);
+      },
+      'mousedown': function(e) {
+        if (e.altKey === true) {
+          clicked = true;
+          clickY = e.pageY;
+          clickX = e.pageX;
+        }
+      },
+      'mouseup': function() {
+        clicked = false;
+        $('html').css('cursor', 'auto');
+      }
   });
 
-
-  function map_reset_zoom() {
-    _map_x = map_canvas.lastPosX;
-    _map_y = map_canvas.lastPosY;
-    canvas_canvases.forEach(function(e){
-      e.zoomToPoint(_map_x, _map_y, 1);
-    });
-    let _size = parseInt($('#map_grid_size').val());
-    _size = _size * map_canvas.getZoom();
-    $('#map_grid_display_size').val(_size);
+  var updateScrollPos = function(e) {
+    $('html').css('cursor', 'nwse-resize');
+    $(window).scrollTop($(window).scrollTop() + (clickY - e.pageY));
+    $(window).scrollLeft($(window).scrollLeft() + (clickX - e.pageX));
   }
 
   /**
    * Helper to set zoom across all canvases.
    */
   function map_zoom(opt, zoom) {
-    canvas_canvases.forEach(function(e){
-      e.zoomToPoint({ x: opt.e.offsetX, y: opt.e.offsetY }, zoom);
+    let _x = opt.e.offsetX;
+    let _y = opt.e.offsetY;
+    canvases.forEach(function(e) {
+      _e = eval(e + "_canvas");
+      _e.zoomToPoint({ x: _x, y: _y }, zoom);
     });
     let _size = parseInt($('#map_grid_size').val());
     _size = _size * map_canvas.getZoom();
     $('#map_grid_display_size').val(_size);
+    update_canvases();
   }
 
-  $('#map_height, #map_width').change(function(e) {
-    switch (e.id) {
-      case 'map_height':
-        map_canvas.setHeight(e.val());
-        break;
-      case 'map_width':
-        map_canvas.setWidth(e.val());
-        break;
-    }
+  $('#map_dim_submit').click(function(e) {
+    let _screensize = {
+      width: $('#map_width').val(),
+      height: $('#map_height').val()
+    };
+    set_grid();
+    set_canvas_dimensions(_screensize);
   });
 
   $('#fullscreener').click(function(e) {
     full_screen();
   });
 
-  map_canvas.on('mouse:wheel', function(opt) {
-    var delta = opt.e.deltaY;
-    var zoom = map_canvas.getZoom();
-    zoom = zoom + delta/200;
-    if (zoom > 10) {zoom = 10;}
-    if (zoom < 1) {zoom = 1;}
-    map_zoom(opt, zoom);
-
-    opt.e.preventDefault();
-    opt.e.stopPropagation();
-    var vpt = this.viewportTransform;
-    // if (zoom < 400 / 1000) {
-    //   grid_canvas.viewportTransform[4] = this.viewportTransform[4] = zoom / 2;
-    //   grid_canvas.viewportTransform[5] = this.viewportTransform[5] = zoom / 2;
-    // } else {
-      if (vpt[4] >= 0) {
-        grid_canvas.viewportTransform[4] = this.viewportTransform[4] = 0;
-      } else if (vpt[4] < map_canvas.getWidth() * zoom) {
-        grid_canvas.viewportTransform[4] = this.viewportTransform[4] = map_canvas.getWidth() * zoom;
-      }
-      if (vpt[5] >= 0) {
-        grid_canvas.viewportTransform[5] = this.viewportTransform[5] = 0;
-      } else if (vpt[5] < map_canvas.getHeight() * zoom) {
-        grid_canvas.viewportTransform[5] = this.viewportTransform[5] = map_canvas.getHeight() * zoom;
-      }
-    // }
-  });
+  // map_canvas.on('mouse:wheel', function(opt) {
+  //   var delta = opt.e.deltaY;
+  //   var zoom = map_canvas.getZoom();
+  //   zoom = zoom + delta/200;
+  //   if (zoom > 10) {zoom = 10;}
+  //   if (zoom < 1) {zoom = 1;}
+  //
+  //   map_zoom(opt, zoom);
+  //
+  //   opt.e.preventDefault();
+  //   opt.e.stopPropagation();
+  //   var vpt = this.viewportTransform;
+  //   if (vpt[4] >= 0) {
+  //     grid_canvas.viewportTransform[4] = this.viewportTransform[4] = 0;
+  //   } else if (vpt[4] < map_canvas.getWidth() * zoom) {
+  //     grid_canvas.viewportTransform[4] = this.viewportTransform[4] = map_canvas.getWidth() * zoom;
+  //   }
+  //   if (vpt[5] >= 0) {
+  //     grid_canvas.viewportTransform[5] = this.viewportTransform[5] = 0;
+  //   } else if (vpt[5] < map_canvas.getHeight() * zoom) {
+  //     grid_canvas.viewportTransform[5] = this.viewportTransform[5] = map_canvas.getHeight() * zoom;
+  //   }
+  // });
 
   $(document).on('click', function(e) {
     if ($(e.target).closest('#sidebar').length === 0) {
@@ -408,6 +427,7 @@
   function do_youtube(_url) {
     let yttag = $('<video />', {
       class: 'yt_video',
+      id: 'yt_video',
       src: _url,
       type: 'video/mp4',
       control: false,
@@ -415,40 +435,29 @@
       loop: true,
       muted: true,
     });
-
     $('#map_video_wrapper').html(yttag);
-    let ytvideo = new fabric.Image(yttag, {
+    let ytvideo = new fabric.Image(e[0], {
       left: 0,
       top: 0,
       originX: 'center',
       originY: 'center'
     });
     map_canvas.add(ytvideo);
-    return make_video_thumbnail(yttag[0]);
   }
 
-  function do_video(_url, ext) {
-    let videotag = $('<video />', {
-      type: 'video/' + ext,
+  function do_video(_file_id, _url, ext) {
+    let vtag = $('<video />', {
       class: 'map_video',
+      type: 'video/' + ext,
+      src: _url,
       control: false,
       autoplay: true,
-      loop: true,
-      src: _url,
       muted: true,
-      muted: 'muted'
+      loop: true,
+      id: _file_id
     });
-    $('#map_video_wrapper').html(videotag);
-
-    var map_video = new fabric.Image(videotag, {
-      id: make_file_id(map_video.filename),
-      originX: 'center',
-      originY: 'center',
-      left: grid_canvas.viewportTransform[4],
-      top: grid_canvas.viewportTransform[5]
-    });
-    map_canvas.add(map_video);
-    return make_video_thumbnail(videotag[0]);
+    $('#map_video_wrapper').append(vtag[0]);
+    return vtag;
   }
 
   /**
@@ -466,12 +475,6 @@
     });
   });
 
-  // $('.map_authors_maps a').on('touchend click', function(event){
-  //   event.stopPropagation();
-  //   event.preventDefault();
-  //   do_youtube(this.href);
-  // });
-
   /**
    * Returns reference to added canvas entity.
    */
@@ -480,7 +483,7 @@
       img.set({
         id: make_file_id(_url)
       })
-      map_canvas.add(img).renderAll();
+      map_canvas.add(img);
     });
   }
 
@@ -599,6 +602,10 @@
 
   Cookies.remove('DMGE_Veteran');
 
+
+  /**
+   * Helper initializes fog of war.
+   */
   function init_fow(__height, __width){
     var fow = $('#fow'),
         ctx = fow[0].getContext( '2d' ),
@@ -649,19 +656,18 @@
     });
   }
 
+  /**
+   * Helper creates grid.
+   */
   function set_grid(_size) {
-
-    var __map = $('#map_wrapper');
-    var __grid_wrapper = $('#grid_wrapper');
-
-    // $('#grid_settings').addClass('loading');
-    console.time();
-    // __grid_wrapper.empty();
-    // draw = SVG('grid_wrapper');
-
-    _type = $('input[name=map_grid_type]:checked').val();
-
+    grid_canvas.clear();
+    var _type = $('input[name=map_grid_type]:checked').val();
     if (_type !== 'None') {
+      var __map = $('#map_wrapper');
+      var __grid_wrapper = $('#grid_wrapper');
+      // const grid_group = new fabric.Group();
+
+      console.time();
 
       __grid_wrapper.css('opacity', get_opacity($('#map_grid_opacity')));
 
@@ -669,11 +675,11 @@
         var _size = parseInt($('#map_grid_size').val());
       }
 
-      var _width = screensize.width;
-      var _height = screensize.height;
+      var _width = $('#map_width').val() ? $('#map_width').val() : screensize.width;
+      var _height = $('#map_height').val() ? $('#map_height').val() : screensize.height;
 
-      var _rows = (_height / _size);
       var _cols = (_width / _size);
+      var _rows = (_height / _size);
 
       var __gridoptions = {size: _size};
 
@@ -685,20 +691,19 @@
       }
       const Hex = Honeycomb.extendHex(__gridoptions);
 
-      Grid = Honeycomb.defineGrid(Hex)
+      var Grid = Honeycomb.defineGrid(Hex)
 
-      _rows = (_height / _size);
       _cols = (_width / _size);
+      _rows = (_height / _size);
 
       const __grid = Grid.rectangle({width: _cols, height: _rows});
+
 
       if (_type === 'H_Hex' || _type === 'V_Hex') {
         var _points = regularPolygonPoints(6, _size);
         var corners = Hex().corners();
 
-        grid_canvas.clear();
         __grid.forEach(hex => {
-
           const {x, y} = hex.toPoint();
           var _corners = corners.map(({x, y}) => `${x}, ${y}`);
 
@@ -711,67 +716,64 @@
             stroke: 'white',
             strokeWidth: 1,
             fill: '',
-            originX: 'center',
-            originY: 'center',
+            originX: 'left',
+            originY: 'top',
             centeredRotation: true,
+            hasRotatingPoint: false,
             selectable: false,
-            objectCaching: false
+            lockMovementX: true,
+            lockMovementY: true,
+            objectCaching: true
           };
 
           let hexSymbol = new fabric.Polygon(corners, _props, false);
 
+          // grid_group.add(hexSymbol);
           grid_canvas.add(hexSymbol);
 
         });
-
       }
 
       if (_type === 'Quad') {
         const __grid = Grid.rectangle({ width: _cols, height: _rows });
-        grid_canvas.clear();
 
-        __grid.forEach(hex => {
+        __grid.forEach(quad => {
 
           let _props = {
-            left: hex.x*_size,
-            top: hex.y*_size,
+            left: quad.x*_size,
+            top: quad.y*_size,
             width: _size,
             height: _size,
             stroke: 'white',
             strokeWidth: 1,
             fill: '',
-            originX: 'center',
-            originY: 'center',
+            originX: 'left',
+            originY: 'top',
             centeredRotation: true,
             selectable: false,
-            objectCaching: false
+            lockMovementX: true,
+            lockMovementY: true,
+            objectCaching: true
           };
 
           let quadSymbol = new fabric.Rect(_props);
+          // let quadClone = quadSymbol.clone();
+          // quadSymbol.left = quad.x*_size
 
+          // grid_group.add(quadSymbol);
           grid_canvas.add(quadSymbol);
 
         });
-        grid_canvas.renderAll();
-        grid_canvas.on('mouse:down', function(e) {
-          if (!$('#grid_wrapper').is('.grid_marking')) {
-            return;
-          }
-          _props.left = e.target.left;
-          _props.top = e.target.top;
-          _props.fill = getRandomColor();
-          let highlightSymbol = new fabric.Rect(_props);
-          highlightSymbol.on('selected', function(e) {
-            console.log(e);
-            grid_canvas.remove(e);
-          })
-          grid_canvas.add(highlightSymbol);
-        });
+
       }
-    } else {
-      grid_canvas.clear();
+
+      // grid_canvas.add(grid_group);
+      console.timeEnd();
+      grid_canvas.renderAll();
+      // _grid = grid_canvas.toDataURL();
+      // grid_canvas.clear();
+      // grid_canvas.setBackgroundImage(_grid);
     }
-    console.timeEnd();
   }
 
   function getRandomColor() {
@@ -783,7 +785,7 @@
     return color;
   }
 
-  // file_load
+  // file load
   $('#file_load').click(function() {
     loadFile($('#file'));
   })
@@ -794,11 +796,12 @@
   function loadFile(file){
     var files = file.prop("files")
     $.each(files, function () {
-      _file = this;
-      _url = window.URL.createObjectURL(_file);
-      _thumbnail = _url;
-      _type = 'Static';
-      ext = getExtension(_file.name);
+      let _file = this;
+      let _url = window.URL.createObjectURL(_file);
+      let _file_id = make_file_id(_url);
+      let _thumbnail = _url;
+      let _type = 'Static';
+      let ext = getExtension(_file.name);
 
       switch (ext) {
         case 'pdf':
@@ -815,12 +818,10 @@
 
         case 'm4v':
           ext = 'x-m4v'
-          _type = 'Animated';
-          _thumbnail = do_video(_url, ext);
         case 'mpg':
         case 'mp4':
           _type = 'Animated';
-          _thumbnail = do_video(_url, ext);
+          _vtag = do_video(_file_id, _url, ext);
           break;
 
       default:
@@ -830,16 +831,16 @@
        break;
       }
 
-      $("#files").jsGrid("insertItem", { 'Filename': _file.name, 'Title': _url, 'Type': _type, 'Thumbnail': _thumbnail }).done(function() {
+      $("#files").jsGrid("insertItem", {'id': _file_id, 'Filename': _file.name, 'Blob': _url, 'Type': _type, 'Thumbnail': _thumbnail }).done(function() {
         $(this).stop().css("background-color", "green").animate({ backgroundColor: "none"}, 500);
       });
     });
   }
 
   function make_file_id(filename) {
-    console.log(filename);
     let t = todays_date.getTime();
-    return window.btoa(filename + t);
+    t = filename.hashCode() + t;
+    return t;
   }
 
   $("#file_preview_dialog").dialog({
@@ -868,10 +869,31 @@
 
     deleteConfirm: 'Remove?',
 
+    onItemInserted: function(e) {
+      let item = e.item;
+      if (item.Type === 'Animated') {
+        let vtag = $('#' + item.id);
+        $(vtag).on('play', function(e) {
+          let thumbnail = make_video_thumbnail(item.id);
+          $("#files").jsGrid("updateItem", item, {'Thumbnail': thumbnail });
+
+          var map_video = new fabric.Image(vtag[0], {
+            id: item.id,
+            originX: 'left',
+            originY: 'top',
+            left: 10,
+            top: 10
+          });
+          map_canvas.add(map_video);
+        });
+      }
+    },
+
     fields: [
+      { name: 'id', type: 'number', visible: false },
       { name: 'Bulk Op', type: 'checkbox' },
       { name: 'Filename', type: 'text', width: '25%' },
-      { name: 'Address', type: 'text', width: '25%' },
+      { name: 'Blob', type: 'text', width: '25%' },
       { name: 'Type', type: 'select', items: ['Static', 'Animated'] },
       { name: 'Thumbnail',
         itemTemplate: function(val, item) {
@@ -910,32 +932,41 @@
         },
         align: 'center',
         width: 120
-      },
-      { type: 'control',
-        editButton: false
       }
     ]
   });
 
+
+  /**
+   * Grab video by id and make shot.
+   */
   function make_video_thumbnail(video) {
-    var canvas = document.createElement('canvas');
-    var _canvas = $(canvas);
-    var _video = $(video);
-    // canvas.width = _video[0].videoWidth;
-    // canvas.height = _video[0].videoHeight;
-    canvas.width = 1920;
-    canvas.height = 1080;
+    video = document.getElementById(video);
 
-    var ctx = canvas.getContext('2d')
-                    .drawImage(video, 0, 0, canvas.width, canvas.height);
-
-    var thumbnail = canvas.toDataURL();
-    return thumbnail;
+    if ($('#thumb_video_canvas')) {
+      $('#thumb_video_canvas').remove();
+    }
+    let _shot,
+    thumb_canvas = $('<canvas />', {
+      'class': 'thumb_video_canvas',
+      'id': 'thumb_video_canvas',
+      'height': 256,
+      'width': 256
+    });
+    $('body').append(thumb_canvas);
+    thumb_canvas[0].width = 256;
+    thumb_canvas[0].height = 256;
+    thumb_canvas[0].getContext('2d').drawImage(video, 0, 0, thumb_canvas[0].width, thumb_canvas[0].height);
+    while (!_shot) {
+      _shot = thumb_canvas[0].toDataURL();
+    }
+    thumb_canvas.remove();
+    return _shot;
   }
 
   function get_canvas_obj(canvas, obj) {
     canvas.getObjects().forEach(function(o) {
-      if(o.id === obj) {
+      if (o.id === obj) {
         canvas.setActiveObject(o);
       }
     })
@@ -944,15 +975,13 @@
   /**
    * Calculate screen.
    */
-  let _screen_width = screen.width,
-    _screen_height = screen.height,
-    _screen_x = $("#first").val(_screen_width),
-    _screen_y = $("#second").val(_screen_height);
+  var _screen_x = $("#first").val(screen.width),
+    _screen_y = $("#second").val(screen.height);
 
   $('#screen_calculate').click(function() {
-  	let _screen_x = $("#screen_x").val(),
-  	_screen_y = $("#screen_y").val(),
-  	inch = $("#screen_inch").val(),
+  	_screen_x = $("#screen_x").val();
+  	_screen_y = $("#screen_y").val();
+  	let inch = $("#screen_inch").val(),
   	result = $("#screen_result"),
   	sqroot = +(_screen_x * _screen_x) + +(_screen_y * _screen_y);
 

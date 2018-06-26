@@ -85,44 +85,48 @@ article, aside, details, figcaption, figure, footer, header, hgroup, main, menu,
   pointer-events: none;
 }
 
-/* line 23, ../sass/screen.sass */
+/* line 22, ../sass/screen.sass */
+body {
+  overflow: hidden;
+}
+/* line 24, ../sass/screen.sass */
 body, body.admin-menu {
   margin: 0 !important;
   padding: 0;
   background: black;
 }
 
-/* line 30, ../sass/screen.sass */
+/* line 31, ../sass/screen.sass */
 h1, h2, h3, h4, h5, h6 {
   margin: 0 0 10px;
 }
 
-/* line 34, ../sass/screen.sass */
+/* line 35, ../sass/screen.sass */
 p {
   line-height: 1.5em;
   margin: 0 0 10px;
 }
 
-/* line 38, ../sass/screen.sass */
+/* line 39, ../sass/screen.sass */
 sup {
   font-size: 0.7em;
 }
 
-/* line 41, ../sass/screen.sass */
+/* line 42, ../sass/screen.sass */
 ul, ol {
   margin: 0 0 20px;
 }
 
-/* line 43, ../sass/screen.sass */
+/* line 44, ../sass/screen.sass */
 ol {
   padding: 0 0 0 20px;
 }
-/* line 45, ../sass/screen.sass */
+/* line 46, ../sass/screen.sass */
 ol li {
   list-style: decimal;
 }
 
-/* line 48, ../sass/screen.sass */
+/* line 49, ../sass/screen.sass */
 #fow_wrapper {
   z-index: 101;
   position: absolute;
@@ -130,37 +134,30 @@ ol li {
   opacity: 0.5;
 }
 
-/* line 54, ../sass/screen.sass */
-video {
-  display: none;
-}
-
-/* line 58, ../sass/screen.sass */
+/* line 61, ../sass/screen.sass */
 #dmge canvas {
   position: absolute;
   top: 0px;
   left: 0px;
   z-index: 100;
-  width: auto !important;
-  height: auto !important;
 }
-/* line 65, ../sass/screen.sass */
+/* line 66, ../sass/screen.sass */
 #dmge canvas.grid_canvas {
   z-index: 500;
 }
-/* line 67, ../sass/screen.sass */
+/* line 68, ../sass/screen.sass */
 #dmge canvas.fow_canvas {
   display: none;
   z-index: 150;
 }
-/* line 70, ../sass/screen.sass */
+/* line 71, ../sass/screen.sass */
 #dmge canvas.fow_canvas.active {
   cursor: none;
   pointer-events: all;
   display: block;
 }
 
-/* line 75, ../sass/screen.sass */
+/* line 76, ../sass/screen.sass */
 #grid_wrapper {
   position: absolute;
   top: 0;
@@ -168,74 +165,69 @@ video {
   z-index: 500;
   pointer-events: none;
 }
-/* line 81, ../sass/screen.sass */
+/* line 82, ../sass/screen.sass */
 #grid_wrapper.grid_marking {
   pointer-events: all;
 }
 
-/* line 84, ../sass/screen.sass */
+/* line 85, ../sass/screen.sass */
 .hideBrush {
   opacity: 0;
 }
-/* line 86, ../sass/screen.sass */
+/* line 87, ../sass/screen.sass */
 .fow_canvas .hideBrush {
   cursor: pointer !important;
 }
 
-/* line 89, ../sass/screen.sass */
+/* line 90, ../sass/screen.sass */
 .active {
   display: block;
 }
 
-/* line 92, ../sass/screen.sass */
+/* line 93, ../sass/screen.sass */
 #map_wrapper {
   z-index: 100;
   position: absolute;
 }
-/* line 95, ../sass/screen.sass */
+/* line 96, ../sass/screen.sass */
 #map_wrapper img {
   width: 100%;
   max-width: 100%;
   height: 100%;
   max-height: 100%;
 }
-/* line 100, ../sass/screen.sass */
+/* line 101, ../sass/screen.sass */
 #map_wrapper iframe {
   width: 100%;
   height: 100%;
   object-fit: fill;
 }
 
-/* line 105, ../sass/screen.sass */
-#map_video_wrapper {
-  display: none;
-}
-
-/* line 108, ../sass/screen.sass */
+/* line 109, ../sass/screen.sass */
 .map_grid_type, .map_grid_property, .fow_brush_property {
   position: relative;
   margin: 0 0 20px;
 }
 
-/* line 112, ../sass/screen.sass */
+/* line 113, ../sass/screen.sass */
 .map_grid_type {
   display: inline-block;
   white-space: nowrap;
   margin: 0 20px 20px 0;
 }
 
-/* line 117, ../sass/screen.sass */
+/* line 118, ../sass/screen.sass */
 #map_file_settings, #fow_settings, #grid_settings {
   padding: 20px 0;
   position: relative;
 }
 
-/* line 121, ../sass/screen.sass */
+/* line 122, ../sass/screen.sass */
 input[type=range] {
   width: auto;
 }
 
-/* line 124, ../sass/screen.sass */
+/* line 125, ../sass/screen.sass */
 output {
   background: darkred;
   width: 40px;
@@ -249,7 +241,7 @@ output {
   pointer-events: none;
 }
 
-/* line 136, ../sass/screen.sass */
+/* line 137, ../sass/screen.sass */
 #wrench {
   position: fixed;
   top: 0;
@@ -262,16 +254,16 @@ output {
   background: white;
   cursor: pointer;
 }
-/* line 147, ../sass/screen.sass */
+/* line 148, ../sass/screen.sass */
 #wrench:hover {
   background: black;
   color: white;
 }
-/* line 151, ../sass/screen.sass */
+/* line 152, ../sass/screen.sass */
 #wrench.newbie #wrench_innerwrapper {
   animation: wrench 2.5s ease infinite;
 }
-/* line 153, ../sass/screen.sass */
+/* line 154, ../sass/screen.sass */
 #wrench.newbie:before {
   position: absolute;
   content: "";
@@ -287,7 +279,7 @@ output {
   animation: horizontal 2s ease-in-out infinite;
 }
 
-/* line 167, ../sass/screen.sass */
+/* line 168, ../sass/screen.sass */
 #menu {
   position: absolute;
   top: 0;
@@ -295,19 +287,19 @@ output {
   height: auto;
   display: block;
 }
-/* line 173, ../sass/screen.sass */
+/* line 174, ../sass/screen.sass */
 #menu ul, #menu li, #menu ul li {
   margin: 0;
   padding: 0;
 }
-/* line 176, ../sass/screen.sass */
+/* line 177, ../sass/screen.sass */
 #menu a {
   display: block;
   font-size: 32px;
   padding: 16px;
 }
 
-/* line 181, ../sass/screen.sass */
+/* line 182, ../sass/screen.sass */
 #sidebar {
   top: 0;
   right: 0;
@@ -321,40 +313,40 @@ output {
   z-index: 1000;
   height: 100%;
 }
-/* line 193, ../sass/screen.sass */
+/* line 194, ../sass/screen.sass */
 #sidebar.active {
   display: block;
 }
 
-/* line 196, ../sass/screen.sass */
+/* line 197, ../sass/screen.sass */
 #sidebar_innerwrapper {
   padding: 20px 20px 80px 80px;
   height: 100%;
 }
 
-/* line 200, ../sass/screen.sass */
+/* line 201, ../sass/screen.sass */
 #sidebar_tray {
   position: fixed;
   bottom: 0;
   text-align: center;
 }
-/* line 205, ../sass/screen.sass */
+/* line 206, ../sass/screen.sass */
 #sidebar_tray button, #sidebar_tray input[type="button"] {
   display: inline-block;
 }
-/* line 207, ../sass/screen.sass */
+/* line 208, ../sass/screen.sass */
 #sidebar_tray button, #sidebar_tray button:visited, #sidebar_tray input[type="button"], #sidebar_tray input[type="button"]:visited {
   background: white;
   border: none;
   padding: 20px;
 }
-/* line 211, ../sass/screen.sass */
+/* line 212, ../sass/screen.sass */
 #sidebar_tray button:hover, #sidebar_tray button:active, #sidebar_tray input[type="button"]:hover, #sidebar_tray input[type="button"]:active {
   background: black;
   color: white;
 }
 
-/* line 215, ../sass/screen.sass */
+/* line 216, ../sass/screen.sass */
 .css-triangle {
   display: block;
   float: left;
