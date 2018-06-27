@@ -1,7 +1,8 @@
 (function ($, Drupal, window, document, undefined) {
   const todays_date = new Date();
-  var mainDocument = Drupal.mainDocument = document;
-  var mainView = Drupal.mainView = window;
+
+  // We set these now for assignment later.
+  var player_map, player_fow, player_grid, player_paint;
 
   /**
    * Hash code helper.
@@ -66,13 +67,34 @@
 
   fabric.util.requestAnimFrame(function render() {
     map_canvas.renderAll();
+
+    if (window.player_view) {
+      if (player_map) {
+        let window_properties = ['height', 'width'];
+        window_properties.each(function(e) {
+          window.player_view.body.e = window.e;
+          console.log(window.player_view.body.e);
+        });
+
+        canvas_properties = ['height', 'width'];
+        window_properties.each(function(e) {
+          player_map.e = map_canvas.e;
+        });
+        player_map.getContext('2d').drawImage(map_canvas.getElement(), 0, 0, map_canvas.width, map_canvas.height);
+      }
+    }
+
     fabric.util.requestAnimFrame(render);
   });
 
   // Using jQuery with fabricjs to call the canvas function
-  let fow_canvas_content = localStorage.getItem("fow_canvas");
-  if (fow_canvas_content) {
-    Drupal.playerFOWView.loadFromJSON(fow_canvas_content);
+  function load_canvas_data() {
+    canvases.forEach(function(e) {
+      let _canvas_content = e + '_canvas_content';
+      window[_canvas_content] = localStorage.getItem(canvas + '_canvas_content');
+      window.e.loadFromJSON(window[_canvas_content]);
+      window[e].renderAll();
+    });
   }
 
   /**
@@ -88,18 +110,10 @@
   }
 
   $('#save_map').click(function(e) {
-    localStorage.setItem("map_canvas", map_canvas_content);
-    file_storage(jsonData, 'map_canvas.txt', 'text/plain');
+    let map_name = document.getElementById(map_name).value;
+    localStorage.setItem("map_canvas_content", map_canvas_content);
+    file_storage(jsonData, map_name + '_map_canvas_content.txt', 'text/plain');
   });
-
-  let map_canvas_content = localStorage.getItem("map_canvas");
-  if (map_canvas_content) {
-    if (Drupal.playerView) {
-      Drupal.playerView.loadFromJSON(map_canvas_content);
-    }
-  }
-  localStorage.setItem("fow_canvas_content", fow_canvas_content);
-
 
   var clicked = false, clickY, clickX;
   $(document).on({
@@ -123,14 +137,110 @@
 
   map_canvas.on('object:moving', function(options) {
     let grid_snap = document.getElementById('grid_snap');
-    if (grid_snap.checked) {
-      let grid = parseInt(document.getElementById('map_grid_size').value);
-      options.target.set({
-        left: Math.round(options.target.left / grid) * grid,
-        top: Math.round(options.target.top / grid) * grid
-      });
+    if (!grid_snap.checked) {
+      return;
     }
+    let grid = parseInt(document.getElementById('map_grid_size').value);
+    options.target.set({
+      left: Math.round(options.target.left / grid) * grid,
+      top: Math.round(options.target.top / grid) * grid
+    });
   });
+
+  map_canvas.on('object:scaling', function(options) {
+    let grid_snap = document.getElementById('grid_snap');
+    if (!grid_snap.checked) {
+      return;
+    }
+    let grid = parseInt(document.getElementById('map_grid_size').value),
+    target = options.target,
+    w = target.width * target.scaleX,
+    h = target.height * target.scaleY,
+    snap = {      // Closest snapping points
+       top: Math.round(target.top / grid) * grid,
+       left: Math.round(target.left / grid) * grid,
+       bottom: Math.round((target.top + h) / grid) * grid,
+       right: Math.round((target.left + w) / grid) * grid
+    },
+    threshold = grid,
+    dist = {      // Distance from snapping points
+       top: Math.abs(snap.top - target.top),
+       left: Math.abs(snap.left - target.left),
+       bottom: Math.abs(snap.bottom - target.top - h),
+       right: Math.abs(snap.right - target.left - w)
+    },
+    attrs = {
+       scaleX: target.scaleX,
+       scaleY: target.scaleY,
+       top: target.top,
+       left: target.left
+    };
+  switch (target.__corner) {
+    case 'tl':
+       if (dist.left < dist.top && dist.left < threshold) {
+          attrs.scaleX = (w - (snap.left - target.left)) / target.width;
+          attrs.scaleY = (attrs.scaleX / target.scaleX) * target.scaleY;
+          attrs.top = target.top + (h - target.height * attrs.scaleY);
+          attrs.left = snap.left;
+       } else if (dist.top < threshold) {
+          attrs.scaleY = (h - (snap.top - target.top)) / target.height;
+          attrs.scaleX = (attrs.scaleY / target.scaleY) * target.scaleX;
+          attrs.left = attrs.left + (w - target.width * attrs.scaleX);
+          attrs.top = snap.top;
+       }
+       break;
+    case 'mt':
+       if (dist.top < threshold) {
+          attrs.scaleY = (h - (snap.top - target.top)) / target.height;
+          attrs.top = snap.top;
+       }
+       break;
+    case 'tr':
+       if (dist.right < dist.top && dist.right < threshold) {
+          attrs.scaleX = (snap.right - target.left) / target.width;
+          attrs.scaleY = (attrs.scaleX / target.scaleX) * target.scaleY;
+          attrs.top = target.top + (h - target.height * attrs.scaleY);
+       } else if (dist.top < threshold) {
+          attrs.scaleY = (h - (snap.top - target.top)) / target.height;
+          attrs.scaleX = (attrs.scaleY / target.scaleY) * target.scaleX;
+          attrs.top = snap.top;
+       }
+       break;
+    case 'ml':
+       if (dist.left < threshold) {
+          attrs.scaleX = (w - (snap.left - target.left)) / target.width;
+          attrs.left = snap.left;
+       }
+       break;
+    case 'mr':
+       if (dist.right < threshold) attrs.scaleX = (snap.right - target.left) / target.width;
+       break;
+    case 'bl':
+       if (dist.left < dist.bottom && dist.left < threshold) {
+          attrs.scaleX = (w - (snap.left - target.left)) / target.width;
+          attrs.scaleY = (attrs.scaleX / target.scaleX) * target.scaleY;
+          attrs.left = snap.left;
+       } else if (dist.bottom < threshold) {
+          attrs.scaleY = (snap.bottom - target.top) / target.height;
+          attrs.scaleX = (attrs.scaleY / target.scaleY) * target.scaleX;
+          attrs.left = attrs.left + (w - target.width * attrs.scaleX);
+       }
+       break;
+    case 'mb':
+       if (dist.bottom < threshold) attrs.scaleY = (snap.bottom - target.top) / target.height;
+       break;
+    case 'br':
+       if (dist.right < dist.bottom && dist.right < threshold) {
+          attrs.scaleX = (snap.right - target.left) / target.width;
+          attrs.scaleY = (attrs.scaleX / target.scaleX) * target.scaleY;
+       } else if (dist.bottom < threshold) {
+          attrs.scaleY = (snap.bottom - target.top) / target.height;
+          attrs.scaleX = (attrs.scaleY / target.scaleY) * target.scaleX;
+       }
+       break;
+   }
+   target.set(attrs);
+ });
 
   var updateScrollPos = function(e) {
     $('html').css('cursor', 'nwse-resize');
@@ -459,7 +569,8 @@
   }
 
   function do_video(_file_id, _url, ext) {
-    let vtag = $('<video />', {
+    let vtag;
+    vtag = $('<video />', {
       class: 'map_video',
       type: 'video/' + ext,
       src: _url,
@@ -551,16 +662,21 @@
   }
 
   function setupTimers () {
-    document.addEventListener("mousemove", resetTimer, false);
-    document.addEventListener("mousedown", resetTimer, false);
-    document.addEventListener("keypress", resetTimer, false);
-    document.addEventListener("touchmove", resetTimer, false);
+    document.addEventListener('keypress', resetTimer, false);
+    document.addEventListener('mousemove', resetTimer, false);
+    document.addEventListener('mousedown', resetTimer, false);
+    document.addEventListener('touchmove', resetTimer, false);
 
     startTimer();
   }
 
   $(document).ready(function(){
     setupTimers();
+    player_view = window.player_view = localStorage.getItem('player_view');
+    player_window = window.player_window = localStorage.getItem('player_window');
+    if (player_view && player_window) {
+      player_view_connect();
+    }
   });
 
   /**
@@ -635,14 +751,12 @@
     });
     $('#fow').on('mouseup', function() {
       dragging = false;
-      localStorage.setItem('fow_canvas_content', fow_canvas_content.toDataURL());
-      localStorage.setItem('fow_canvas_content_size', JSON.stringify({
-        'width': $('#fow').width(),
-        'height': $('#fow').height()
-      }));
+      if (window['player_view']) {
+        console.log(window['player_view']);
+      }
     });
 
-    $('#fow').on('mousemove', function(ev, ev2){
+    $('#fow').on('mousemove', function(ev, ev2) {
       if (dragging) {
         r1 = $('#fow_brush_size').val()/2;
         r2 = $('#fow_brush_feather_size').val()/2;
@@ -890,8 +1004,8 @@
         $(vId).on('play', function(e) {
           let thumbnail = make_video_thumbnail(item.id);
           $("#files").jsGrid("updateItem", item, {'Thumbnail': thumbnail });
-          console.log(vtag);
-          var map_video = new fabric.Image(vtag, {
+          let item_id = 'map_video_' + item.id;
+          window[item_id] = new fabric.Image(vtag, {
             id: item.id,
             originX: 'left',
             originY: 'top',
@@ -900,9 +1014,7 @@
             left: 10,
             top: 10
           });
-          console.log(map_video);
-
-          map_canvas.add(map_video);
+          map_canvas.add(window[item_id]);
         });
       }
     },
@@ -1030,14 +1142,39 @@
     player_view_open();
   });
 
+  /**
+   * Helper opens the player window and sets the reference to local storage.
+   */
   function player_view_open() {
-    var playerView = Drupal.playerView = window.open('/engine/players');
-    var playerViewInterval = setInterval(playerViewTimer, 1000);
-    var playerMap = Drupal.playerMap = playerView.document.getElementById('player_map');
-    var playerFOW = Drupal.playerFOW = playerView.document.getElementById('player_fow');
-    function playerViewTimer() {
-      // playerMap.innerHTML += 'works.';
-      // playerFOW.innerHTML += 'works.';
+    var player_view = window.player_view = window.open('/engine/players', 'player_window');
+    console.log(player_view);
+    console.log(player_window);
+    localStorage.setItem("player_view", player_view);
+    localStorage.setItem("player_window", player_window);
+
+    player_view_initialize();
+  }
+
+  /**
+   * Sets event handler for onload and assigns player canvases to variables in local window.
+   */
+  function player_view_initialize() {
+    if (player_view) {
+      player_view.onload = function() {
+        player_view_connect();
+      };
+    }
+  }
+
+  function player_view_connect() {
+    $player_view_content = $(player_view.document.body);
+    if ($player_view_content) {
+      player_map = $player_view_content.find('#player_map')[0];
+      player_fow = $player_view_content.find('#player_fow')[0];
+      player_grid = $player_view_content.find('#player_grid')[0];
+    }
+    else {
+      alert("Couldn't connect to player window.  Re open the window.");
     }
   }
 
