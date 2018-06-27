@@ -154,6 +154,11 @@ $age = $incept_date->diff($today)->days;
         <div id="grid_settings" class="sidebar_section">
           <h3>Grid Settings</h3>
 
+          <div id="grid_snap_wrapper">
+            <label for="grid_snap">Grid Snap</label>
+            <input type="checkbox" id="grid_snap" class="grid_snap_checkbox"></input>
+          </div>
+
           <div id="map_grid_type">
             <h3>Grid Type</h3>
 

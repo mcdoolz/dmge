@@ -108,15 +108,28 @@
       },
       'mousedown': function(e) {
         if (e.altKey === true) {
+          map_canvas.selection = false;
           clicked = true;
           clickY = e.pageY;
           clickX = e.pageX;
         }
       },
       'mouseup': function() {
+        map_canvas.selection = true;
         clicked = false;
         $('html').css('cursor', 'auto');
       }
+  });
+
+  map_canvas.on('object:moving', function(options) {
+    let grid_snap = document.getElementById('grid_snap');
+    if (grid_snap.checked) {
+      let grid = parseInt(document.getElementById('map_grid_size').value);
+      options.target.set({
+        left: Math.round(options.target.left / grid) * grid,
+        top: Math.round(options.target.top / grid) * grid
+      });
+    }
   });
 
   var updateScrollPos = function(e) {
@@ -454,7 +467,7 @@
       autoplay: true,
       muted: true,
       loop: true,
-      id: _file_id
+      id: _file_id,
     });
     $('#map_video_wrapper').append(vtag[0]);
     return vtag;
@@ -794,7 +807,7 @@
   })
 
   function loadFile(file) {
-    var files = file.prop("files")
+    var files = file.prop("files");
     $.each(files, function () {
       let _file = this;
       let _url = window.URL.createObjectURL(_file);
@@ -817,7 +830,7 @@
           break;
 
         case 'm4v':
-          ext = 'x-m4v'
+          ext = 'x-m4v';
         case 'mpg':
         case 'mp4':
           _type = 'Animated';
@@ -872,18 +885,23 @@
     onItemInserted: function(e) {
       let item = e.item;
       if (item.Type === 'Animated') {
-        let vtag = $('#' + item.id);
-        $(vtag).on('play', function(e) {
+        let vId = $('#' + item.id);
+        let vtag = document.getElementById(item.id);
+        $(vId).on('play', function(e) {
           let thumbnail = make_video_thumbnail(item.id);
           $("#files").jsGrid("updateItem", item, {'Thumbnail': thumbnail });
-
-          var map_video = new fabric.Image(vtag[0], {
+          console.log(vtag);
+          var map_video = new fabric.Image(vtag, {
             id: item.id,
             originX: 'left',
             originY: 'top',
+            height: vtag.videoHeight,
+            width: vtag.videoWidth,
             left: 10,
             top: 10
           });
+          console.log(map_video);
+
           map_canvas.add(map_video);
         });
       }
