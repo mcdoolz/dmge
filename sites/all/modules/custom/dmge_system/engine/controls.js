@@ -2,7 +2,7 @@
   const todays_date = new Date();
 
   // We set these now for assignment later.
-  var player_map, player_fow, player_grid, player_paint;
+  var player_view, player_map, player_fow, player_grid, player_paint;
 
   /**
    * Hash code helper.
@@ -68,18 +68,17 @@
   fabric.util.requestAnimFrame(function render() {
     map_canvas.renderAll();
 
+    /**
+     * Update the player view on frame.
+     */
     if (window.player_view) {
       if (player_map) {
-        let window_properties = ['height', 'width'];
-        window_properties.each(function(e) {
-          window.player_view.body.e = window.e;
-          console.log(window.player_view.body.e);
-        });
+        window.player_view.height = map_canvas.height;
+        window.player_view.width = map_canvas.width;
 
-        canvas_properties = ['height', 'width'];
-        window_properties.each(function(e) {
-          player_map.e = map_canvas.e;
-        });
+        player_map.height = map_canvas.height;
+        player_map.width = map_canvas.width;
+
         player_map.getContext('2d').drawImage(map_canvas.getElement(), 0, 0, map_canvas.width, map_canvas.height);
       }
     }
@@ -357,7 +356,6 @@
     if (e.which == 88) {
       if (e.ctrlKey) {
         $('#grid_wrapper').removeClass();
-        // $('#grid_wrapper').draggable({disabled: true});
         $('#grid_wrapper').addClass('active grid_canvas_marking');
       }
       if (e.shiftKey) {
@@ -672,11 +670,6 @@
 
   $(document).ready(function(){
     setupTimers();
-    player_view = window.player_view = localStorage.getItem('player_view');
-    player_window = window.player_window = localStorage.getItem('player_window');
-    if (player_view && player_window) {
-      player_view_connect();
-    }
   });
 
   /**
@@ -753,6 +746,9 @@
       dragging = false;
       if (window['player_view']) {
         console.log(window['player_view']);
+      }
+      if (player_fow) {
+        player_fow.getContext('2d').drawImage(fow_canvas, 0, 0, fow_canvas.width, fow_canvas.height);
       }
     });
 
@@ -893,13 +889,11 @@
         });
 
       }
-
-      // grid_canvas.add(grid_group);
       console.timeEnd();
       grid_canvas.renderAll();
-      // _grid = grid_canvas.toDataURL();
-      // grid_canvas.clear();
-      // grid_canvas.setBackgroundImage(_grid);
+      if (player_grid) {
+        player_grid.getContext('2d').drawImage(grid_canvas, 0, 0, grid_canvas.width, grid_canvas.height);
+      }
     }
   }
 
@@ -1146,12 +1140,7 @@
    * Helper opens the player window and sets the reference to local storage.
    */
   function player_view_open() {
-    var player_view = window.player_view = window.open('/engine/players', 'player_window');
-    console.log(player_view);
-    console.log(player_window);
-    localStorage.setItem("player_view", player_view);
-    localStorage.setItem("player_window", player_window);
-
+    player_view = window.player_view = window.open('/engine/players', 'player_window');
     player_view_initialize();
   }
 
@@ -1167,6 +1156,12 @@
   }
 
   function player_view_connect() {
+    if (!$(player_view)) {
+      return;
+    }
+    if (!$(player_view.document)) {
+      return;
+    }
     $player_view_content = $(player_view.document.body);
     if ($player_view_content) {
       player_map = $player_view_content.find('#player_map')[0];
