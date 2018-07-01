@@ -19,7 +19,9 @@ $age = $incept_date->diff($today)->days;
       <li>Press Ctrl-Z to reposition the grid.  Shift-Z clears dragging mode.</li>
       <li>Press Ctrl-X to mark the grid before scrolling it, so you can track where your miniatures were.  Shift-X clears marking mode.</li>
       <li>Press Backspace to clear marking or dragging mode.</li>
-      <li>Press Ctrl-Backspace to clear all marks.</li>
+      <!-- <li>Press Ctrl-Backspace to clear all marks.</li> -->
+      <li>Press Alt to pan around.</li>
+      <li>Press Ctrl-Shift-V to open the player view window.</li>
       <li>Zoom out and in by holding Ctrl and rolling your scroll wheel.  You can scale your map larger then the available space this way.</li>
       <li>If you lose the ability to interact with the board in some way, click the wrench and your mouse should start reacting.</li>
     </ol>
@@ -30,7 +32,7 @@ $age = $incept_date->diff($today)->days;
   </div>
 
   <div id="file_preview_dialog" title="Preview">
-    <img id="file_preview" />
+    <img id="file_preview">
     <button id="file_dialog_add_to_canvas" class="file_add_to_canvas" type="button">
       <i class="fa fa-puzzle-piece" aria-hidden="true"></i> Add
     </button>
@@ -61,14 +63,14 @@ $age = $incept_date->diff($today)->days;
             <div id="files"></div>
             <form method="post">
               <input id="file" type="file" multiple />
-              <input id="file_load" type="button" value="Load File" />
+              <input id="file_load" type="button" value="Load File">
               <select id="file_functions">
                 <options>
                   <option>--Bulk Ops--</option>
                   <option>Remove</option>
                 </options>
               </select>
-              <input id="file_bulkop" type="button" value="Do Bulk Op" />
+              <input id="file_bulkop" type="button" value="Do Bulk Op">
             </form>
             <label for="map_embed">Paste the URL to a Video</label>
             <form><input type="text" id="map_embed"><input type="submit" id="map_embed_submit"></form>
@@ -85,15 +87,15 @@ $age = $incept_date->diff($today)->days;
           <div class="map_setting">
             <h3>Map Settings</h3>
             <label for="map_name">Map Name</label>
-            <input type="text" id="map_name" placeholder="Untitled" class="ui-corner-all" />
+            <input type="text" id="map_name" placeholder="Untitled" class="ui-corner-all">
           </div>
           <div class="map_setting">
             <h4>Map Size</h4>
             <p>Defaults to your screen resolution.<br />Press F11 for Full Screen.</p>
             <label for="map_width">Width</label>
-            <input type="number" id="map_width" class="ui-corner-all" />
+            <input type="number" id="map_width" class="ui-corner-all">
             <label for="map_height">Height</label>
-            <input type="number" id="map_height" class="ui-corner-all" />
+            <input type="number" id="map_height" class="ui-corner-all">
             <br />
             <button id="map_dim_submit" class="ui-button ui-widget ui-corner-all">Set Map Dimensions</button>
           </div>
@@ -101,16 +103,21 @@ $age = $incept_date->diff($today)->days;
           <div class="map_setting">
             <h4>Map Controls</h4>
             <label for="map_scroll_synch">Map Scroll Synchronize</label>
-            <input type="checkbox" id="map_scroll_synch" name="map_scroll_synch" />
+            <input type="checkbox" id="map_scroll_synch" name="map_scroll_synch">
           </div>
 
         </div>
 
         <div id="fow_settings" class="sidebar_section">
           <h3>Fog of War Settings</h3>
-          <div class="fow_brush_property">
+          <div class="fow_control">
             <label for="fow_toggle">Fog of War</label>
             <input type="checkbox" id="fow_toggle">
+          </div>
+          <div class="fow_control">
+            <input type="button" id="fow_store" value="Store FoW">
+            <input type="button" id="fow_recall" value="Recall FoW">
+            <input type="button" id="fow_reset" value="Reset FoW">
           </div>
           <div class="fow_brush_property">
             <label for="fow_opacity">FoW Opacity %</label>
@@ -129,10 +136,10 @@ $age = $incept_date->diff($today)->days;
         <div id="paint_box" class="sidebar_section">
           <h3>Painters Box</h3>
           <label for="painting_toggle">Painting Mode</label>
-          <input class="painting_control" type="checkbox" id="painting_toggle" />
+          <input class="painting_control" type="checkbox" id="painting_toggle">
           <div id="painting_brush_settings">
-            <input class="painting_control" type="range" id="painting_brushsize" />
-            <input class="painting_control" type="color" id="painting_colour" />
+            <input class="painting_control" type="range" id="painting_brushsize">
+            <input class="painting_control" type="color" id="painting_colour">
           </div>
           <select class="painting_control" id="painting_toolselect">
             <option value="select">Select</option>
@@ -153,7 +160,7 @@ $age = $incept_date->diff($today)->days;
           </div>
           <div class="template_controls" id="template_controls">
             <label for="template_colour">Template Size</label>
-            <input type="color" id="template_colour" />
+            <input type="color" id="template_colour">
           </div>
         </div>
 
@@ -162,7 +169,7 @@ $age = $incept_date->diff($today)->days;
 
           <div id="grid_snap_wrapper">
             <label for="grid_snap">Grid Snap</label>
-            <input type="checkbox" id="grid_snap" class="grid_snap_checkbox"></input>
+            <input type="checkbox" id="grid_snap" class="grid_snap_checkbox">
           </div>
 
           <div id="map_grid_type">
@@ -170,15 +177,15 @@ $age = $incept_date->diff($today)->days;
 
             <div class="map_grid_type">
               <label for="quad_grid">Quad</label>
-              <input type="radio" id="quad_grid" name="map_grid_type" value="Quad" />
+              <input type="radio" id="quad_grid" name="map_grid_type" value="Quad">
             </div>
             <div class="map_grid_type">
               <label for="h_hex_grid">Horizontal Hex</label>
-              <input type="radio" id="h_hex_grid" name="map_grid_type" value="H_Hex" />
+              <input type="radio" id="h_hex_grid" name="map_grid_type" value="H_Hex">
             </div>
             <div class="map_grid_type">
               <label for="v_hex_grid">Vertical Hex</label>
-              <input type="radio" id="v_hex_grid" name="map_grid_type" value="V_Hex" />
+              <input type="radio" id="v_hex_grid" name="map_grid_type" value="V_Hex">
             </div>
             <div class="map_grid_type">
               <label for="no_grid">None</label>
@@ -187,11 +194,11 @@ $age = $incept_date->diff($today)->days;
           </div>
           <div class="map_grid_property">
             <label for="map_grid_size">Grid Size</label>
-            <input type="number" id="map_grid_size" value="20" />
+            <input type="number" id="map_grid_size" value="20">
             <p><sup>Lower sizes take longer to process.</sup></p>
             <div class="map_grid_property">
               <label for="map_grid_display_size">Grid Size at Scale</label>
-              <input type="number" disabled id="map_grid_display_size" value="" />
+              <input type="number" disabled id="map_grid_display_size" value="">
               <p><sup>This is the grid in pixels with your zoom level considered (Reset Zoom with Ctrl-Z or Ctrl-R).</sup></p>
             </div>
           </div>
@@ -200,18 +207,18 @@ $age = $incept_date->diff($today)->days;
               <label for="screen_x">Width Pixels</label>
               <input placeholder="1920" type="text" id="screen_x"/><br />
               <label for="screen_y">Height Pixels</label>
-              <input placeholder="1080" type="text" id="screen_y" /><br />
+              <input placeholder="1080" type="text" id="screen_y"><br />
               <label for="screen_inch">Screen Inches</label>
-              <input type="text" placeholder="40" id="screen_inch" /><br />
+              <input type="text" placeholder="40" id="screen_inch"><br />
               <label for="screen_result" title="Pixels Per Inch">PPI</label>
-              <input type="text" disabled id="screen_result" value="" /><br />
+              <input type="text" disabled id="screen_result" value=""><br />
               <button id="screen_calculate">Calculate</button>
             </div>
           </div>
 
           <div class="map_grid_property">
             <label for="map_grid_opacity">Grid Opacity</label>
-            <input type="number" id="map_grid_opacity" value="50" />
+            <input type="number" id="map_grid_opacity" value="50">
           </div>
 
         </div>

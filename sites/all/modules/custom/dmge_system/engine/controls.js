@@ -1,4 +1,7 @@
 (function ($, Drupal, window, document, undefined) {
+  window.moveTo(0, 0);
+  window.resizeTo(screen.availWidth, screen.availHeight);
+
   const todays_date = new Date();
 
   // We set these now for assignment later.
@@ -23,8 +26,8 @@
    * Helper for screen size.
    */
   const screensize = {
-    width: window.screen.width,
-    height: window.screen.height
+    width: screen.availWidth,
+    height: screen.availHeight
   };
 
   var _canvas_props = {
@@ -47,13 +50,18 @@
     canvases.forEach(function(e) {
       let _canvas = e + '_canvas';
       if (!window[_canvas]) {
-        window[_canvas] = new fabric.Canvas(e, _canvas_props);
-        map_canvas.selection = true;
-        map_canvas.skipTargetFind = false;
+        switch (e) {
+          case 'fow':
+            window[_canvas] = new fabric.StaticCanvas(e, _canvas_props);
+            break;
+          default:
+            window[_canvas] = new fabric.Canvas(e, _canvas_props);
+        }
       }
       window[_canvas].setWidth(screensize.width);
       window[_canvas].setHeight(screensize.height);
     });
+    map_canvas.selection = true;
   }
 
   set_canvas_dimensions(screensize);
@@ -135,7 +143,7 @@
 
       },
       'mousedown': function(e) {
-        if (e.ctrlKey === true) {
+        if (e.altKey === true) {
           dragging_initialize();
           clicked = true;
           clickY = e.pageY;
@@ -371,8 +379,8 @@
       Drupal.howto.dialog(__toggle);
     }
     if (e.which == 70) {
-      if (e.ctrlKey) {
-        __fow = localStorage.getItem('fow');
+      if (e.altKey) {
+        __fow = localStorage.getItem('fow_content');
       }
     }
     if (e.which == 86) {
@@ -483,16 +491,34 @@
     $('#fow_wrapper').css('opacity', get_opacity($('#fow_opacity')));
   });
 
+  $('#fow_store').click(function(e) {
+    localStorage.setItem('current_fow_content', window.fow_content.stringify());
+  });
+  $('#fow_recall').click(function(e) {
+    fow_canvas.getContext('2d').putImageData(JSON.parse(localStorage.getItem('current_fow_content')), 0, 0);
+    render_player_fow_canvas();
+  });
+
+  function render_player_fow_canvas() {
+    player_fow.getContext('2d').drawImage(fow_canvas, 0, 0, fow_canvas.width, fow_canvas.height);
+  }
+
+  $('#fow_reset').click(function(e) {
+    window.fow_content = null;
+    clear_fow();
+  });
+
   /**
    * Fog On!
    */
   $("#fow_toggle").change(function() {
+    window.fow_content = fow_canvas.getContext('2d').getImageData(0, 0, fow_canvas.width, fow_canvas.height);
     $('canvas[id^=fow]').toggleClass('active', this.checked);
     $('#cursor').toggleClass('active', this.checked);
     if ($('canvas[id^=fow]').hasClass('active')) {
-      _width = $('#map_wrapper').width();
-      _height = $('#map_wrapper').height();
-      init_fow(_height, _width);
+      if (window.fow_content) {
+        fow_canvas.getContext('2d').putImageData(window.fow_content, 0, 0);
+      }
     }
   }).change();
 
@@ -763,62 +789,61 @@
     $('#wrench').addClass('newbie');
     Cookies.set('DMGE_Veteran', 'true');
   }
-
   Cookies.remove('DMGE_Veteran');
 
 
   /**
    * Helper initializes fog of war.
    */
-  function init_fow(__height, __width){
-    var fow = $('#fow'),
-        ctx = fow[0].getContext('2d'),
-        r1 = $('#fow_brush_size').val(),
-        r2 = $('#fow_brush_feather_size').val(),
-        dragging = false;
+   var fow_ctx = fow_canvas.getElement().getContext('2d'),
+   r1 = $('#fow_brush_size').val(),
+   r2 = $('#fow_brush_feather_size').val(),
+   dragging = false;
 
-    fow.attr('height', __height).attr('width', __width);
-    ctx.fillStyle = 'rgba( 0, 0, 0, 1 )';
-    ctx.fillRect( 0, 0, __width, __height );
-
-    $('#fow').on('mousedown', function() {
-      dragging = true;
-    });
-    $('#fow').on('mouseup', function() {
-      dragging = false;
-      if (player_fow) {
-        player_fow.width = fow_canvas.width;
-        player_fow.height = fow_canvas.height;
-        player_fow.getContext('2d').drawImage(fow_canvas.getElement(), 0, 0, fow_canvas.width, fow_canvas.height);
-      }
-    });
-
-    $('#fow').on('mousemove', function(ev, ev2) {
-      if (dragging) {
-        r1 = $('#fow_brush_size').val()/2;
-        r2 = $('#fow_brush_feather_size').val()/2;
-
-        ev2 && ( ev = ev2 );
-
-        var pX = ev.pageX,
-            pY = ev.pageY;
-
-        var radGrd = ctx.createRadialGradient( pX, pY, r1, pX, pY, r2 );
-        radGrd.addColorStop(0, 'rgba( 0, 0, 0,  1 )' );
-        radGrd.addColorStop(0.25, 'rgba( 0, 0, 0, .1 )' );
-        radGrd.addColorStop(1, 'rgba( 0, 0, 0, 0 )' );
-
-        if (shifted !== false) {
-          ctx.globalCompositeOperation="source-over";
-        } else {
-          ctx.globalCompositeOperation = 'destination-out';
-        }
-
-        ctx.fillStyle = radGrd;
-        ctx.fillRect( pX - r2, pY - r2, r2*2, r2*2 );
-      };
-    });
+  function clear_fow() {
+    fow_ctx.fillStyle = 'rgba( 0, 0, 0, 1 )';
+    fow_ctx.fillRect(0, 0, screen.availWidth, screen.availHeight);
   }
+  clear_fow();
+
+  $('#fow').on('mousedown', function() {
+    dragging = true;
+  });
+
+  $('#fow').on('mouseup', function() {
+    dragging = false;
+    if (player_fow) {
+      player_fow.width = fow_canvas.width;
+      player_fow.height = fow_canvas.height;
+      render_player_fow_canvas();
+    }
+  });
+
+  $('#fow').on('mousemove', function(ev, ev2) {
+    if (dragging) {
+      r1 = $('#fow_brush_size').val() / 2;
+      r2 = $('#fow_brush_feather_size').val() / 2;
+
+      ev2 && (ev = ev2);
+
+      var pX = ev.pageX,
+      pY = ev.pageY;
+
+      var radGrd = fow_ctx.createRadialGradient(pX, pY, r1, pX, pY, r2);
+      radGrd.addColorStop(0, 'rgba( 0, 0, 0,  1 )');
+      radGrd.addColorStop(0.25, 'rgba( 0, 0, 0, .1 )');
+      radGrd.addColorStop(1, 'rgba( 0, 0, 0, 0 )');
+
+      if (shifted !== false) {
+        fow_ctx.globalCompositeOperation = 'source-over';
+      } else {
+        fow_ctx.globalCompositeOperation = 'destination-out';
+      }
+
+      fow_ctx.fillStyle = radGrd;
+      fow_ctx.fillRect(pX - r2, pY - r2, r2 * 2, r2 * 2);
+    };
+  });
 
   /**
    * Helper creates grid.
@@ -829,7 +854,6 @@
     if (_type !== 'None') {
       var __map = $('#map_wrapper');
       var __grid_wrapper = $('#grid_wrapper');
-      // const grid_group = new fabric.Group();
 
       console.time();
 
@@ -892,7 +916,6 @@
 
           let hexSymbol = new fabric.Polygon(corners, _props, false);
 
-          // grid_group.add(hexSymbol);
           grid_canvas.add(hexSymbol);
 
         });
