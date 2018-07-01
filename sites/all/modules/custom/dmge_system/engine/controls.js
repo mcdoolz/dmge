@@ -474,6 +474,9 @@
    */
   $('#map_grid_opacity').on('input', function() {
     $('#grid_wrapper').css('opacity', get_opacity($('#map_grid_opacity')));
+    if (player_view) {
+      player_grid_wrapper.css('opacity', get_opacity($('#map_grid_opacity')));
+    }
   });
 
   $('#fow_opacity').on('input', function() {
@@ -1199,9 +1202,12 @@
     }
     $player_view_content = $(player_view.document.body);
     if ($player_view_content) {
-      player_map = $player_view_content.find('#player_map')[0];
-      player_fow = $player_view_content.find('#player_fow')[0];
-      player_grid = $player_view_content.find('#player_grid')[0];
+      player_map_wrapper = $player_view_content.find('#player_map');
+      player_map = player_map_wrapper[0];
+      player_fow_wrapper = $player_view_content.find('#player_fow');
+      player_fow = player_fow_wrapper[0];
+      player_grid_wrapper = $player_view_content.find('#player_grid');
+      player_grid = player_grid_wrapper[0];
     }
     else {
       alert("Couldn't connect to player window.  Re open the window.");
