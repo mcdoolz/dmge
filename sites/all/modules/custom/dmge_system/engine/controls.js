@@ -2,7 +2,7 @@
   const todays_date = new Date();
 
   // We set these now for assignment later.
-  var player_view, player_map, player_fow, player_grid, player_paint;
+  var player_view, player_map, player_fow, player_grid, player_paint, map_scroll_synch;
 
   /**
    * Hash code helper.
@@ -117,25 +117,39 @@
     file_storage(jsonData, map_name + '_map_canvas_content.txt', 'text/plain');
   });
 
+  function dragging_initialize() {
+    map_canvas.selection = false;
+    $('#map_wrapper').addClass('notouchie');
+    map_scroll_synch = $('map_scroll_synch').val();
+  }
+
   var clicked = false, clickY, clickX;
   $(document).on({
       'mousemove': function(e) {
-        clicked && updateScrollPos(e);
+        if (clicked) {
+          updateScrollPos(e, window);
+          if ((player_view) && (map_scroll_synch)) {
+            updateScrollPos(e, player_view);
+          }
+        }
+
       },
       'mousedown': function(e) {
-        if (e.altKey === true) {
-          map_canvas.selection = false;
+        if (e.ctrlKey === true) {
+          dragging_initialize();
           clicked = true;
           clickY = e.pageY;
           clickX = e.pageX;
-          if (player_window) {
-
+          if (player_view) {
+            player_view.pageY = e.pageY;
+            player_view.pageX = e.pageX;
           }
         }
       },
       'mouseup': function() {
-        map_canvas.selection = true;
+        $('#map_wrapper').removeClass('notouchie');
         clicked = false;
+        map_canvas.selection = true;
         $('html').css('cursor', 'auto');
       }
   });
@@ -180,77 +194,95 @@
        top: target.top,
        left: target.left
     };
-  switch (target.__corner) {
-    case 'tl':
-       if (dist.left < dist.top && dist.left < threshold) {
-          attrs.scaleX = (w - (snap.left - target.left)) / target.width;
-          attrs.scaleY = (attrs.scaleX / target.scaleX) * target.scaleY;
-          attrs.top = target.top + (h - target.height * attrs.scaleY);
-          attrs.left = snap.left;
-       } else if (dist.top < threshold) {
-          attrs.scaleY = (h - (snap.top - target.top)) / target.height;
-          attrs.scaleX = (attrs.scaleY / target.scaleY) * target.scaleX;
-          attrs.left = attrs.left + (w - target.width * attrs.scaleX);
-          attrs.top = snap.top;
+    switch (target.__corner) {
+      case 'tl':
+         if (dist.left < dist.top && dist.left < threshold) {
+            attrs.scaleX = (w - (snap.left - target.left)) / target.width;
+            attrs.scaleY = (attrs.scaleX / target.scaleX) * target.scaleY;
+            attrs.top = target.top + (h - target.height * attrs.scaleY);
+            attrs.left = snap.left;
+         } else if (dist.top < threshold) {
+            attrs.scaleY = (h - (snap.top - target.top)) / target.height;
+            attrs.scaleX = (attrs.scaleY / target.scaleY) * target.scaleX;
+            attrs.left = attrs.left + (w - target.width * attrs.scaleX);
+            attrs.top = snap.top;
+         }
+         break;
+      case 'mt':
+         if (dist.top < threshold) {
+            attrs.scaleY = (h - (snap.top - target.top)) / target.height;
+            attrs.top = snap.top;
+         }
+         break;
+      case 'tr':
+         if (dist.right < dist.top && dist.right < threshold) {
+            attrs.scaleX = (snap.right - target.left) / target.width;
+            attrs.scaleY = (attrs.scaleX / target.scaleX) * target.scaleY;
+            attrs.top = target.top + (h - target.height * attrs.scaleY);
+         } else if (dist.top < threshold) {
+            attrs.scaleY = (h - (snap.top - target.top)) / target.height;
+            attrs.scaleX = (attrs.scaleY / target.scaleY) * target.scaleX;
+            attrs.top = snap.top;
+         }
+         break;
+      case 'ml':
+         if (dist.left < threshold) {
+            attrs.scaleX = (w - (snap.left - target.left)) / target.width;
+            attrs.left = snap.left;
+         }
+         break;
+      case 'mr':
+         if (dist.right < threshold) attrs.scaleX = (snap.right - target.left) / target.width;
+         break;
+      case 'bl':
+         if (dist.left < dist.bottom && dist.left < threshold) {
+            attrs.scaleX = (w - (snap.left - target.left)) / target.width;
+            attrs.scaleY = (attrs.scaleX / target.scaleX) * target.scaleY;
+            attrs.left = snap.left;
+         } else if (dist.bottom < threshold) {
+            attrs.scaleY = (snap.bottom - target.top) / target.height;
+            attrs.scaleX = (attrs.scaleY / target.scaleY) * target.scaleX;
+            attrs.left = attrs.left + (w - target.width * attrs.scaleX);
+         }
+         break;
+      case 'mb':
+         if (dist.bottom < threshold) attrs.scaleY = (snap.bottom - target.top) / target.height;
+         break;
+      case 'br':
+         if (dist.right < dist.bottom && dist.right < threshold) {
+            attrs.scaleX = (snap.right - target.left) / target.width;
+            attrs.scaleY = (attrs.scaleX / target.scaleX) * target.scaleY;
+         } else if (dist.bottom < threshold) {
+            attrs.scaleY = (snap.bottom - target.top) / target.height;
+            attrs.scaleX = (attrs.scaleY / target.scaleY) * target.scaleX;
+         }
+         break;
        }
-       break;
-    case 'mt':
-       if (dist.top < threshold) {
-          attrs.scaleY = (h - (snap.top - target.top)) / target.height;
-          attrs.top = snap.top;
-       }
-       break;
-    case 'tr':
-       if (dist.right < dist.top && dist.right < threshold) {
-          attrs.scaleX = (snap.right - target.left) / target.width;
-          attrs.scaleY = (attrs.scaleX / target.scaleX) * target.scaleY;
-          attrs.top = target.top + (h - target.height * attrs.scaleY);
-       } else if (dist.top < threshold) {
-          attrs.scaleY = (h - (snap.top - target.top)) / target.height;
-          attrs.scaleX = (attrs.scaleY / target.scaleY) * target.scaleX;
-          attrs.top = snap.top;
-       }
-       break;
-    case 'ml':
-       if (dist.left < threshold) {
-          attrs.scaleX = (w - (snap.left - target.left)) / target.width;
-          attrs.left = snap.left;
-       }
-       break;
-    case 'mr':
-       if (dist.right < threshold) attrs.scaleX = (snap.right - target.left) / target.width;
-       break;
-    case 'bl':
-       if (dist.left < dist.bottom && dist.left < threshold) {
-          attrs.scaleX = (w - (snap.left - target.left)) / target.width;
-          attrs.scaleY = (attrs.scaleX / target.scaleX) * target.scaleY;
-          attrs.left = snap.left;
-       } else if (dist.bottom < threshold) {
-          attrs.scaleY = (snap.bottom - target.top) / target.height;
-          attrs.scaleX = (attrs.scaleY / target.scaleY) * target.scaleX;
-          attrs.left = attrs.left + (w - target.width * attrs.scaleX);
-       }
-       break;
-    case 'mb':
-       if (dist.bottom < threshold) attrs.scaleY = (snap.bottom - target.top) / target.height;
-       break;
-    case 'br':
-       if (dist.right < dist.bottom && dist.right < threshold) {
-          attrs.scaleX = (snap.right - target.left) / target.width;
-          attrs.scaleY = (attrs.scaleX / target.scaleX) * target.scaleY;
-       } else if (dist.bottom < threshold) {
-          attrs.scaleY = (snap.bottom - target.top) / target.height;
-          attrs.scaleX = (attrs.scaleY / target.scaleY) * target.scaleX;
-       }
-       break;
-   }
-   target.set(attrs);
- });
+     target.set(attrs);
+  });
 
-  var updateScrollPos = function(e) {
+  /**
+   * Helper function get canvas object.
+   */
+  function getObjectFromCanvasById(id, canvas) {
+    const canvasObject = canvas.getObjects().filter((item) => {
+      return item.id === parseInt(id);
+    });
+    return canvasObject[0];
+  }
+
+  /**
+   * Helper to remove object from canvas.
+   */
+  function removeObjectFromCanvas(objectId, canvas) {
+    const canvasObject = getObjectFromCanvasById(objectId, canvas);
+    canvas.remove(canvasObject);
+  }
+
+  var updateScrollPos = function(e, _window) {
     $('html').css('cursor', 'nwse-resize');
-    $(window).scrollTop($(window).scrollTop() + (clickY - e.pageY));
-    $(window).scrollLeft($(window).scrollLeft() + (clickX - e.pageX));
+    $(_window).scrollTop($(_window).scrollTop() + (clickY - e.pageY));
+    $(_window).scrollLeft($(_window).scrollLeft() + (clickX - e.pageX));
   }
 
   /**
@@ -607,9 +639,10 @@
    * Returns reference to added canvas entity.
    */
   function do_image(_url) {
-    fabric.Image.fromURL(_url, function(img) {
+    let _id = make_file_id(_url);
+    window[_id] = fabric.Image.fromURL(_url, function(img) {
       img.set({
-        id: make_file_id(_url)
+        id: _id
       })
       map_canvas.add(img);
     });
@@ -885,18 +918,12 @@
           };
 
           let quadSymbol = new fabric.Rect(_props);
-          // let quadClone = quadSymbol.clone();
-          // quadSymbol.left = quad.x*_size
-
-          // grid_group.add(quadSymbol);
           grid_canvas.add(quadSymbol);
-
         });
-
       }
       console.timeEnd();
       grid_canvas.renderAll();
-      
+
       if (player_grid) {
         player_grid.width = grid_canvas.width;
         player_grid.height = grid_canvas.height;
@@ -1047,14 +1074,8 @@
       { name: 'Add',
         itemTemplate: function(val, item) {
           return $('<button>').html('<i class="fa fa-puzzle-piece" aria-hidden="true"></i> Add').attr({'class': 'file_add_to_canvas'}).css({ 'display': 'block' }).on('click', function(e) {
-            switch(item.Type) {
-              case 'Animated' :
-                do_video(val);
-              break;
-              case 'Static' :
-                do_image(val);
-              break;
-            }
+            let obj = fabric.util.object.clone(getObjectFromCanvasById(item.id, map_canvas));
+            map_canvas.add(obj);
           });
         },
         align: 'center',
@@ -1063,10 +1084,10 @@
       { name: 'Delete',
         itemTemplate: function(val, item) {
           return $('<button>').html('<i class="fa fa-trash" aria-hidden="true"></i> Delete').attr({'class': 'file_delete_from_canvas'}).css({ 'display': 'block' }).on('click', function() {
+            while (getObjectFromCanvasById(item.id, map_canvas)) {
+              removeObjectFromCanvas(item.id, map_canvas);
+            }
             $('#files').jsGrid('deleteItem', $(item));
-            console.log(val);
-            console.log(item);
-            grid_canvas.remove(item);
           });
         },
         align: 'center',
@@ -1075,6 +1096,9 @@
     ]
   });
 
+  // map_canvas.on('selection:created', function (e) {
+  //    console.log(e);
+  // });
 
   /**
    * Grab video by id and make shot.
