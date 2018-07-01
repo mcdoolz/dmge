@@ -3,6 +3,11 @@
  */
 (function ($, Drupal, window, document, undefined) {
 
+  if (window.opener) {
+    var main_window = window.opener;
+    console.log(window.opener);
+  }
+
   var updateScrollPos = function(e) {
     $('html').css('cursor', 'nwse-resize');
     $(window).scrollTop($(window).scrollTop() + (clickY - e.pageY));

@@ -13,6 +13,7 @@ function dmge_system_permission() {
     'access dmge' => array(
       'title' => t('Access the DMGE'),
       'description' => t('Use the DMGE.'),
+      'restrict access' => TRUE,
     ),
     'configure dmge' => array(
       'title' => t('Configure the DMGE'),
@@ -84,14 +85,17 @@ function dmge_system_init() {
 
 function dmge_system_main() {
   global $user;
+  if (!user_access('access dmge')) {
+    return drupal_goto('user');
+  }
   $path = drupal_get_path('module', 'dmge_system');
 
   $header_javascripts = array(
-    $path . '/lib/svg.min.js',
     $path . '/lib/honeycomb.min.js',
+    $path . '/lib/jsgrid.min.js',
     $path . '/lib/fabric.min.js',
     $path . '/lib/js.cookie.js',
-    $path . '/lib/jsgrid.min.js',
+    $path . '/lib/svg.min.js',
   );
   foreach ($header_javascripts as $header_javascript) {
     drupal_add_js($header_javascript, array(

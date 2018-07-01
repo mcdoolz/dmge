@@ -96,8 +96,14 @@ $age = $incept_date->diff($today)->days;
             <input type="number" id="map_height" class="ui-corner-all" />
             <br />
             <button id="map_dim_submit" class="ui-button ui-widget ui-corner-all">Set Map Dimensions</button>
-
           </div>
+
+          <div class="map_setting">
+            <h4>Map Controls</h4>
+            <label for="map_scroll_synch">Map Scroll Synchronize</label>
+            <input type="checkbox" id="map_scroll_synch" name="map_scroll_synch" />
+          </div>
+
         </div>
 
         <div id="fow_settings" class="sidebar_section">

@@ -73,13 +73,16 @@
      */
     if (window.player_view) {
       if (player_map) {
-        window.player_view.height = map_canvas.height;
-        window.player_view.width = map_canvas.width;
+        let map_width = map_canvas.width;
+        let map_height = map_canvas.height;
 
-        player_map.height = map_canvas.height;
-        player_map.width = map_canvas.width;
+        window.player_view.width = map_width;
+        window.player_view.height = map_height;
 
-        player_map.getContext('2d').drawImage(map_canvas.getElement(), 0, 0, map_canvas.width, map_canvas.height);
+        player_map.width = map_width;
+        player_map.height = map_height;
+
+        player_map.getContext('2d').drawImage(map_canvas.getElement(), 0, 0, map_width, map_height);
       }
     }
 
@@ -125,6 +128,9 @@
           clicked = true;
           clickY = e.pageY;
           clickX = e.pageX;
+          if (player_window) {
+
+          }
         }
       },
       'mouseup': function() {
@@ -730,7 +736,7 @@
    */
   function init_fow(__height, __width){
     var fow = $('#fow'),
-        ctx = fow[0].getContext( '2d' ),
+        ctx = fow[0].getContext('2d'),
         r1 = $('#fow_brush_size').val(),
         r2 = $('#fow_brush_feather_size').val(),
         dragging = false;
@@ -744,11 +750,10 @@
     });
     $('#fow').on('mouseup', function() {
       dragging = false;
-      if (window['player_view']) {
-        console.log(window['player_view']);
-      }
       if (player_fow) {
-        player_fow.getContext('2d').drawImage(fow_canvas, 0, 0, fow_canvas.width, fow_canvas.height);
+        player_fow.width = fow_canvas.width;
+        player_fow.height = fow_canvas.height;
+        player_fow.getContext('2d').drawImage(fow_canvas.getElement(), 0, 0, fow_canvas.width, fow_canvas.height);
       }
     });
 
@@ -891,8 +896,11 @@
       }
       console.timeEnd();
       grid_canvas.renderAll();
+      
       if (player_grid) {
-        player_grid.getContext('2d').drawImage(grid_canvas, 0, 0, grid_canvas.width, grid_canvas.height);
+        player_grid.width = grid_canvas.width;
+        player_grid.height = grid_canvas.height;
+        player_grid.getContext('2d').drawImage(grid_canvas.getElement(), 0, 0, grid_canvas.width, grid_canvas.height);
       }
     }
   }
@@ -1155,6 +1163,9 @@
     }
   }
 
+  /**
+   * Link child window canvases when the view connects.
+   */
   function player_view_connect() {
     if (!$(player_view)) {
       return;
@@ -1192,7 +1203,7 @@
         }
       }
     } else {
-      console.log("User doesn't allow full screen");
+      console.error("You didn't allow full screen, so the DMGE couldn't go full screen.");
     }
   }
 
