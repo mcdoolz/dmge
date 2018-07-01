@@ -14,13 +14,14 @@ body {
 /* line 11, ../sass/players.sass */
 #dmge_player_view canvas#player_grid {
   z-index: 300;
+  opacity: 0.5;
 }
-/* line 13, ../sass/players.sass */
+/* line 14, ../sass/players.sass */
 #dmge_player_view canvas#player_fow {
   z-index: 200;
   opacity: 1;
 }
-/* line 16, ../sass/players.sass */
+/* line 17, ../sass/players.sass */
 #dmge_player_view canvas#player_map {
   z-index: 100;
 }
