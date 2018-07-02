@@ -1071,7 +1071,15 @@
     pageSize: 15,
     pageButtonCount: 5,
 
+    confirmDeleting: true,
     deleteConfirm: 'Remove?',
+    onItemDeleted: function(e) {
+      let _id = e.row[0].id;
+      while (getObjectFromCanvasById(_id, map_canvas)) {
+        removeObjectFromCanvas(_id, map_canvas);
+        $('#' + _id).remove();
+      }
+    },
 
     onItemInserted: function(e) {
       let item = e.item;
@@ -1132,14 +1140,7 @@
       { name: 'Delete',
         itemTemplate: function(val, item) {
           return $('<button>').html('<i class="fa fa-trash" aria-hidden="true"></i> Delete').attr({'class': 'file_delete_from_canvas'}).css({ 'display': 'block' }).on('click', function(e) {
-            console.log(e);
-            if (e.yes) {
-              while (getObjectFromCanvasById(item.id, map_canvas)) {
-                removeObjectFromCanvas(item.id, map_canvas);
-                $('#' + item.id).remove();
-              }
-              $('#files').jsGrid('deleteItem', $(item));
-            }
+            $('#files').jsGrid('deleteItem', $(item));
           });
         },
         align: 'center',
@@ -1177,14 +1178,6 @@
     }
     thumb_canvas.remove();
     return _shot;
-  }
-
-  function get_canvas_obj(canvas, obj) {
-    canvas.getObjects().forEach(function(o) {
-      if (o.id === obj) {
-        canvas.setActiveObject(o);
-      }
-    })
   }
 
   /**
