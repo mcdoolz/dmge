@@ -506,7 +506,7 @@
    */
   function fow_recall_content() {
     // window.fow_content = JSON.parse(localStorage.getItem('current_fow_content'));
-    if (window.fow_content !== undefined) {
+    if (window.fow_content) {
       fow_ctx.putImageData(window.fow_content, 0, 0);
       render_fow_canvas();
     }
@@ -524,11 +524,17 @@
   function render_fow_canvas() {
     if (player_fow) {
       player_fow.getContext('2d').drawImage(fow_canvas.getElement(), 0, 0, fow_canvas.width, fow_canvas.height);
-      return;
     }
-    console.log('No FoW data or no Player view.');
   }
 
+  /**
+   * Helper initializes fog of war.
+   */
+  function fow_reset() {
+    fow_ctx.globalCompositeOperation = 'source-over';
+    fow_ctx.fillStyle = 'rgba( 0, 0, 0, 1 )';
+    fow_ctx.fillRect(0, 0, fow_canvas.width, fow_canvas.height);
+  }
   $('#fow_reset').click(function(e) {
     fow_reset();
   });
@@ -678,9 +684,9 @@
   $('#map_embed_submit').on('touchend, click', function(event) {
     event.stopPropagation();
     event.preventDefault();
-    console.log('Calling YouTube');
     // A serverside PHP callback fires the URL to YouTube and parses an mp4 url from the response, for us to embed.
     let code = get_youtube_code($('#map_embed').val());
+    console.log('Calling YouTube for id:' + code);
     $.get('/engine/youtube?v=' + code, null, function(response) {
       console.log(response);
       if (response[0]) {
@@ -765,6 +771,7 @@
 
   $(document).ready(function(){
     setupTimers();
+    fow_reset();
   });
 
   /**
@@ -817,17 +824,6 @@
     Cookies.set('DMGE_Veteran', 'true');
   }
   Cookies.remove('DMGE_Veteran');
-
-
-  /**
-   * Helper initializes fog of war.
-   */
-  function fow_reset() {
-    fow_ctx.globalCompositeOperation = 'destination-out';
-    fow_ctx.fillStyle = 'rgba( 0, 0, 0, 1 )';
-    fow_ctx.fillRect(0, 0, screen.availWidth, screen.availHeight);
-    window.fow_content = null;
-  }
 
   $('#fow').on('mousedown', function() {
     dragging = true;
