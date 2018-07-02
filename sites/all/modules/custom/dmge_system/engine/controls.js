@@ -680,7 +680,8 @@
     event.preventDefault();
     console.log('Calling YouTube');
     // A serverside PHP callback fires the URL to YouTube and parses an mp4 url from the response, for us to embed.
-    $.get('/engine/youtube?url=' + $('#map_embed').val(), null, function(response) {
+    let code = get_youtube_code($('#map_embed').val());
+    $.get('/engine/youtube?v=' + code, null, function(response) {
       console.log(response);
       if (response[0]) {
         if (response[0].url) {

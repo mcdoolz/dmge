@@ -326,18 +326,13 @@ function dmge_system_theme_registry_alter(&$theme_registry) {
 /**
  * Helper to get YouTube URL.
  */
-function _dmge_system_get_youtube_url($url = '') {
+function _dmge_system_get_youtube_url($id = '') {
   if (!empty($_GET)) {
-    if (empty($_GET['url'])) {
+    if (empty($_GET['v'])) {
       return 'This URL is used to process YouTube URLs<br>Raw access does not garner any benefits.';
     }
-    $url = $_GET['url'];
+    $id = $_GET['v'];
   }
-  if (empty($url)) {
-    return;
-  }
-  parse_str(parse_url($url, PHP_URL_QUERY), $vars);
-  $id = $vars['v'];
   if (empty($id)) {
     return;
   }
@@ -345,15 +340,13 @@ function _dmge_system_get_youtube_url($url = '') {
   'http' => array(
     'method' => "GET",
     'user_agent' => 'Dynamic Maps Game Engine',
-    'header' => "Accept-language: en\r\n" .
-              "Cookie: dmge\r\n"
+    'header' => "Accept-language: en\r\n"
     )
   );
 
   $context = stream_context_create($opts);
   $yt_url = 'https://www.youtube.com/get_video_info?video_id=' . $id . '&el=embedded&ps=default&eurl=&gl=US&hl=en';
   $dt = file_get_contents($yt_url, false, $context);
-  echo $dt;
 
   if (strpos($dt, 'status=fail') !== false) {
 
@@ -401,5 +394,4 @@ function _dmge_system_get_youtube_url($url = '') {
     }
     drupal_json_output($g);
   }
-  echo $dt;
 }
