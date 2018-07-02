@@ -93,11 +93,13 @@ body {
 body, body.admin-menu {
   margin: 0 !important;
   padding: 0;
+  font-family: "Roboto", sans-serif;
   background: black;
 }
 
 /* line 31, ../sass/screen.sass */
 h1, h2, h3, h4, h5, h6 {
+  font-family: "Passion One", cursive;
   margin: 0 0 10px;
 }
 
@@ -150,9 +152,9 @@ video {
 /* line 65, ../sass/screen.sass */
 #dmge canvas {
   position: absolute;
-  top: 0px;
-  left: 0px;
   z-index: 100;
+  left: 0px;
+  top: 0px;
 }
 /* line 70, ../sass/screen.sass */
 #dmge canvas.grid_canvas {

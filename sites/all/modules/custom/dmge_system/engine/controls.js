@@ -5,7 +5,11 @@
   const todays_date = new Date();
 
   // We set these now for assignment later.
-  var player_view, player_map, player_fow, player_grid, player_paint, map_scroll_synch;
+  var player_view, player_map, player_fow, player_grid, player_paint, map_scroll_synch,
+  fow_ctx = document.getElementById('fow').getContext('2d'),
+  r1 = $('#fow_brush_size').val(),
+  r2 = $('#fow_brush_feather_size').val(),
+  dragging = false;
 
   /**
    * Hash code helper.
@@ -288,7 +292,7 @@
   }
 
   var updateScrollPos = function(e, _window) {
-    $('html').css('cursor', 'nwse-resize');
+    $('html').css('cursor', 'move');
     $(_window).scrollTop($(_window).scrollTop() + (clickY - e.pageY));
     $(_window).scrollLeft($(_window).scrollLeft() + (clickX - e.pageX));
   }
@@ -357,14 +361,6 @@
    */
   $('#fow').contextmenu(function() {
       return false;
-  });
-
-  /**
-   * Binding an event to a variable toggle.  Computer science in action.
-   */
-  var shifted = false;
-  $(document).on('keyup keydown', function(e){
-    shifted = e.shiftKey;
   });
 
   /**
@@ -491,34 +487,61 @@
     $('#fow_wrapper').css('opacity', get_opacity($('#fow_opacity')));
   });
 
+  /**
+   * Helper stores FoW content to window variable.
+   */
+  function fow_store_content() {
+    // Get image data from canvas and store it to window variable.
+    window.fow_content = fow_ctx.getImageData(0, 0, fow_canvas.width, fow_canvas.height);
+    // Stringify the window variable for localstorage.
+    // window.fow_content = JSON.stringify(window.fow_content);
+    // localStorage.setItem('current_fow_content', window.fow_content);
+  }
   $('#fow_store').click(function(e) {
-    localStorage.setItem('current_fow_content', window.fow_content.stringify());
-  });
-  $('#fow_recall').click(function(e) {
-    fow_canvas.getContext('2d').putImageData(JSON.parse(localStorage.getItem('current_fow_content')), 0, 0);
-    render_player_fow_canvas();
+    fow_store_content();
   });
 
-  function render_player_fow_canvas() {
-    player_fow.getContext('2d').drawImage(fow_canvas, 0, 0, fow_canvas.width, fow_canvas.height);
+  /**
+   * Helper recalls FoW content.
+   */
+  function fow_recall_content() {
+    // window.fow_content = JSON.parse(localStorage.getItem('current_fow_content'));
+    if (window.fow_content !== undefined) {
+      fow_ctx.putImageData(window.fow_content, 0, 0);
+      render_fow_canvas();
+    }
+    else {
+      fow_reset();
+    }
+  }
+  $('#fow_recall').click(function(e) {
+    fow_recall_content();
+  });
+
+  /**
+   * Render the Fog of War data in variable to player canvas
+   */
+  function render_fow_canvas() {
+    if (player_fow) {
+      player_fow.getContext('2d').drawImage(fow_canvas.getElement(), 0, 0, fow_canvas.width, fow_canvas.height);
+      return;
+    }
+    console.log('No FoW data or no Player view.');
   }
 
   $('#fow_reset').click(function(e) {
-    window.fow_content = null;
-    clear_fow();
+    fow_reset();
   });
 
   /**
    * Fog On!
    */
   $("#fow_toggle").change(function() {
-    window.fow_content = fow_canvas.getContext('2d').getImageData(0, 0, fow_canvas.width, fow_canvas.height);
+    fow_store_content();
     $('canvas[id^=fow]').toggleClass('active', this.checked);
     $('#cursor').toggleClass('active', this.checked);
     if ($('canvas[id^=fow]').hasClass('active')) {
-      if (window.fow_content) {
-        fow_canvas.getContext('2d').putImageData(window.fow_content, 0, 0);
-      }
+      fow_recall_content();
     }
   }).change();
 
@@ -795,16 +818,12 @@
   /**
    * Helper initializes fog of war.
    */
-   var fow_ctx = fow_canvas.getElement().getContext('2d'),
-   r1 = $('#fow_brush_size').val(),
-   r2 = $('#fow_brush_feather_size').val(),
-   dragging = false;
-
-  function clear_fow() {
+  function fow_reset() {
+    fow_ctx.globalCompositeOperation = 'destination-out';
     fow_ctx.fillStyle = 'rgba( 0, 0, 0, 1 )';
     fow_ctx.fillRect(0, 0, screen.availWidth, screen.availHeight);
+    window.fow_content = null;
   }
-  clear_fow();
 
   $('#fow').on('mousedown', function() {
     dragging = true;
@@ -815,7 +834,7 @@
     if (player_fow) {
       player_fow.width = fow_canvas.width;
       player_fow.height = fow_canvas.height;
-      render_player_fow_canvas();
+      render_fow_canvas();
     }
   });
 
@@ -834,7 +853,7 @@
       radGrd.addColorStop(0.25, 'rgba( 0, 0, 0, .1 )');
       radGrd.addColorStop(1, 'rgba( 0, 0, 0, 0 )');
 
-      if (shifted !== false) {
+      if (ev.shiftKey !== false) {
         fow_ctx.globalCompositeOperation = 'source-over';
       } else {
         fow_ctx.globalCompositeOperation = 'destination-out';
@@ -967,7 +986,7 @@
     return color;
   }
 
-  // file load
+  // File loaders.
   $('#file_load').click(function() {
     loadFile($('#file'));
   })
@@ -975,6 +994,9 @@
     loadFile($(this));
   })
 
+  /**
+   * Helper loads files.
+   */
   function loadFile(file) {
     var files = file.prop("files");
     $.each(files, function () {
@@ -1109,11 +1131,15 @@
       },
       { name: 'Delete',
         itemTemplate: function(val, item) {
-          return $('<button>').html('<i class="fa fa-trash" aria-hidden="true"></i> Delete').attr({'class': 'file_delete_from_canvas'}).css({ 'display': 'block' }).on('click', function() {
-            while (getObjectFromCanvasById(item.id, map_canvas)) {
-              removeObjectFromCanvas(item.id, map_canvas);
+          return $('<button>').html('<i class="fa fa-trash" aria-hidden="true"></i> Delete').attr({'class': 'file_delete_from_canvas'}).css({ 'display': 'block' }).on('click', function(e) {
+            console.log(e);
+            if (e.yes) {
+              while (getObjectFromCanvasById(item.id, map_canvas)) {
+                removeObjectFromCanvas(item.id, map_canvas);
+                $('#' + item.id).remove();
+              }
+              $('#files').jsGrid('deleteItem', $(item));
             }
-            $('#files').jsGrid('deleteItem', $(item));
           });
         },
         align: 'center',
