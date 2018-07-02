@@ -670,7 +670,7 @@
           let _url = response[0].url;
           let _id = make_file_id(_url);
           do_video(_id, _url, 'mp4');
-          $("#files").jsGrid("insertItem", {'id': _id, 'Filename': _file.name, 'Blob': _url, 'Type': 'YouTube', 'Thumbnail': _thumbnail });
+          $("#files").jsGrid("insertItem", {'id': _id, 'Filename': 'YouTube', 'Blob': _url, 'Type': 'YouTube', 'Thumbnail': _thumbnail });
         }
       }
     });
