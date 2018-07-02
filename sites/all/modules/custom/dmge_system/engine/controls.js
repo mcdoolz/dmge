@@ -668,7 +668,9 @@
       if (response[0]) {
         if (response[0].url) {
           let _url = response[0].url;
-          do_video(make_file_id(_url), _url, 'mp4');
+          let _id = make_file_id(_url);
+          do_video(_id, _url, 'mp4');
+          $("#files").jsGrid("insertItem", {'id': _id, 'Filename': _file.name, 'Blob': _url, 'Type': 'YouTube', 'Thumbnail': _thumbnail });
         }
       }
     });
@@ -979,7 +981,7 @@
     $.each(files, function () {
       let _file = this;
       let _url = window.URL.createObjectURL(_file);
-      let _file_id = make_file_id(_url);
+      let _id = make_id(_url);
       let _thumbnail = _url;
       let _type = 'Static';
       let ext = getExtension(_file.name);
@@ -1002,7 +1004,7 @@
         case 'mpg':
         case 'mp4':
           _type = 'Animated';
-          _vtag = do_video(_file_id, _url, ext);
+          _vtag = do_video(_id, _url, ext);
           break;
 
       default:
@@ -1012,10 +1014,13 @@
        break;
       }
 
-      $("#files").jsGrid("insertItem", {'id': _file_id, 'Filename': _file.name, 'Blob': _url, 'Type': _type, 'Thumbnail': _thumbnail });
+      $("#files").jsGrid("insertItem", {'id': _id, 'Filename': _file.name, 'Blob': _url, 'Type': _type, 'Thumbnail': _thumbnail });
     });
   }
 
+  /**
+   * Helper makes unique ID from hash of current time and url.
+   */
   function make_file_id(filename) {
     let t = todays_date.getTime();
     t = filename.hashCode() + t;
