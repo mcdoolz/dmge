@@ -329,7 +329,7 @@ function dmge_system_theme_registry_alter(&$theme_registry) {
 function _dmge_system_get_youtube_url($url = '') {
   if (!empty($_GET)) {
     if (empty($_GET['url'])) {
-      return;
+      return 'This URL is used to process YouTube URLs<br>Raw access does not garner any benefits.';
     }
     $url = $_GET['url'];
   }
@@ -351,7 +351,8 @@ function _dmge_system_get_youtube_url($url = '') {
   );
 
   $context = stream_context_create($opts);
-  $dt = file_get_contents('https://www.youtube.com/get_video_info?video_id=' . $id . '&el=embedded&ps=default&eurl=&gl=US&hl=en', false, $context);
+  $yt_url = 'https://www.youtube.com/get_video_info?video_id=' . $id . '&el=embedded&ps=default&eurl=&gl=US&hl=en';
+  $dt = file_get_contents($yt_url, false, $context);
   echo $dt;
 
   if (strpos($dt, 'status=fail') !== false) {
