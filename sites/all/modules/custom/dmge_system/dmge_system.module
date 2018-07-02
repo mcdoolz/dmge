@@ -334,7 +334,7 @@ function _dmge_system_get_youtube_url($id = '') {
     $id = $_GET['v'];
   }
   if (empty($id)) {
-    return;
+    return 'No id provided.';
   }
   $opts = array(
   'http' => array(
