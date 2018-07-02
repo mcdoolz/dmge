@@ -1038,9 +1038,7 @@
        break;
       }
 
-      $("#files").jsGrid("insertItem", {'id': _file_id, 'Filename': _file.name, 'Blob': _url, 'Type': _type, 'Thumbnail': _thumbnail }).done(function() {
-        $(this).stop().css("background-color", "green").animate({ backgroundColor: "none"}, 500);
-      });
+      $("#files").jsGrid("insertItem", {'id': _file_id, 'Filename': _file.name, 'Blob': _url, 'Type': _type, 'Thumbnail': _thumbnail });
     });
   }
 
