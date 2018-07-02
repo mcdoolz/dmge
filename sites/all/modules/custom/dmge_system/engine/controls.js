@@ -675,10 +675,13 @@
   /**
    * Let's make us ah awnliiiiine veedeo.
    */
-  $('#map_embed_submit').on('touchend click', function(event) {
+  $('#map_embed_submit').on('touchend, click', function(event) {
     event.stopPropagation();
     event.preventDefault();
+    console.log('Calling YouTube');
+    // A serverside PHP callback fires the URL to YouTube and parses an mp4 url from the response, for us to embed.
     $.get('/engine/youtube?url=' + $('#map_embed').val(), null, function(response) {
+      console.log(response);
       if (response[0]) {
         if (response[0].url) {
           do_youtube(response[0].url);
@@ -1058,96 +1061,99 @@
   });
 
   // Fashion the file grid_canvas.
-  $('#files').jsGrid({
-    height: '400px',
-    width: '100%',
-
-    filtering: true,
-    editing: false,
-    sorting: true,
-    paging: true,
-    autoload: true,
-
-    pageSize: 15,
-    pageButtonCount: 5,
-
-    confirmDeleting: true,
-    deleteConfirm: 'Remove?',
-    onItemDeleted: function(e) {
-      let _id = e.row[0].id;
-      while (getObjectFromCanvasById(_id, map_canvas)) {
-        removeObjectFromCanvas(_id, map_canvas);
-        $('#' + _id).remove();
-      }
-    },
-
-    onItemInserted: function(e) {
-      let item = e.item;
-      if (item.Type === 'Animated') {
-        let vId = $('#' + item.id);
-        let vtag = document.getElementById(item.id);
-        $(vId).on('play', function(e) {
-          let thumbnail = make_video_thumbnail(item.id);
-          $("#files").jsGrid("updateItem", item, {'Thumbnail': thumbnail });
-          let item_id = 'map_video_' + item.id;
-          window[item_id] = new fabric.Image(vtag, {
-            id: item.id,
-            originX: 'left',
-            originY: 'top',
-            height: vtag.videoHeight,
-            width: vtag.videoWidth,
-            left: 10,
-            top: 10
-          });
-          map_canvas.add(window[item_id]);
-        });
-      }
-    },
-
-    fields: [
-      { name: 'id', type: 'number', visible: false },
-      { name: 'Bulk Op', type: 'checkbox' },
-      { name: 'Filename', type: 'text', width: '25%' },
-      { name: 'Blob', type: 'text', width: '25%' },
-      { name: 'Type', type: 'select', items: ['Static', 'Animated'] },
-      { name: 'Thumbnail',
-        itemTemplate: function(val, item) {
-          return $('<img>').attr('src', val).css({ height: 50, width: 50 }).on('click', function() {
-            $('#file_preview').attr('src', item.Thumbnail);
-            $('#file_preview_dialog').dialog('open');
-          });
-        },
-        insertTemplate: function() {
-            var insertControl = this.insertControl = $('<input>').prop('type', 'file');
-            return insertControl;
-        },
-        insertValue: function() {
-            return this.insertControl[0].files[0];
-        },
-        align: 'center',
-        width: 120
-      },
-      { name: 'Add',
-        itemTemplate: function(val, item) {
-          return $('<button>').html('<i class="fa fa-puzzle-piece" aria-hidden="true"></i> Add').attr({'class': 'file_add_to_canvas'}).css({ 'display': 'block' }).on('click', function(e) {
-            let obj = fabric.util.object.clone(getObjectFromCanvasById(item.id, map_canvas));
-            map_canvas.add(obj);
-          });
-        },
-        align: 'center',
-        width: 120
-      },
-      { name: 'Delete',
-        itemTemplate: function(val, item) {
-          return $('<button>').html('<i class="fa fa-trash" aria-hidden="true"></i> Delete').attr({'class': 'file_delete_from_canvas'}).css({ 'display': 'block' }).on('click', function(e) {
-            $('#files').jsGrid('deleteItem', $(item));
-          });
-        },
-        align: 'center',
-        width: 120
-      }
-    ]
-  });
+  $('#files').jsGrid(
+  //   {
+  //   height: '400px',
+  //   width: '100%',
+  //
+  //   filtering: true,
+  //   editing: false,
+  //   sorting: true,
+  //   // paging: true,
+  //   // autoload: true,
+  //
+  //   pageSize: 15,
+  //   pageButtonCount: 5,
+  //
+  //   confirmDeleting: true,
+  //   deleteConfirm: 'Remove?',
+  //   onItemDeleted: function(e) {
+  //     let _id = e.row[0].id;
+  //     while (getObjectFromCanvasById(_id, map_canvas)) {
+  //       removeObjectFromCanvas(_id, map_canvas);
+  //       $('#' + _id).remove();
+  //     }
+  //   },
+  //
+  //   onItemInserted: function(e) {
+  //     let item = e.item;
+  //     if (item.Type === 'Animated') {
+  //       let vId = $('#' + item.id);
+  //       let vtag = document.getElementById(item.id);
+  //       $(vId).on('play', function(e) {
+  //         let thumbnail = make_video_thumbnail(item.id);
+  //         $("#files").jsGrid("updateItem", item, {'Thumbnail': thumbnail });
+  //         // VIDEO TAGS GET A MAP_VIDEO_ PREFIX
+  //         let item_id = 'map_video_' + item.id;
+  //         window[item_id] = new fabric.Image(vtag, {
+  //           id: item.id,
+  //           originX: 'left',
+  //           originY: 'top',
+  //           height: vtag.videoHeight,
+  //           width: vtag.videoWidth,
+  //           left: 10,
+  //           top: 10
+  //         });
+  //         map_canvas.add(window[item_id]);
+  //       });
+  //     }
+  //   },
+  //
+  //   fields: [
+  //     { name: 'id', type: 'number', visible: false },
+  //     { name: 'Bulk Op', type: 'checkbox' },
+  //     { name: 'Filename', type: 'text', width: '25%' },
+  //     { name: 'Blob', type: 'text', width: '25%' },
+  //     { name: 'Type', type: 'select', items: ['Static', 'Animated'] },
+  //     { name: 'Thumbnail',
+  //       itemTemplate: function(val, item) {
+  //         return $('<img>').attr('src', val).css({ height: 50, width: 50 }).on('click', function() {
+  //           $('#file_preview').attr('src', item.Thumbnail);
+  //           $('#file_preview_dialog').dialog('open');
+  //         });
+  //       },
+  //       insertTemplate: function() {
+  //           var insertControl = this.insertControl = $('<input>').prop('type', 'file');
+  //           return insertControl;
+  //       },
+  //       insertValue: function() {
+  //           return this.insertControl[0].files[0];
+  //       },
+  //       align: 'center',
+  //       width: 120
+  //     },
+  //     { name: 'Add',
+  //       itemTemplate: function(val, item) {
+  //         return $('<button>').html('<i class="fa fa-puzzle-piece" aria-hidden="true"></i> Add').attr({'class': 'file_add_to_canvas'}).css({ 'display': 'block' }).on('click', function(e) {
+  //           let obj = fabric.util.object.clone(getObjectFromCanvasById(item.id, map_canvas));
+  //           map_canvas.add(obj);
+  //         });
+  //       },
+  //       align: 'center',
+  //       width: 120
+  //     },
+  //     { name: 'Delete',
+  //       itemTemplate: function(val, item) {
+  //         return $('<button>').html('<i class="fa fa-trash" aria-hidden="true"></i> Delete').attr({'class': 'file_delete_from_canvas'}).css({ 'display': 'block' }).on('click', function(e) {
+  //           $('#files').jsGrid('deleteItem', $(item));
+  //         });
+  //       },
+  //       align: 'center',
+  //       width: 120
+  //     }
+  //   ]
+  // }
+);
 
   // map_canvas.on('selection:created', function (e) {
   //    console.log(e);

@@ -27,7 +27,7 @@ $age = $incept_date->diff($today)->days;
     </ol>
     <p>Crafted with <i class="fa fa-heart"></i> by Dooley P.<br>
     This is Alphaware (<?php print $age;?> days old).<br>
-    Report problems to <a href="mailto:icanfly@digitalforge.ca">icanfly@digitalforge.ca</a><br>
+    Report problems to <a href="mailto:contact@dmge.net">contact@dmge.net</a><br>
     Code was lifted from various sources, or written personally.</p>
   </div>
 
@@ -64,16 +64,16 @@ $age = $incept_date->diff($today)->days;
             <form method="post">
               <input id="file" type="file" multiple />
               <input id="file_load" type="button" value="Load File">
+              <label for="file_functions">Bulk Operations</label>
               <select id="file_functions">
                 <options>
-                  <option>--Bulk Ops--</option>
                   <option>Remove</option>
                 </options>
               </select>
               <input id="file_bulkop" type="button" value="Do Bulk Op">
             </form>
             <label for="map_embed">Paste the URL to a Video</label>
-            <form><input type="text" id="map_embed"><input type="submit" id="map_embed_submit"></form>
+            <form><input type="text" id="map_embed"><input type="button" id="map_embed_submit" value="Import"></form>
             <p><sup>Currently recognizes YouTube videos only.</sup></p>
           </div>
           <div id="files_storage_path">
