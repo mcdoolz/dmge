@@ -638,30 +638,6 @@
     $('#map_innerwrapper').html('<iframe src="' + _url + '" frameborder="0" allowfullscreen></iframe>');
   }
 
-  /**
-   * Make and inject YouTube embed.
-   */
-  function do_youtube(_url) {
-    let yttag = $('<video />', {
-      class: 'yt_video',
-      id: 'yt_video',
-      src: _url,
-      type: 'video/mp4',
-      control: false,
-      autoplay: true,
-      loop: true,
-      muted: true,
-    });
-    $('#map_video_wrapper').html(yttag);
-    let ytvideo = new fabric.Image(e[0], {
-      left: 0,
-      top: 0,
-      originX: 'center',
-      originY: 'center'
-    });
-    map_canvas.add(ytvideo);
-  }
-
   function do_video(_file_id, _url, ext) {
     let vtag;
     vtag = $('<video />', {
@@ -691,7 +667,8 @@
       console.log(response);
       if (response[0]) {
         if (response[0].url) {
-          do_youtube(response[0].url);
+          let _url = response[0].url;
+          do_video(make_file_id(_url), _url, 'mp4');
         }
       }
     });
