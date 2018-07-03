@@ -1069,14 +1069,15 @@
           $("#files").jsGrid("updateItem", item, {'Thumbnail': thumbnail });
           // VIDEO TAGS GET A MAP_VIDEO_ PREFIX
           let item_id = 'map_video_' + item.id;
+          console.log(vtag);
           window[item_id] = new fabric.Image(vtag, {
             id: item.id,
             originX: 'left',
             originY: 'top',
             height: vtag.videoHeight,
             width: vtag.videoWidth,
-            left: 10,
-            top: 10
+            left: 0,
+            top: 0
           });
           map_canvas.add(window[item_id]);
         });
