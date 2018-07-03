@@ -1060,7 +1060,7 @@
 
     onItemInserted: function(e) {
       let item = e.item;
-      if (item.Type === 'Animated') {
+      if ((item.Type === 'Animated') || (item.Type === 'YouTube')) {
         let vId = $('#' + item.id);
         let vtag = document.getElementById(item.id);
         $(vId).on('play', function(e) {
