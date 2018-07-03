@@ -1048,7 +1048,6 @@
     confirmDeleting: true,
     deleteConfirm: 'Remove?',
     onItemDeleted: function(e) {
-      console.log(e);
       let _id = e.row[0].id;
       while (getObjectFromCanvasById(_id, map_canvas)) {
         removeObjectFromCanvas(_id, map_canvas);
