@@ -1161,6 +1161,7 @@
 
   /**
    * Calculate screen.
+   * Shout out to screen-size.info for the javascript driving this feature.
    */
   var _screen_x = $("#first").val(screen.width),
     _screen_y = $("#second").val(screen.height);

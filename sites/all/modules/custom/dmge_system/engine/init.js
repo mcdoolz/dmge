@@ -4,7 +4,7 @@
   if (window.File && window.FileReader && window.FileList && window.Blob) {
     // Great success! All the File APIs are supported.
   } else {
-    alert("This browser does not support local file interactions.  You can't read files.  Switch or upgrade your browser.");
+    alert("This browser does not support local file interactions.  You can't read or write files.  Switch or upgrade your browser if you want moar from the DMGE.");
   }
 
   if (typeof(Storage) !== "undefined") {
@@ -17,7 +17,7 @@
   Drupal.behaviors.dmge_init = {
     attach: function(context, settings) {
       // $('body').prepend('<div id="memory"><div id="memory_available"></div><div id="memory_used"></div></div>');
-      $('canvas').height($(window).height()).width($(window).width());
+      // $('canvas').height($(window).height()).width($(window).width());
     }
   }
 
