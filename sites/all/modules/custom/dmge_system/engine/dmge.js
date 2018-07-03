@@ -610,15 +610,6 @@
     $('#cursor').css('left', _x);
   });
 
-  /**
-   * Don't reinvent the wheel.
-   * https://stackoverflow.com/a/8260383/4942292
-   */
-  function get_youtube_code(url) {
-      var regExp = /^.*((youtu.be\/)|(v\/)|(\/u\/\w\/)|(embed\/)|(watch\?))\??v?=?([^#\&\?]*).*/;
-      var match = url.match(regExp);
-      return (match&&match[7].length==11)? match[7] : false;
-  }
   $("input[name=map_type_options]").change(function(event) {
     _option = event.target;
     $(".map_type_property").hide();
@@ -654,12 +645,29 @@
   }
 
   /**
+   * Don't reinvent the wheel.
+   * https://stackoverflow.com/a/8260383/4942292
+   */
+  function get_youtube_code(url) {
+      var regExp = /^.*((youtu.be\/)|(v\/)|(\/u\/\w\/)|(embed\/)|(watch\?))\??v?=?([^#\&\?]*).*/;
+      var match = url.match(regExp);
+      return (match&&match[7].length==11)? match[7] : false;
+  }
+
+  /**
    * Let's make us ah awnliiiiine veedeo.
    */
-  $('#map_embed_submit').on('touchend, click', function(event) {
+  $('#map_embed_submit').on('touchend, click', function(e) {
     // A serverside PHP callback fires the URL to YouTube and parses an mp4 url from the response, for us to embed.
     let code = get_youtube_code($('#map_embed').val());
     // Fire our backend script with our id code.
+    do_youtube(code);
+  });
+
+  /**
+   * Helper fires GET and then sets off code processing.
+   */
+  function do_youtube(code) {
     $.get('/engine/youtube?v=' + code, null, function(response) {
       if (response[0]) {
         if (response[0].url) {
@@ -670,7 +678,7 @@
         }
       }
     });
-  });
+  }
 
   /**
    * Returns reference to added canvas entity.
@@ -744,9 +752,34 @@
     startTimer();
   }
 
+  /**
+   * Helper for getting query params as an object.
+   * Thanks to https://stackoverflow.com/a/29546771/4942292
+   */
+  function getQueryParams() {
+    try {
+      let url = window.location.href;
+      let query_str = url.substr(url.indexOf('?')+1, url.length-1);
+      let r_params = query_str.split('&');
+      let params = {};
+      for (i in r_params) {
+          param = r_params[i].split('=');
+          params[param[0]] = param[1];
+      }
+      return params;
+    }
+    catch(e) {
+       return {};
+    }
+  }
+
   $(document).ready(function(){
     setupTimers();
     fow_reset();
+    params = getQueryParams();
+    if (params.v) {
+      do_youtube(params.v);
+    }
   });
 
   /**

@@ -397,3 +397,43 @@ function _dmge_system_get_youtube_url($id = '') {
     drupal_json_output($g);
   }
 }
+
+/**
+ * Find a video with the respective video id.
+ */
+function _dmge_system_get_youtube_video($video) {
+  $query = new EntityFieldQuery();
+  $query->entityCondition('entity_type', 'node')
+    ->entityCondition('bundle', 'resource')
+    ->fieldCondition('field_resource_links', 'field_resource_link', $video, 'IN')
+    ->range(0, 10)
+    ->addMetaData('account', user_load(1));
+
+  $result = $query->execute();
+  if (isset($result['node'])) {
+    $nids = array_keys($result['node']);
+    $nodes = entity_load('node', $nids);
+  }
+  // There should only ever be one, unless someone manually added more than one.
+  return $nodes[0];
+}
+
+/**
+ * Helper gets videos from youtube channel id.
+ * Manny Sykes is hardcoded.
+ */
+function dmge_system_get_youtube_channel($channel = 'UCrsCjHT8tJ1vpSkvLoYji3g') {
+  $apikey = 'AIzaSyBiUK8xJG-Q8hUwxekpuf1R_xhYYWKuwL0';
+  $maxResults = 200;
+
+  $videos = json_decode(file_get_contents('https://www.googleapis.com/youtube/v3/search?order=date&part=snippet&channelId='.$channel.'&maxResults='.$maxResults.'&key='.$apikey.''));
+
+  foreach($videos->items as $item) {
+    if (isset($item->id->videoId)) {
+      if (true) {}
+      $node = new stdClass();
+      $node->title = $item->snippet->title;
+      $url = 'https://www.youtube.com/?v='.$item->id->videoId;
+    }
+  }
+}
