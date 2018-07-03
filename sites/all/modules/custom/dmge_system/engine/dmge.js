@@ -1061,7 +1061,6 @@
       if ((item.Type === 'Animated') || (item.Type === 'YouTube')) {
         let vId = $('#' + item.id);
         let vtag = document.getElementById(item.id);
-        vtag.crossOrigin = "Anonymous";
         $(vId).on('play', function(e) {
           let thumbnail = make_video_thumbnail(item.id, item.Type);
           $("#files").jsGrid("updateItem", item, {'Thumbnail': thumbnail });
@@ -1135,6 +1134,9 @@
    * Grab video tag by id and make a screen shot.
    */
   function make_video_thumbnail(video, type) {
+    if (type == 'YouTube') {
+      return;
+    }
     video = document.getElementById(video);
 
     if ($('#thumb_video_canvas')) {
@@ -1152,8 +1154,12 @@
     thumb_canvas[0].height = 256;
     thumb_canvas[0].getContext('2d').drawImage(video, 0, 0, thumb_canvas[0].width, thumb_canvas[0].height);
     while (!_shot) {
-      _shot = thumb_canvas[0].toDataURL();
+        _shot = thumb_canvas[0].toDataURL();
+      // if (type == 'YouTube') {
+      //   _shot = thumb_canvas[0].getImageData(0, 0, thumb_canvas[0].width, thumb_canvas[0].height);
+      // }
     }
+
     if (_shot) {
       thumb_canvas.remove();
     }
