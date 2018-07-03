@@ -47,7 +47,7 @@ function dmge_system_theme() {
 function dmge_system_players() {
   global $user;
   $path = drupal_get_path('module', 'dmge_system');
-  drupal_add_js($path . '/engine/heartbeat.js', array(
+  drupal_add_js($path . '/engine/player.js', array(
     'type' => 'file',
     'scope' => 'footer',
     'weight' => 999,
@@ -112,7 +112,7 @@ function dmge_system_main() {
 
   $footer_javascripts = array(
     $path . '/engine/init.js',
-    $path . '/engine/controls.js',
+    $path . '/engine/dmge.js',
   );
   foreach ($footer_javascripts as $footer_javascript) {
     drupal_add_js($footer_javascript, array(
