@@ -1066,7 +1066,7 @@
           $("#files").jsGrid("updateItem", item, {'Thumbnail': thumbnail });
           // VIDEO TAGS GET A MAP_VIDEO_ PREFIX
           let item_id = 'map_video_' + item.id;
-          console.log('Vtag', vtag);
+          console.log('Vtag: ', vtag);
           window[item_id] = new fabric.Image(vtag, {
             id: item.id,
             originX: 'left',
@@ -1131,7 +1131,7 @@
   });
 
   /**
-   * Grab video by id and make shot.
+   * Grab video tag by id and make a screen shot.
    */
   function make_video_thumbnail(video) {
     video = document.getElementById(video);
@@ -1153,7 +1153,9 @@
     while (!_shot) {
       _shot = thumb_canvas[0].toDataURL();
     }
-    thumb_canvas.remove();
+    if (_shot) {
+      thumb_canvas.remove();
+    }
     return _shot;
   }
 
