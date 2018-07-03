@@ -659,7 +659,6 @@
   $('#map_embed_submit').on('touchend, click', function(event) {
     // A serverside PHP callback fires the URL to YouTube and parses an mp4 url from the response, for us to embed.
     let code = get_youtube_code($('#map_embed').val());
-    console.log('Calling YouTube for ' + code);
     // Fire our backend script with our id code.
     $.get('/engine/youtube?v=' + code, null, function(response) {
       if (response[0]) {
@@ -1049,6 +1048,7 @@
     confirmDeleting: true,
     deleteConfirm: 'Remove?',
     onItemDeleted: function(e) {
+      console.log(e);
       let _id = e.row[0].id;
       while (getObjectFromCanvasById(_id, map_canvas)) {
         removeObjectFromCanvas(_id, map_canvas);
@@ -1066,7 +1066,6 @@
           $("#files").jsGrid("updateItem", item, {'Thumbnail': thumbnail });
           // VIDEO TAGS GET A MAP_VIDEO_ PREFIX
           let item_id = 'map_video_' + item.id;
-          console.log('Vtag: ', vtag);
           window[item_id] = new fabric.Image(vtag, {
             id: item.id,
             originX: 'left',
