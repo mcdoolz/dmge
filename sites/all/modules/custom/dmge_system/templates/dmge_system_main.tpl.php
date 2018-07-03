@@ -10,7 +10,8 @@ $age = $incept_date->diff($today)->days;
   <div id="about" class="dialog" title="How to use the DMGE">
     <h4>How to Use</h4>
     <ol>
-      <li>Click Choose File and select an image or video to use as a map, or select Online Video and paste the URL of a YouTube video.</li>
+      <li>Click the File tab, then Choose File and select an image or video to use as a map.</li>
+      <li>You can import YouTube videos by inputting their address in the provided field, then clicking Import.</li>
       <li>Click and drag the corner of the map to scale it to your liking.  Zoom out using your browsers control if you need more space.</li>
       <li>If the Fog of War is enabled, left click drag to remove the fog, hold shift to repaint it.  Use the slider to change the opacity.</li>
     </ol>
