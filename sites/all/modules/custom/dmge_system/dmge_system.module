@@ -327,6 +327,8 @@ function dmge_system_theme_registry_alter(&$theme_registry) {
  * Helper to get YouTube URL.
  */
 function _dmge_system_get_youtube_url($id = '') {
+  $id = filter_xss($id);
+  $id = check_plain($id);
   if (!empty($_GET)) {
     if (empty($_GET['v'])) {
       return 'This URL is used to process YouTube URLs<br>Raw access does not garner any benefits.';
