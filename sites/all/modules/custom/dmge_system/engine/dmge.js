@@ -1061,8 +1061,9 @@
       if ((item.Type === 'Animated') || (item.Type === 'YouTube')) {
         let vId = $('#' + item.id);
         let vtag = document.getElementById(item.id);
+        vtag.crossOrigin = "Anonymous";
         $(vId).on('play', function(e) {
-          let thumbnail = make_video_thumbnail(item.id);
+          let thumbnail = make_video_thumbnail(item.id, item.Type);
           $("#files").jsGrid("updateItem", item, {'Thumbnail': thumbnail });
           // VIDEO TAGS GET A MAP_VIDEO_ PREFIX
           let item_id = 'map_video_' + item.id;
@@ -1133,7 +1134,7 @@
   /**
    * Grab video tag by id and make a screen shot.
    */
-  function make_video_thumbnail(video) {
+  function make_video_thumbnail(video, type) {
     video = document.getElementById(video);
 
     if ($('#thumb_video_canvas')) {
