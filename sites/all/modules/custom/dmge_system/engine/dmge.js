@@ -657,8 +657,6 @@
    * Let's make us ah awnliiiiine veedeo.
    */
   $('#map_embed_submit').on('touchend, click', function(event) {
-    event.stopPropagation();
-    event.preventDefault();
     // A serverside PHP callback fires the URL to YouTube and parses an mp4 url from the response, for us to embed.
     let code = get_youtube_code($('#map_embed').val());
     console.log('Calling YouTube for ' + code);
@@ -1068,7 +1066,7 @@
           $("#files").jsGrid("updateItem", item, {'Thumbnail': thumbnail });
           // VIDEO TAGS GET A MAP_VIDEO_ PREFIX
           let item_id = 'map_video_' + item.id;
-          console.log(vtag);
+          console.log('Vtag', vtag);
           window[item_id] = new fabric.Image(vtag, {
             id: item.id,
             originX: 'left',
