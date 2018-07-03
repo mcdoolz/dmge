@@ -980,7 +980,7 @@
     $.each(files, function () {
       let _file = this;
       let _url = window.URL.createObjectURL(_file);
-      let _id = make_id(_url);
+      let _id = make_file_id(_url);
       let _thumbnail = _url;
       let _type = 'Static';
       let ext = getExtension(_file.name);
