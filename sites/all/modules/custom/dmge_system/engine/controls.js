@@ -661,7 +661,7 @@
     event.preventDefault();
     // A serverside PHP callback fires the URL to YouTube and parses an mp4 url from the response, for us to embed.
     let code = get_youtube_code($('#map_embed').val());
-    console.log('Calling YouTube for id:' + code);
+    console.log('Calling YouTube for ' + code);
     $.get('/engine/youtube?v=' + code, null, function(response) {
       console.log(response);
       if (response[0]) {
@@ -1128,9 +1128,9 @@
     ]
   });
 
-  // map_canvas.on('selection:created', function (e) {
-  //    console.log(e);
-  // });
+  map_canvas.on('selection:created', function (e) {
+     console.log(e);
+  });
 
   /**
    * Grab video by id and make shot.
