@@ -638,17 +638,16 @@
     $('#map_innerwrapper').html('<iframe src="' + _url + '" frameborder="0" allowfullscreen></iframe>');
   }
 
-  function do_video(_file_id, _url, ext) {
+  function do_video(_id, _url, ext) {
     let vtag;
     vtag = $('<video />', {
       class: 'map_video',
       type: 'video/' + ext,
       src: _url,
-      control: false,
+      controls: false,
       autoplay: true,
-      muted: true,
       loop: true,
-      id: _file_id,
+      id: _id
     });
     $('#map_video_wrapper').append(vtag[0]);
     return vtag;
