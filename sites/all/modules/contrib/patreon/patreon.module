@@ -153,24 +153,25 @@ function patreon_authorise_account($client_id, $redirect_url = NULL, $redirect =
  *
  * @param string $code
  *   An oauth code returned by the Patreon API.
+ * @param string $url
+ *   The callback URL to use. If not valid, will be rejected.
  *
  * @return null|string
  *   A valid access token, or NULL in event of error.
+ *
+ * @see patreon_get_allowed_callback_urls()
  */
-function patreon_get_token($code, $scope = NULL) {
+function patreon_get_token($code, $url = NULL) {
   $return = NULL;
+  $url = (is_null($url) || !in_array($url, patreon_get_allowed_callback_urls())) ? patreon_get_callback_url() : $url;
   $key = variable_get('patreon_client_id', '');
   $secret = variable_get('patreon_client_secret', '');
   $library = libraries_load(PATREON_LIBRARY);
 
   if ($library['loaded'] && $key && $secret) {
     $oauth_client = new Patreon\OAuth($key, $secret);
-    $url = patreon_get_callback_url();
-    if ($scope == 'user') {
-      $url = patreon_user_get_callback_url();
-    }
     $tokens = $oauth_client->get_tokens($code, $url);
-    if ($tokens && $access_token = $tokens['access_token']) {
+    if (isset($tokens['access_token']) && $access_token = $tokens['access_token']) {
       $return = check_plain($access_token);
     }
   }
