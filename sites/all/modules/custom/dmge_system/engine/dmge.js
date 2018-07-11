@@ -649,9 +649,9 @@
    * https://stackoverflow.com/a/8260383/4942292
    */
   function get_youtube_code(url) {
-      var regExp = /^.*((youtu.be\/)|(v\/)|(\/u\/\w\/)|(embed\/)|(watch\?))\??v?=?([^#\&\?]*).*/;
-      var match = url.match(regExp);
-      return (match&&match[7].length==11)? match[7] : false;
+    var regExp = /^.*((youtu.be\/)|(v\/)|(\/u\/\w\/)|(embed\/)|(watch\?))\??v?=?([^#\&\?]*).*/;
+    var match = url.match(regExp);
+    return (match&&match[7].length==11)? match[7] : false;
   }
 
   /**
@@ -665,7 +665,7 @@
   });
 
   /**
-   * Helper fires GET and then sets off code processing.
+   * Helper fires GET and then sets off code and video processing.
    */
   function do_youtube(code) {
     $.get('/engine/youtube?v=' + code, null, function(response) {
@@ -753,7 +753,7 @@
   }
 
   /**
-   * Helper for getting query params as an object.
+   * Helper for returning query string params as an object.
    * Thanks to https://stackoverflow.com/a/29546771/4942292
    */
   function getQueryParams() {
@@ -776,8 +776,10 @@
   $(document).ready(function(){
     setupTimers();
     fow_reset();
-    params = getQueryParams();
+    let params = getQueryParams();
     if (params.v) {
+      console.log(params);
+      console.log(params.v);
       do_youtube(params.v);
     }
   });

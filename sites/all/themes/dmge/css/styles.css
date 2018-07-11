@@ -2520,4 +2520,53 @@ html.js input.throbbing {
   padding-right: 13px;
 }
 
+/* line 495, ../sass/_theme.sass */
+#comparetable {
+  width: 100%;
+  table-layout: fixed;
+  text-align: center;
+  margin: 4em 0;
+  border-collapse: collapse;
+}
+/* line 501, ../sass/_theme.sass */
+#comparetable tr {
+  background: transparent !important;
+}
+/* line 503, ../sass/_theme.sass */
+#comparetable td, #comparetable th {
+  padding: 20px;
+  text-align: center;
+}
+/* line 506, ../sass/_theme.sass */
+#comparetable td.rowTitle {
+  text-align: left;
+}
+
+/* line 509, ../sass/_theme.sass */
+.blank {
+  background: none !important;
+  border: none !important;
+}
+
+/* line 514, ../sass/_theme.sass */
+.clean th {
+  background-color: #dfdfdf;
+  font-size: 26px;
+  color: #585858;
+  text-align: center;
+  font-weight: 400;
+  text-shadow: 0 1px 0 #e0ecf7;
+  border: 1px solid #bbbbbb;
+}
+/* line 522, ../sass/_theme.sass */
+.clean td {
+  background-color: #f0f1f1;
+  border: 1px solid #c8d6e2;
+}
+/* line 525, ../sass/_theme.sass */
+.clean td.rowTitle {
+  font-size: 20px;
+  font-weight: 400;
+}
+
 /* @import "theme-B"; */
