@@ -3,9 +3,8 @@ description = Provides additional node functions for use with the Patreon API
 core = 7.x
 package = Patreon
 
-; Information added by Drupal.org packaging script on 2017-06-03
-version = "7.x-1.1+4-dev"
+; Information added by Drupal.org packaging script on 2018-05-08
+version = "7.x-1.2+1-dev"
 core = "7.x"
 project = "patreon"
-datestamp = "1496520544"
-
+datestamp = "1525795987"
