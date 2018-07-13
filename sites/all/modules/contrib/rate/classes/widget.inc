@@ -375,7 +375,7 @@ abstract class RateWidget
       $anonymous_window = variable_get('votingapi_anonymous_window', 86400);
       // Use a minimum of 5 seconds. Needed to get the anonymous vote directly after the user has voted.
       $anonymous_window = max(5, $anonymous_window);
-      if ($this->account->uid || $user_vote[0]['timestamp'] > REQUEST_TIME - $anonymous_window || $anonymous_window == -1) {
+      if ($this->account->uid || $results[0]['timestamp'] > REQUEST_TIME - $anonymous_window || $anonymous_window == -1) {
         return $results[0]['value'];
       }
     }
