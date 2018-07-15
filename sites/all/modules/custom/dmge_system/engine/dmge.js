@@ -39,7 +39,8 @@
     hoverCursor: 'pointer',
     skipTargetFind: false,
     skipOffscreen: false,
-    selection: false
+    selection: false,
+    preserveObjectStacking: true
   };
   const canvases = ['map', 'grid', 'fow'];
   const canvas_canvases = ['map_canvas', 'grid_canvas', 'fow_canvas'];
@@ -77,6 +78,10 @@
       window[_canvas].renderAll();
     });
   }
+
+  map_canvas.on('object:added', function(e) {
+    $('#layering').jsGrid('insertItem', {'id': e.target.id, 'Index': map_canvas.getObjects().indexOf(getObjectFromCanvasById(e.target.id, map_canvas))});
+  });
 
   fabric.util.requestAnimFrame(function render() {
     map_canvas.renderAll();
@@ -278,18 +283,18 @@
    * Helper function get canvas object.
    */
   function getObjectFromCanvasById(id, canvas) {
-    const canvasObject = canvas.getObjects().filter((item) => {
+    let objs = canvas.getObjects().filter((item) => {
       return item.id === parseInt(id);
     });
-    return canvasObject[0];
+    return objs[0];
   }
 
   /**
    * Helper to remove object from canvas.
    */
-  function removeObjectFromCanvas(objectId, canvas) {
-    const canvasObject = getObjectFromCanvasById(objectId, canvas);
-    canvas.remove(canvasObject);
+  function removeObjectFromCanvas(id, canvas) {
+    let obj = getObjectFromCanvasById(id, canvas);
+    canvas.remove(obj);
   }
 
   var updateScrollPos = function(e, _window) {
@@ -675,7 +680,7 @@
           let _url = response[0].url;
           let _id = make_file_id(_url);
           do_video(_id, _url, 'mp4');
-          $("#files").jsGrid("insertItem", {'id': _id, 'Blob': _url, 'Type': 'YouTube' });
+          $('#files').jsGrid('insertItem', {'id': _id, 'Blob': _url, 'Type': 'YouTube' });
         }
       }
     });
@@ -1046,7 +1051,7 @@
        break;
       }
 
-      $("#files").jsGrid("insertItem", {'id': _id, 'Filename': _file.name, 'Blob': _url, 'Type': _type, 'Thumbnail': _thumbnail });
+      $('#files').jsGrid('insertItem', {'id': _id, 'Filename': _file.name, 'Blob': _url, 'Type': _type, 'Thumbnail': _thumbnail });
     });
   }
 
@@ -1059,6 +1064,9 @@
     return t;
   }
 
+  /**
+   * Initializing the file preview dialog.
+   */
   $("#file_preview_dialog").dialog({
     autoOpen: false,
     modal: true,
@@ -1069,7 +1077,9 @@
     }
   });
 
-  // Fashion the file grid_canvas.
+  /**
+   * Initializing the files table.
+   */
   $('#files').jsGrid({
     height: '400px',
     width: '100%',
@@ -1098,7 +1108,7 @@
         let vtag = document.getElementById(item.id);
         $(vId).on('play', function(e) {
           let thumbnail = make_video_thumbnail(item.id, item.Type);
-          $("#files").jsGrid("updateItem", item, {'Thumbnail': thumbnail });
+          $('#files').jsGrid("updateItem", item, {'Thumbnail': thumbnail });
           // VIDEO TAGS GET A MAP_VIDEO_ PREFIX
           let item_id = 'map_video_' + item.id;
           window[item_id] = new fabric.Image(vtag, {
@@ -1160,6 +1170,80 @@
     ]
   });
 
+  /**
+   * Layering grid.
+   */
+  $('#layering').jsGrid({
+    height: '400px',
+    width: '100%',
+
+    editing: false,
+
+    pageSize: 999,
+    // pageButtonCount: 5,
+
+    confirmDeleting: true,
+    deleteConfirm: 'Remove?',
+    onItemDeleted: function(e) {
+      let _id = e.row[0].id;
+      while (getObjectFromCanvasById(_id, map_canvas)) {
+        removeObjectFromCanvas(_id, map_canvas);
+        $('#' + _id).remove();
+      }
+    },
+
+    fields: [
+      { name: 'id', type: 'number', visible: false },
+      { name: 'Index', type: 'integer' },
+      { name: 'Filename', type: 'text', width: '25%' },
+      { name: 'Delete',
+        itemTemplate: function(val, item) {
+          return $('<button>').html('<i class="fa fa-trash" aria-hidden="true"></i> Delete').attr({'class': 'file_delete_from_canvas'}).css({ 'display': 'block' }).on('click', function(e) {
+            $('#files').jsGrid('deleteItem', $(item));
+          });
+        },
+        align: 'center',
+        width: 120
+      }
+    ],
+    rowClass: function(item, itemIndex) {
+      return "idx-" + itemIndex;
+    },
+    onRefreshed: function() {
+      var $gridData = $("#layering .jsgrid-grid-body tbody");
+
+      $gridData.sortable({
+        update: function(e, ui) {
+          // array of indexes
+          var clientIndexRegExp = /\s*idx-(\d+)\s*/;
+          var indexes = $.map($gridData.sortable('toArray', {
+            attribute: 'class'
+          }), function(classes) {
+            console.log(clientIndexRegExp.exec(classes));
+            return clientIndexRegExp.exec(classes)[1];
+          });
+
+          // arrays of items
+          var items = $.map($gridData.find("tr"), function(row) {
+            return $(row).data("JSGridItem");
+          });
+          console && console.log("Reordered items", items);
+          items.forEach(function(e) {
+            console.log(e);
+            map_canvas.moveTo(getObjectFromCanvasById(e.id, map_canvas), e.row);
+          });
+        }
+      });
+    }
+  });
+
+  /**
+   * Helper function for getting an objects z-index.
+   */
+  fabric.Object.prototype.getZIndex = function() {
+    return this.canvas.getObjects().indexOf(this);
+  }
+
   $('#map_element_options').dialog({
     autoOpen: false,
     modal: true,
@@ -1171,21 +1255,20 @@
   });
 
   map_canvas.on('selection:created', function (e) {
-     console.log(e);
-     if (!$('#map_element_options').dialog('isOpen')) {
-       $('#map_element_options').dialog('open');
+    if (e.ctrlKey) {
+       console.log(e);
+       if (!$('#map_element_options').dialog('isOpen')) {
+         $('#map_element_options').dialog('open');
+       }
+       let obj = map_canvas.getActiveObject();
+       $('#map_element_opacity').val(obj.opacity);
      }
-     let _obj = map_canvas.getActiveObject();
-     $('#map_element_opacity').val(1);
   });
 
   $('#map_element_opacity').on('input', function(e) {
-    let _obj = map_canvas.getActiveObject();
-    console.log(e);
-    let $e = $(this);
-    console.log($e);
-    _obj.set({
-        opacity: this.value
+    let obj = map_canvas.getActiveObject();
+    obj.set({
+      opacity: this.value
     });
   })
 
