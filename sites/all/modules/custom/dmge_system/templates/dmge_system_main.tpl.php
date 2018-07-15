@@ -39,6 +39,11 @@ $age = $incept_date->diff($today)->days;
     </button>
   </div>
 
+  <div id="map_element_options" title="Map Element Options">
+    <label for="map_element_opacity">Opacity</label>
+    <input id="map_element_opacity" type="range" value="1" step="0.1" min="0.1" max="1">
+  </div>
+
   <div id="wrench"><div id="wrench_innerwrapper"><i class="fa fa-wrench"></i></div></div>
 
   <div id="sidebar">

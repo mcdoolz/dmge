@@ -1160,10 +1160,34 @@
     ]
   });
 
+  $('#map_element_options').dialog({
+    autoOpen: false,
+    modal: true,
+    position: {
+      my: "center",
+      at: "top",
+      of: $('#map_wrapper')
+    }
+  });
+
   map_canvas.on('selection:created', function (e) {
      console.log(e);
-
+     if (!$('#map_element_options').dialog('isOpen')) {
+       $('#map_element_options').dialog('open');
+     }
+     let _obj = map_canvas.getActiveObject();
+     $('#map_element_opacity').val(1);
   });
+
+  $('#map_element_opacity').on('input', function(e) {
+    let _obj = map_canvas.getActiveObject();
+    console.log(e);
+    let $e = $(this);
+    console.log($e);
+    _obj.set({
+        opacity: this.value
+    });
+  })
 
   /**
    * Grab video tag by id and make a screen shot.
