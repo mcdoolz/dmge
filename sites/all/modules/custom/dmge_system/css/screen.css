@@ -85,10 +85,6 @@ article, aside, details, figcaption, figure, footer, header, hgroup, main, menu,
   pointer-events: none;
 }
 
-/* line 22, ../sass/screen.sass */
-body {
-  overflow: hidden;
-}
 /* line 24, ../sass/screen.sass */
 body, body.admin-menu {
   margin: 0 !important;

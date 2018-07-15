@@ -46,6 +46,7 @@
 
   /**
    * Helper to set dimensions on all canvases.
+   * Defines the canvases to fabricjs.
    */
   function set_canvas_dimensions(_screensize) {
     if (!_screensize) {
@@ -61,11 +62,11 @@
           default:
             window[_canvas] = new fabric.Canvas(e, _canvas_props);
         }
+        map_canvas.selection = true;
       }
-      window[_canvas].setWidth(screensize.width);
-      window[_canvas].setHeight(screensize.height);
+      window[_canvas].setWidth(_screensize.width);
+      window[_canvas].setHeight(_screensize.height);
     });
-    map_canvas.selection = true;
   }
 
   set_canvas_dimensions(screensize);
@@ -318,7 +319,7 @@
       width: $('#map_width').val(),
       height: $('#map_height').val()
     };
-    set_grid();
+    // set_grid();
     set_canvas_dimensions(_screensize);
   });
 
@@ -1161,6 +1162,7 @@
 
   map_canvas.on('selection:created', function (e) {
      console.log(e);
+
   });
 
   /**
