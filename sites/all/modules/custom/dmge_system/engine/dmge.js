@@ -35,12 +35,12 @@
   };
 
   var _canvas_props = {
+    preserveObjectStacking: true,
     renderOnAddRemove: false,
     hoverCursor: 'pointer',
     skipTargetFind: false,
     skipOffscreen: false,
-    selection: false,
-    preserveObjectStacking: true
+    selection: false
   };
   const canvases = ['map', 'grid', 'fow'];
   const canvas_canvases = ['map_canvas', 'grid_canvas', 'fow_canvas'];
@@ -58,6 +58,7 @@
       if (!window[_canvas]) {
         switch (e) {
           case 'fow':
+          case 'grid':
             window[_canvas] = new fabric.StaticCanvas(e, _canvas_props);
             break;
           default:
@@ -324,7 +325,6 @@
       width: $('#map_width').val(),
       height: $('#map_height').val()
     };
-    // set_grid();
     set_canvas_dimensions(_screensize);
   });
 
@@ -490,7 +490,10 @@
   });
 
   $('#fow_opacity').on('input', function() {
-    $('#fow_wrapper').css('opacity', get_opacity($('#fow_opacity')));
+    $('#fow_wrapper').css('opacity', get_opacity($('#fow_opacity')) / 2);
+    if (player_view) {
+      player_fow_wrapper.css('opacity', get_opacity($('#map_grid_opacity')));
+    }
   });
 
   /**
@@ -960,7 +963,6 @@
         const __grid = Grid.rectangle({ width: _cols, height: _rows });
 
         __grid.forEach(quad => {
-
           let _props = {
             left: quad.x*_size,
             top: quad.y*_size,
@@ -981,6 +983,28 @@
           let quadSymbol = new fabric.Rect(_props);
           grid_canvas.add(quadSymbol);
         });
+
+        /**
+         * This doesn't work because:
+         * We're using Fabric because:
+         * We want to interact with the grid because:
+         * Grid marking, etc.
+         */
+        // var canvas = $('#grid').get(0);
+        // var context = canvas.getContext("2d");
+        // context.beginPath();
+        // for (var x = 0; x <= _width; x += _size) {
+        //   context.moveTo(0.5 + x, 0);
+        //   context.lineTo(0.5 + x, _height);
+        // }
+        // for (var x = 0; x <= _height; x += _size) {
+        //   context.moveTo(p, 0.5 + x);
+        //   context.lineTo(bw, 0.5 + x);
+        // }
+        // context.closePath();
+        // context.strokeStyle = "white";
+        // context.lineWidth = 1;
+        // context.stroke();
       }
       console.timeEnd();
       grid_canvas.renderAll();
@@ -1244,6 +1268,9 @@
     return this.canvas.getObjects().indexOf(this);
   }
 
+  /**
+   * Initialize map element properties dialog.
+   */
   $('#map_element_options').dialog({
     autoOpen: false,
     modal: true,
@@ -1254,17 +1281,23 @@
     }
   });
 
+  /**
+   * Selection function opens element dialog and should set controls to match properties of object.
+   */
   map_canvas.on('selection:created', function (e) {
-    if (e.ctrlKey) {
-       console.log(e);
-       if (!$('#map_element_options').dialog('isOpen')) {
-         $('#map_element_options').dialog('open');
-       }
-       let obj = map_canvas.getActiveObject();
-       $('#map_element_opacity').val(obj.opacity);
-     }
+    console.log(e);
+    if (e.shiftKey) {
+      if (!$('#map_element_options').dialog('isOpen')) {
+        $('#map_element_options').dialog('open');
+      }
+      let obj = map_canvas.getActiveObject();
+      $('#map_element_opacity').val(obj.opacity);
+    }
   });
 
+  /**
+   * ELement Opacity.
+   */
   $('#map_element_opacity').on('input', function(e) {
     let obj = map_canvas.getActiveObject();
     obj.set({
