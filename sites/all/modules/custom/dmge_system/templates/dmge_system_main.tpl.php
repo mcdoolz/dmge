@@ -206,7 +206,7 @@ $age = $incept_date->diff($today)->days;
           </div>
           <div class="map_grid_property">
             <label for="map_grid_size">Grid Size</label>
-            <input type="number" id="map_grid_size" value="20">
+            <input type="number" id="map_grid_size" value="60">
             <p><sup>Lower sizes take longer to process.</sup></p>
             <div class="map_grid_property">
               <label for="map_grid_display_size">Grid Size at Scale</label>
