@@ -80,8 +80,24 @@
     });
   }
 
+  /**
+   * Helper checks event passed in.
+   */
+  function check_object_vs_map(e) {
+    let _width = (screensize.width < e.target.width);
+    let _height = (screensize.height < e.target.height);
+    if ((_width) || (_height)) {
+      let _screensize = {
+        width: (_width) ? e.target.width : screensize.width,
+        height: (_width) ? e.target.height : screensize.height
+      }
+      set_canvas_dimensions(_screensize);
+    }
+  }
+
   map_canvas.on('object:added', function(e) {
-    $('#layering').jsGrid('insertItem', {'id': e.target.id, 'Index': map_canvas.getObjects().indexOf(getObjectFromCanvasById(e.target.id, map_canvas))});
+    check_object_vs_map(e);
+    $('#layering').jsGrid('insertItem', {'id': e.target.id, 'index': map_canvas.getObjects().indexOf(getObjectFromCanvasById(e.target.id, map_canvas))});
   });
 
   fabric.util.requestAnimFrame(function render() {
