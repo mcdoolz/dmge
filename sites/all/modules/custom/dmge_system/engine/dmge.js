@@ -146,10 +146,22 @@
     a.remove();
   }
 
+  function save_canvases() {
+    let map_name = document.getElementById('map_name').value;
+    let storage = {'fow': NULL, 'grid': NULL, 'map': NULL};
+    canvases.forEach(function(e) {
+      _e = eval(e + '_canvas');
+      _e.toJSON();
+      _e_content = eval(_e + '_content');
+      _e_json = _e.toJSON();
+      localStorage.setItem(_e_content, _e_json);
+      storage._e_content = _e_json;
+    });
+    file_storage(JSON.stringify(storage), map_name + '.txt', 'text/plain');
+  }
+
   $('#save_map').click(function(e) {
-    let map_name = document.getElementById(map_name).value;
-    localStorage.setItem("map_canvas_content", map_canvas_content);
-    file_storage(jsonData, map_name + '_map_canvas_content.txt', 'text/plain');
+    save_canvases();
   });
 
   function dragging_initialize() {
