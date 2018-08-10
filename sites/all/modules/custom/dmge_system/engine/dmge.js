@@ -139,7 +139,7 @@
    */
   function file_storage(content, filename, contentType) {
     var a = document.createElement("a");
-    var file = new Blob([content], {type: text/json});
+    var file = new Blob([content], {type: 'text/json'});
     a.href = URL.createObjectURL(file);
     a.download = filename;
     a.click();
