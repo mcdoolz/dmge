@@ -85,7 +85,8 @@ $age = $incept_date->diff($today)->days;
           </div>
           <div id="files_storage_path">
             <div id="files_storage_path"><label for="files_storage_path_configure">Select Resource Folder</label>
-            <input id="files_storage_path_configure" type="file" webkitdirectory directory multiple/></div>
+            <input id="files_storage_path_configure" type="file" webkitdirectory mozdirectory msdirectory odirectory directory multiple />
+          </div>
             <div id="files_storage_path_description">Select the folder in which you wish to save your compiled maps.</div>
           </div>
         </div>
