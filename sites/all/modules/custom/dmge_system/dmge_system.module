@@ -5,29 +5,41 @@
  * Render an administrative menu as a dropdown menu at the top of the window.
  */
 
+/**
+ * Invokes hook_cron().
+ */
 function dmge_system_cron() {
   dmge_system_make_patrons();
 }
+
+/**
+ * Gets users, strips patreon roles, checks pledges via API, assigns roles.
+ */
 function dmge_system_make_patrons() {
   global $user;
-  // User not logged in, bail out.
+  // No user logged in, bail out.
   if (empty($user->uid)) {
     return;
   }
+  $patreon_roles = variable_get('dmge_system_patreon_roles', 1);
+  $patreon_roles = unserialize($patreon_roles);
   if (module_exists('patreon') && function_exists('patreon_fetch_user')) {
     $user_wrapper = entity_metadata_wrapper('user', $user);
-    $role = user_role_load_by_name('patron');
-    user_save($account, array('roles' => array_filter($account->roles, function($item) use ($role) {
-      return $item != $role->name;
-    })));
+    foreach ($patreon_roles as $key => $value) {
+      $role = user_role_load($value['role']);
+      user_save($user, array('roles' => array_filter($user->roles, function($item) use ($role) {
+        return $item != $role->name;
+        })));
+    }
     $token = $user_wrapper->field_user_patreon_token->value();
-    // This is not a patreon.  It's probably a Kickstarter backer.
+    // This is not a patreon.  It's probably a Kickstarter backer.  Bail out.
     if (empty($token)) {
       return;
     }
     $patreon = patreon_fetch_user($token);
     if ($campaign = patreon_fetch_campaign_and_patrons(variable_get('patreon_access_token', NULL))) {
       $campaign = array_shift($campaign);
+      // Get up to 500 patrons at once.
       $pledges = patreon_fetch_page_of_pledges($campaign['id'], 500);
 
       $patrons = Array();
@@ -42,13 +54,25 @@ function dmge_system_make_patrons() {
         ->fieldCondition('field_user_patreon_id', 'value', $pids, 'IN')
         ->addMetaData('account', user_load(1));
 
+
       $result = $query->execute();
       if (isset($result['user'])) {
         $uids = array_keys($result['user']);
         $users = entity_load('user', $uids);
         foreach ($users as $uid => $user) {
-          $role = user_role_load_by_name('patron');
-          user_save($user, array('roles' => $user->roles + array($role->rid => $role->name)));
+          $user_wrapper = entity_metadata_wrapper('user', $user);
+          $pid = $user_wrapper->field_user_patreon_id->value();
+          if (in_array($pid, $pids)) {
+            $roles_to_assign = Array();
+            foreach ($patreon_roles as $key => $value) {
+              if ($value['pledge'] <= $patrons[$pid]) {
+                $roles_to_assign[$value['role']] = user_role_load($value['role']);
+              }
+            }
+            foreach ($roles_to_assign as $rid => $role) {
+              user_save($user, array('roles' => $user->roles + array($role->rid => $role->name)));
+            }
+          }
         }
       }
     }
@@ -492,53 +516,53 @@ function dmge_system_get_youtube_channel($channel = 'UCrsCjHT8tJ1vpSkvLoYji3g') 
  * Invokes hook_form_FORMID_alter().
  */
 function dmge_system_form_patreon_admin_form_alter(&$form, &$form_state) {
-  dpm($form);
-
   if (!empty($form_state['values'])) {
-    $links = $form_state['values']['dmge_system_patreon_roles'];
+    $roles = $form_state['values']['dmge_system_patreon_roles'];
   }
   else {
-    $links = serialize(array(
-      array('link' => 'facebook.com', 'weight' => 10),
-      array('link' => 'twitter.com', 'weight' => -10)
+    $user_roles = user_roles();
+    $roles = serialize(array(
+      array('pledge' => '500', 'role' => 2),
+      array('pledge' => '100', 'role' => 1)
     ));
-    $links = variable_get('dmge_system_patreon_roles', $links);
-    $links = unserialize($links);
+    $roles = variable_get('dmge_system_patreon_roles', $roles);
+    $roles = unserialize($roles);
   }
-
   $form['dmge_system_patreon_roles'] = array(
     '#tree' => TRUE,
-    '#type' => 'container',
+    '#title' => 'Set Patreon Roles',
+    '#type' => 'fieldset',
     '#prefix' => '<div id="patreon_roles">',
     '#suffix' => '</div>',
-    '#theme' => 'dmge_system_patreon_roles_table_drag_components',
+  );
+  $form['dmge_system_patreon_roles']['introduction'] = array(
+    '#markup' => t('Pledge amounts must be written as an integer.  Eg: 100 is a dollar.'),
+    '#weight' => -10,
   );
 
-  for ($i = 0; $i !== (count($links) + 1); $i++) {
+  for ($i = 0; $i !== (count($roles) + 1); $i++) {
+    $user_roles = user_roles();
     $form['dmge_system_patreon_roles'][] = array(
-      'link' => array(
-        '#title' => 'Social Network',
-        '#title_display' => 'invisible',
+      'pledge' => array(
+        '#title' => 'Pledge amount',
         '#type' => 'textfield',
-        '#default_value' => (!empty($links[$i])) ? check_plain($links[$i]['link']) : '',
+        '#default_value' => (!empty($roles[$i])) ? check_plain($roles[$i]['pledge']) : '',
       ),
-      'weight' => array(
+      'role' => array(
         '#size' => 3,
-        '#title' => t('Weight'),
+        '#title' => t('Assigns Role'),
         '#delta' => 10,
-        '#title_display' => 'invisible',
-        '#attributes' => array(
-          'class' => array('item-row-weight')
-        ),
-        '#type' => 'textfield',
-        '#default_value' => (!empty($links[$i])) ? $links[$i]['weight'] : 0,
+        '#multiple' => FALSE,
+        '#type' => 'select',
+        '#options' => user_roles(),
+        '#default_value' => (!empty($roles[$i])) ? $roles[$i]['role'] : 0,
       ),
     );
   }
 
   $form['dmge_system_add_patreon_roles'] = array(
     '#type' => 'button',
-    '#value' => t('Add a Social Link'),
+    '#value' => t('Add a Patreon level'),
     '#href' => '',
     '#ajax' => array(
       'callback' => 'dmge_system_patreon_roles_ajax_add_patreon_roles',
@@ -556,17 +580,19 @@ function dmge_system_form_patreon_admin_form_alter(&$form, &$form_state) {
 
 }
 
+function dmge_system_patreon_roles_ajax_add_patreon_roles($form, &$form_state) {
+  return $form['dmge_system_patreon_roles'];
+}
 
 /**
  * Helper sorts array by sub array value.
  */
 function _sort_by_amount($a, $b) {
-  return $a - $b;
+  return $a['pledge'] - $b['pledge'];
 }
 
 function _dmge_system_roles_empty($var) {
-  dpm($var);
-  return !empty($var);
+  return !empty($var['pledge']);
 }
 
 /**
@@ -578,16 +604,7 @@ function dmge_system_patreon_roles_configure_form_submit($form, $form_state) {
   $roles = $form_state['values']['dmge_system_patreon_roles'];
   $roles = array_filter($values['dmge_system_patreon_roles'], '_dmge_system_roles_empty');
   usort($roles, '_sort_by_amount');
-  foreach ($roles as &$link) {
-    $parsed = parse_url($link['link']);
-    if (empty($parsed['scheme'])) {
-      $link['link'] = "https://" . $link['link'];
-    }
-    elseif ($parsed['scheme'] == 'http') {
-      $link['link'] = str_replace('http://', 'https://', $link['link']);
-    }
-  }
-  $links = serialize($links);
-  variable_set('mcdoolz_social_links', $links);
+  $roles = serialize($roles);
+  variable_set('dmge_system_patreon_roles', $roles);
   drupal_set_message(t('The configuration options have been saved.'));
 }
