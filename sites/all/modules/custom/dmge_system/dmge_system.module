@@ -487,3 +487,107 @@ function dmge_system_get_youtube_channel($channel = 'UCrsCjHT8tJ1vpSkvLoYji3g') 
     }
   }
 }
+
+/**
+ * Invokes hook_form_FORMID_alter().
+ */
+function dmge_system_form_patreon_admin_form_alter(&$form, &$form_state) {
+  dpm($form);
+
+  if (!empty($form_state['values'])) {
+    $links = $form_state['values']['dmge_system_patreon_roles'];
+  }
+  else {
+    $links = serialize(array(
+      array('link' => 'facebook.com', 'weight' => 10),
+      array('link' => 'twitter.com', 'weight' => -10)
+    ));
+    $links = variable_get('dmge_system_patreon_roles', $links);
+    $links = unserialize($links);
+  }
+
+  $form['dmge_system_patreon_roles'] = array(
+    '#tree' => TRUE,
+    '#type' => 'container',
+    '#prefix' => '<div id="patreon_roles">',
+    '#suffix' => '</div>',
+    '#theme' => 'dmge_system_patreon_roles_table_drag_components',
+  );
+
+  for ($i = 0; $i !== (count($links) + 1); $i++) {
+    $form['dmge_system_patreon_roles'][] = array(
+      'link' => array(
+        '#title' => 'Social Network',
+        '#title_display' => 'invisible',
+        '#type' => 'textfield',
+        '#default_value' => (!empty($links[$i])) ? check_plain($links[$i]['link']) : '',
+      ),
+      'weight' => array(
+        '#size' => 3,
+        '#title' => t('Weight'),
+        '#delta' => 10,
+        '#title_display' => 'invisible',
+        '#attributes' => array(
+          'class' => array('item-row-weight')
+        ),
+        '#type' => 'textfield',
+        '#default_value' => (!empty($links[$i])) ? $links[$i]['weight'] : 0,
+      ),
+    );
+  }
+
+  $form['dmge_system_add_patreon_roles'] = array(
+    '#type' => 'button',
+    '#value' => t('Add a Social Link'),
+    '#href' => '',
+    '#ajax' => array(
+      'callback' => 'dmge_system_patreon_roles_ajax_add_patreon_roles',
+      'wrapper' => 'patreon_roles',
+    ),
+  );
+
+  $form['submit'] = array(
+    '#type' => 'submit',
+    '#value' => t('Save Configuration'),
+    '#submit' => array('dmge_system_patreon_roles_configure_form_submit'),
+  );
+
+  return $form;
+
+}
+
+
+/**
+ * Helper sorts array by sub array value.
+ */
+function _sort_by_amount($a, $b) {
+  return $a - $b;
+}
+
+function _dmge_system_roles_empty($var) {
+  dpm($var);
+  return !empty($var);
+}
+
+/**
+ * Invokes form_submit().
+ */
+function dmge_system_patreon_roles_configure_form_submit($form, $form_state) {
+  form_state_values_clean($form_state);
+  $values = $form_state['values'];
+  $roles = $form_state['values']['dmge_system_patreon_roles'];
+  $roles = array_filter($values['dmge_system_patreon_roles'], '_dmge_system_roles_empty');
+  usort($roles, '_sort_by_amount');
+  foreach ($roles as &$link) {
+    $parsed = parse_url($link['link']);
+    if (empty($parsed['scheme'])) {
+      $link['link'] = "https://" . $link['link'];
+    }
+    elseif ($parsed['scheme'] == 'http') {
+      $link['link'] = str_replace('http://', 'https://', $link['link']);
+    }
+  }
+  $links = serialize($links);
+  variable_set('mcdoolz_social_links', $links);
+  drupal_set_message(t('The configuration options have been saved.'));
+}
