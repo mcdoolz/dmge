@@ -5,6 +5,49 @@
  * Render an administrative menu as a dropdown menu at the top of the window.
  */
 
+function dmge_system_preprocess_page() {
+  global $user;
+  // User not logged in, bail out.
+  if (empty($user->uid)) {
+    return;
+  }
+  if (module_exists('patreon') && function_exists('patreon_fetch_user')) {
+    $user_wrapper = entity_metadata_wrapper('user', $user);
+    $token = $user_wrapper->field_user_patreon_token->value();
+    // This is not a patreon.  It's probably a Kickstarter backer.
+    if (empty($token)) {
+      return;
+    }
+    $patreon = patreon_fetch_user($token);
+    if ($campaign = patreon_fetch_campaign_and_patrons(variable_get('patreon_access_token', NULL))) {
+      $campaign = array_shift($campaign);
+      $pledges = patreon_fetch_page_of_pledges($campaign['id'], 500);
+
+      $patrons = Array();
+      foreach ($pledges as $key => $value) {
+        $patrons[$value['relationships']['patron']['data']['id']] = $value['attributes']['amount_cents'];
+      }
+
+      $pids = array_keys($patrons);
+
+      $query = new EntityFieldQuery();
+      $query->entityCondition('entity_type', 'user')
+        ->fieldCondition('field_user_patreon_id', 'value', $pids, 'IN')
+        ->addMetaData('account', user_load(1));
+
+      $result = $query->execute();
+      if (isset($result['user'])) {
+        $uids = array_keys($result['user']);
+        $users = entity_load('user', $uids);
+        foreach ($users as $uid => $user) {
+          $role = user_role_load_by_name('patron');
+          user_save($user, array('roles' => $user->roles + array($role->rid => $role->name)));
+        }
+      }
+    }
+  }
+}
+
 /**
  * Implements hook_permission().
  */
