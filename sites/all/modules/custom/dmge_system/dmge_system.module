@@ -5,7 +5,10 @@
  * Render an administrative menu as a dropdown menu at the top of the window.
  */
 
-function dmge_system_preprocess_page() {
+function dmge_system_cron() {
+  dmge_system_make_patrons();
+}
+function dmge_system_make_patrons() {
   global $user;
   // User not logged in, bail out.
   if (empty($user->uid)) {
@@ -13,6 +16,10 @@ function dmge_system_preprocess_page() {
   }
   if (module_exists('patreon') && function_exists('patreon_fetch_user')) {
     $user_wrapper = entity_metadata_wrapper('user', $user);
+    $role = user_role_load_by_name('patron');
+    user_save($account, array('roles' => array_filter($account->roles, function($item) use ($role) {
+      return $item != $role->name;
+    })));
     $token = $user_wrapper->field_user_patreon_token->value();
     // This is not a patreon.  It's probably a Kickstarter backer.
     if (empty($token)) {
