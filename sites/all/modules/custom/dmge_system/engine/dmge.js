@@ -148,16 +148,28 @@
 
   function save_canvases() {
     let map_name = document.getElementById('map_name').value;
-    let storage = {'fow': NULL, 'grid': NULL, 'map': NULL};
+    if (!map_name) {
+      map_name = 'untitled';
+    }
+    let storage = {'fow': null, 'grid': null, 'map': null};
     canvases.forEach(function(e) {
-      _e = eval(e + '_canvas');
-      _e.toJSON();
-      _e_content = eval(_e + '_content');
-      _e_json = _e.toJSON();
+      // eval finds the object, and the next line gets the json from the canvas ala fabricjs.
+      let _e = eval(e + '_canvas');
+      let _e_json = _e.toJSON();
+
+      // Set content variable for local storage.
+      let _e_content = e + '_content';
       localStorage.setItem(_e_content, _e_json);
+
+      // Set up object for json export.
       storage._e_content = _e_json;
     });
-    file_storage(JSON.stringify(storage), map_name + '.txt', 'text/plain');
+    if (storage) {
+      let file = file_storage(JSON.stringify(storage), map_name + '.txt', 'text/plain');
+      if (file) {
+        console.log(file);
+      }
+    }
   }
 
   $('#save_map').click(function(e) {
@@ -1054,6 +1066,22 @@
     return color;
   }
 
+  $('#files_storage_path_configure').on('change, input', function(e) {
+    let files = e.target.files;
+    if (!files) {
+      return;
+    }
+    let len = files.length,
+        relative_path = files[0].webkitRelativePath,
+        folder = relative_path.split("/");
+
+    loadFile(files);
+
+    // for(let i = 0; i < len; i += 1) {
+    //   loadFile(files[i]);
+    // }
+  });
+
   // File loaders.
   $('#file_load').click(function() {
     loadFile($('#file'));
@@ -1065,8 +1093,10 @@
   /**
    * Helper loads files.
    */
-  function loadFile(file) {
-    var files = file.prop("files");
+  function loadFile(files, load = false) {
+    if (files.hasOwnProperty('files')) {
+      files = file.prop('files');
+    }
     $.each(files, function () {
       let _file = this;
       let _url = window.URL.createObjectURL(_file);
@@ -1074,33 +1104,43 @@
       let _thumbnail = _url;
       let _type = 'Static';
       let ext = getExtension(_file.name);
+      let txt = null;
 
-      switch (ext) {
-        case 'pdf':
-          do_pdf(_url);
-          break;
+      if (load) {
+        switch (ext) {
+          case 'pdf':
+            do_pdf(_url);
+            break;
 
-        case 'jpg':
-        case 'jpeg':
-        case 'gif':
-        case 'bmp':
-        case 'png':
-          do_image(_url, ext);
-          break;
+          case 'jpg':
+          case 'jpeg':
+          case 'gif':
+          case 'bmp':
+          case 'png':
+            do_image(_url, ext);
+            break;
 
-        case 'm4v':
-          ext = 'x-m4v';
-        case 'mpg':
-        case 'mp4':
-          _type = 'Animated';
-          _vtag = do_video(_id, _url, ext);
-          break;
+          case 'm4v':
+            ext = 'x-m4v';
+          case 'mpg':
+          case 'mp4':
+            _type = 'Animated';
+            _vtag = do_video(_id, _url, ext);
+            break;
 
-      default:
-       items = ['You look great, by the way :)', 'You look very nice today.  I hope you\'re well.', 'That tickled.', 'I wish all my friends looked as good as you :)'];
-       var item = items[Math.floor(Math.random()*items.length)];
-       alert('Sorry, I don\'t know what you are trying to load.\n\n' + item);
-       break;
+          case 'txt':
+            let reader = new FileReader();
+            reader.addEventListener('load', function (e) {
+              console.log(e.target.result);
+            });
+            reader.readAsBinaryString(_url);
+            break;
+        default:
+         items = ['You look great, by the way :)', 'You look very nice today.  I hope you\'re well.', 'That tickled.', 'I wish all my friends looked as good as you :)'];
+         var item = items[Math.floor(Math.random()*items.length)];
+         alert('Sorry, I don\'t know what you are trying to load.\n\n' + item);
+         break;
+        }
       }
 
       $('#files').jsGrid('insertItem', {'id': _id, 'Filename': _file.name, 'Blob': _url, 'Type': _type, 'Thumbnail': _thumbnail });
