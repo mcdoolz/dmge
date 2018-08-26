@@ -1093,12 +1093,16 @@
   /**
    * Helper loads files.
    */
-  function loadFile(files, load = false) {
-    if (files.hasOwnProperty('files')) {
-      files = file.prop('files');
+  function loadFile(files, load = true) {
+    files = files.prop('files');
+    if (!files) {
+      console.error('No files selected?');
+      return;
     }
-    $.each(files, function () {
-      let _file = this;
+    console.log(files);
+    $.each(files, function(key, file) {
+      console.log(file);
+      let _file = file;
       let _url = window.URL.createObjectURL(_file);
       let _id = make_file_id(_url);
       let _thumbnail = _url;
@@ -1243,8 +1247,14 @@
       { name: 'Add',
         itemTemplate: function(val, item) {
           return $('<button>').html('<i class="fa fa-puzzle-piece" aria-hidden="true"></i> Add').attr({'class': 'file_add_to_canvas'}).css({ 'display': 'block' }).on('click', function(e) {
-            let obj = fabric.util.object.clone(getObjectFromCanvasById(item.id, map_canvas));
-            map_canvas.add(obj);
+            var obj;
+            if (obj = getObjectFromCanvasById(item.id, map_canvas)) {
+              obj = fabric.util.object.clone();
+              map_canvas.add(obj);
+            }
+            else {
+
+            }
           });
         },
         align: 'center',
