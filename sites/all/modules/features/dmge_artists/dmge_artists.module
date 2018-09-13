@@ -20,20 +20,17 @@ function dmge_artists_cron() {
   //
 }
 
-function dmge_artists_preprocess_page() {
-  global $user;
-  if (is_array($user->roles) && in_array('administrator', $user->roles)) {
-    dmge_artists_retrieve_uploads();
-  }
-}
-function dmge_artists_retrieve_uploads($channelId = 'UCrsCjHT8tJ1vpSkvLoYji3g') {
+/**
+ * Hard Coded to Manny.
+ */
+function dmge_artists_retrieve_uploads($channelId = 'UCrsCjHT8tJ1vpSkvLoYji3g', $author_node_id = 5 {
   $apiKey = variable_get('youtube_apikey', 'AIzaSyAE_8NGF6cwkpDZ4nKrogAIASzxpdT-gcw');
   $baseUrl = 'https://www.googleapis.com/youtube/v3/';
 
   $params = [
-  'id'=> $channelId,
-  'part'=> 'contentDetails',
-  'key'=> $apiKey
+    'id'=> $channelId,
+    'part'=> 'contentDetails',
+    'key'=> $apiKey,
   ];
   $url = $baseUrl . 'channels?' . http_build_query($params);
   $json = drupal_http_request($url);
@@ -53,9 +50,12 @@ function dmge_artists_retrieve_uploads($channelId = 'UCrsCjHT8tJ1vpSkvLoYji3g') 
 
   $videos = [];
   foreach($json['items'] as $video) {
-    print_r($video['snippet']);
     $vid = $video['snippet']['resourceId']['videoId'];
-    $videos[$vid] = $video['snippet']['resourceId']['videoId'];
+    $videos[$vid] = array(
+      'title => '$video['snippet']['title'],
+      'videoid' => $vid,
+      'thumb' => $video['snippet']['thumbnails']['high']['url'],
+    );
   }
 
   while(isset($json['nextPageToken'])) {
@@ -64,8 +64,65 @@ function dmge_artists_retrieve_uploads($channelId = 'UCrsCjHT8tJ1vpSkvLoYji3g') 
     $json = json_decode($json->data, true);
     foreach($json['items'] as $video) {
       $vid = $video['snippet']['resourceId']['videoId'];
-      $videos[$vid] = $video['snippet']['resourceId']['videoId'];
+      $videos[$vid] = array(
+        'title => '$video['snippet']['title'],
+        'videoid' => $vid,
+        'thumbnail' => $video['snippet']['thumbnails']['high']['url'],
+      );
     }
   }
-  dpm($videos);
+  if (empty($videos)) {
+    return FALSE;
+  }
+  return $videos;
+}
+
+
+/**
+ * Import videos as nodes.
+ */
+
+function dmge_artists_import_videos() {
+  if ($videos = dmge_artists_retrieve_uploads()) {
+    foreach ($videos as $vid => $video) {
+      $node = new stdClass();
+      $node->title = $video['title'];
+      $node->type = 'resource';
+      node_object_prepare($node);
+      $node->language = LANGUAGE_NONE;
+      $node->uid = 1;
+      $node->status = 1;
+      $node->promote = 0;
+      $node->comment = 0;
+
+      $taxonomy = taxonomy_vocabulary_machine_name_load('resource_link');
+      $tid = taxonomy_get_term_by_name('YouTube');
+
+      $file = file_save_data(file_get_contents($video['thumbnail']), file_default_scheme().'://tmp/'.basename($video['thumbnail']));
+      $file->status = 1;
+      $node->field_image[LANGUAGE_NONE][0] = (array) $file;
+
+      $node->field_resource_links = array(
+        LANGUAGE_NONE => array(
+          0 => array(
+            'field_resource_link' => array(
+              LANGUAGE_NONE => array(
+                0 => array(
+                  'url' => 'https://www.youtube.com/?v=' . $vid
+                )
+              )
+            ),
+            'field_resource_link_type' => array(
+              LANGUAGE_NONE => array(
+                0 => array(
+                  'tid' => $tid
+                )
+              )
+            ),
+          )
+        )
+      );
+      node_save($node);
+    }
+  }
 }
