@@ -128,7 +128,6 @@ function dmge_artists_import_videos($author_node_id = 5) {
       node_save($node);
       print 'Saved ' . $node->nid . ' for vid ' . $vid;
       print "\n";
-      break;
     }
   }
 }
