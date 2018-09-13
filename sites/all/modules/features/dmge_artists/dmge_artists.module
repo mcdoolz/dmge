@@ -102,7 +102,7 @@ function dmge_artists_import_videos() {
       $taxonomy = taxonomy_vocabulary_machine_name_load('resource_link');
       $tid = taxonomy_get_term_by_name('YouTube');
 
-      $file = file_save_data(file_get_contents($video['thumbnail']), file_default_scheme().'://tmp/'.basename($video['thumbnail']));
+      $file = file_save_data(drupal_http_request($video['thumbnail'])->data, file_default_scheme() . '://tmp/' . basename($video['thumbnail']));
       $file->status = 1;
       $node->field_image[LANGUAGE_NONE][0] = (array) $file;
 
