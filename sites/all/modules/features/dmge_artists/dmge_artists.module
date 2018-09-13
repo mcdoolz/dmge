@@ -88,7 +88,9 @@ function dmge_artists_import_videos() {
   if ($videos = dmge_artists_retrieve_uploads()) {
     foreach ($videos as $vid => $video) {
       print 'Starting ' . $vid;
-      print "\n";
+      print "\n\n";
+      print_r($video);
+      print "\n\n";
       $node = new stdClass();
       $node->title = $video['title'];
       $node->type = 'resource';
@@ -102,7 +104,7 @@ function dmge_artists_import_videos() {
       $taxonomy = taxonomy_vocabulary_machine_name_load('resource_link');
       $tid = taxonomy_get_term_by_name('YouTube');
 
-      $file = system_retrieve_file($video['thumbnail'], file_default_scheme() . '://' . basename($video['thumbnail']), TRUE);
+      $file = system_retrieve_file($video['thumbnail'], NULL, TRUE);
       $file->status = 1;
       $node->field_image[LANGUAGE_NONE][0] = (array) $file;
 
