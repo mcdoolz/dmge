@@ -74,6 +74,7 @@ function dmge_artists_retrieve_uploads($channelId = 'UCrsCjHT8tJ1vpSkvLoYji3g', 
   if (empty($videos)) {
     return FALSE;
   }
+  print 'Retrieved ' . count($videos) . ' videos\n';
   return $videos;
 }
 
@@ -85,6 +86,7 @@ function dmge_artists_retrieve_uploads($channelId = 'UCrsCjHT8tJ1vpSkvLoYji3g', 
 function dmge_artists_import_videos() {
   if ($videos = dmge_artists_retrieve_uploads()) {
     foreach ($videos as $vid => $video) {
+      print 'Starting ' . $vid . '\n';
       $node = new stdClass();
       $node->title = $video['title'];
       $node->type = 'resource';
@@ -122,7 +124,8 @@ function dmge_artists_import_videos() {
           )
         )
       );
-      node_save($node);
+      $nid = node_save($node);
+      print 'Saved ' . $nid . ' for vid ' . $vid . '\n';
       break;
     }
   }
