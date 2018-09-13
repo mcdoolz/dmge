@@ -104,7 +104,8 @@ function dmge_artists_import_videos($author_node_id = 5) {
       print 'Retrieving taxonomies.';
       print "\n";
       $taxonomy = taxonomy_vocabulary_machine_name_load('resource_link');
-      $tid = taxonomy_get_term_by_name('YouTube');
+      $term = taxonomy_get_term_by_name('YouTube');
+      $tid = $term->tid;
       print 'Assigned taxonomies.';
       print "\n";
       print 'Getting thumbnail.';
