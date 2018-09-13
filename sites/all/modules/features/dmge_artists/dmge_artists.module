@@ -26,10 +26,11 @@ function dmge_artists_preprocess_page() {
     dmge_artists_retrieve_uploads();
   }
 }
-function dmge_artists_retrieve_uploads($channel_id = 'UCrsCjHT8tJ1vpSkvLoYji3g') {
+function dmge_artists_retrieve_uploads($channelId = 'UCrsCjHT8tJ1vpSkvLoYji3g') {
 
-  $youtube_apikey = variable_get('youtube_apikey', 'AIzaSyAE_8NGF6cwkpDZ4nKrogAIASzxpdT-gcw');
-  $baseUrl = 'https://www.googleapis.com/youtube/v3/search?part=snippet&channelId=' . $channel_id . '&key=' . $youtube_apikey;
+  $apiKey = variable_get('youtube_apikey', 'AIzaSyAE_8NGF6cwkpDZ4nKrogAIASzxpdT-gcw');
+  $formedurl = 'https://www.googleapis.com/youtube/v3/search?part=snippet&channelId=' . $channel_id . '&key=' . $apiKey;
+  $baseUrl = 'https://www.googleapis.com/youtube/v3/';
   // $json = drupal_http_request($url);
   // dpm($json);
 
