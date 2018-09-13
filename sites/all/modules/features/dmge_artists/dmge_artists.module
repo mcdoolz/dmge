@@ -119,10 +119,11 @@ function dmge_artists_import_videos($author_node_id = 5) {
       print "\n\n";
       $node->field_map_author[LANGUAGE_NONE][0]['target_id'] = $author_node_id;
       $node->field_resource_links[LANGUAGE_NONE][0]['field_resource_link_type'][LANGUAGE_NONE][0]['tid'] = $tid;
-      $node->field_resource_links[LANGUAGE_NONE][0]['field_resource_link'][LANGUAGE_NONE][0]['#default_value']['url'] = 'https://www.youtube.com/watch?v=' . $vid;
+      $node->field_resource_links[LANGUAGE_NONE][0]['field_resource_link'][LANGUAGE_NONE][0]['url'] = 'https://www.youtube.com/watch?v=' . $vid;
       node_save($node);
       print 'Saved ' . $node->nid . ' for vid ' . $vid;
       print "\n";
+      break;
     }
   }
 }
