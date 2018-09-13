@@ -35,12 +35,13 @@ function dmge_artists_retrieve_uploads($channelId = 'UCrsCjHT8tJ1vpSkvLoYji3g') 
   // dpm($json);
 
   $params = [
-        'id'=> $channelId,
-        'part'=> 'contentDetails',
-        'key'=> $apiKey
+      'id'=> $channelId,
+      'part'=> 'contentDetails',
+      'key'=> $apiKey
     ];
     $url = $baseUrl . 'channels?' . http_build_query($params);
-    $json = json_decode(file_get_contents($url), true);
+    $json = json_decode(drupal_http_request($url), true);
+    print_r($json);
 
     $playlist = $json['items'][0]['contentDetails']['relatedPlaylists']['uploads'];
 
