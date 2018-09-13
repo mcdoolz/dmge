@@ -40,7 +40,7 @@ function dmge_artists_retrieve_uploads($channelId = 'UCrsCjHT8tJ1vpSkvLoYji3g') 
       'key'=> $apiKey
     ];
     $url = $baseUrl . 'channels?' . http_build_query($params);
-    $json = drupal_http_request($url)
+    $json = drupal_http_request($url);
     $json = json_decode($json->data, true);
 
     $playlist = $json['items'][0]['contentDetails']['relatedPlaylists']['uploads'];
@@ -52,7 +52,7 @@ function dmge_artists_retrieve_uploads($channelId = 'UCrsCjHT8tJ1vpSkvLoYji3g') 
         'key'=> $apiKey
     ];
     $url = $baseUrl . 'playlistItems?' . http_build_query($params);
-    $json = drupal_http_request($url)
+    $json = drupal_http_request($url);
     $json = json_decode($json->data, true);
 
     $videos = [];
@@ -61,7 +61,7 @@ function dmge_artists_retrieve_uploads($channelId = 'UCrsCjHT8tJ1vpSkvLoYji3g') 
 
     while(isset($json['nextPageToken'])){
         $nextUrl = $url . '&pageToken=' . $json['nextPageToken'];
-        $json = drupal_http_request($nextUrl)
+        $json = drupal_http_request($nextUrl);
         $json = json_decode($json->data, true);
         // $json = json_decode(file_get_contents($nextUrl), true);
         foreach($json['items'] as $video)
