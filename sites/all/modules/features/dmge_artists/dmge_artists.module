@@ -112,35 +112,20 @@ function dmge_artists_import_videos() {
       print "\n\n";
       $file = system_retrieve_file($video['thumbnail'], NULL, TRUE);
       $file->status = 1;
-      $node->field_image[LANGUAGE_NONE][0]['fid'] = $file->fid;
-      print 'Got thumbnail.';
+      $node->field_image[LANGUAGE_NONE][0] = (array) $file;
+      print 'Assigned thumbnail.';
       print "\n";
       print 'Assigning resource links.';
       print "\n\n";
-      $node->field_resource_links = array(
-        LANGUAGE_NONE => array(
-          0 => array(
-            'field_resource_link' => array(
-              LANGUAGE_NONE => array(
-                0 => array(
-                  'url' => 'https://www.youtube.com/?v=' . $vid
-                )
-              )
-            ),
-            'field_resource_link_type' => array(
-              LANGUAGE_NONE => array(
-                0 => array(
-                  'tid' => $tid
-                )
-              )
-            ),
-          )
-        )
-      );
+      $node->field_resource_links[LANGUAGE_NONE][0]['field_resource_link_type'][LANGUAGE_NONE][0]['tid'] = $tid;
+      $node->field_resource_links[LANGUAGE_NONE][0]['field_resource_link'][LANGUAGE_NONE][0]['#default_value']['url'] = 'https://www.youtube.com/?v=' . $vid;
+      print "\n\n";
+      print_r($node);
+      print "\n\n";
       print 'Done.  Saving node.';
       print "\n";
-      $nid = node_save($node);
-      print 'Saved ' . $nid . ' for vid ' . $vid;
+      node_save($node);
+      print 'Saved ' . $node->nid . ' for vid ' . $vid;
       print "\n";
       break;
     }
