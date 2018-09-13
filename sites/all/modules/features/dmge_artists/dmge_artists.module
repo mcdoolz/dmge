@@ -52,7 +52,7 @@ function dmge_artists_retrieve_uploads($channelId = 'UCrsCjHT8tJ1vpSkvLoYji3g', 
   foreach($json['items'] as $video) {
     $vid = $video['snippet']['resourceId']['videoId'];
     $videos[$vid] = array(
-      'title => '$video['snippet']['title'],
+      'title' => $video['snippet']['title'],
       'videoid' => $vid,
       'thumb' => $video['snippet']['thumbnails']['high']['url'],
     );
