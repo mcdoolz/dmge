@@ -27,45 +27,45 @@ function dmge_artists_preprocess_page() {
   }
 }
 function dmge_artists_retrieve_uploads($channelId = 'UCrsCjHT8tJ1vpSkvLoYji3g') {
-
   $apiKey = variable_get('youtube_apikey', 'AIzaSyAE_8NGF6cwkpDZ4nKrogAIASzxpdT-gcw');
-  $formedurl = 'https://www.googleapis.com/youtube/v3/search?part=snippet&channelId=' . $channel_id . '&key=' . $apiKey;
   $baseUrl = 'https://www.googleapis.com/youtube/v3/';
-  // $json = drupal_http_request($url);
-  // dpm($json);
 
   $params = [
-      'id'=> $channelId,
-      'part'=> 'contentDetails',
-      'key'=> $apiKey
-    ];
-    $url = $baseUrl . 'channels?' . http_build_query($params);
-    $json = drupal_http_request($url);
+  'id'=> $channelId,
+  'part'=> 'contentDetails',
+  'key'=> $apiKey
+  ];
+  $url = $baseUrl . 'channels?' . http_build_query($params);
+  $json = drupal_http_request($url);
+  $json = json_decode($json->data, true);
+
+  $playlist = $json['items'][0]['contentDetails']['relatedPlaylists']['uploads'];
+
+  $params = [
+    'part'=> 'snippet',
+    'playlistId' => $playlist,
+    'maxResults'=> '50',
+    'key'=> $apiKey,
+  ];
+  $url = $baseUrl . 'playlistItems?' . http_build_query($params);
+  $json = drupal_http_request($url);
+  $json = json_decode($json->data, true);
+
+  $videos = [];
+  foreach($json['items'] as $video) {
+    print_r($video['snippet']);
+    $vid = $video['snippet']['resourceId']['videoId'];
+    $videos[$vid] = $video['snippet']['resourceId']['videoId'];
+  }
+
+  while(isset($json['nextPageToken'])) {
+    $nextUrl = $url . '&pageToken=' . $json['nextPageToken'];
+    $json = drupal_http_request($nextUrl);
     $json = json_decode($json->data, true);
-
-    $playlist = $json['items'][0]['contentDetails']['relatedPlaylists']['uploads'];
-
-    $params = [
-        'part'=> 'snippet',
-        'playlistId' => $playlist,
-        'maxResults'=> '50',
-        'key'=> $apiKey
-    ];
-    $url = $baseUrl . 'playlistItems?' . http_build_query($params);
-    $json = drupal_http_request($url);
-    $json = json_decode($json->data, true);
-
-    $videos = [];
-    foreach($json['items'] as $video)
-        $videos[] = $video['snippet']['resourceId']['videoId'];
-
-    while(isset($json['nextPageToken'])){
-        $nextUrl = $url . '&pageToken=' . $json['nextPageToken'];
-        $json = drupal_http_request($nextUrl);
-        $json = json_decode($json->data, true);
-        // $json = json_decode(file_get_contents($nextUrl), true);
-        foreach($json['items'] as $video)
-            $videos[] = $video['snippet']['resourceId']['videoId'];
+    foreach($json['items'] as $video) {
+      $vid = $video['snippet']['resourceId']['videoId'];
+      $videos[$vid] = $video['snippet']['resourceId']['videoId'];
     }
-    dpm($videos);
+  }
+  dpm($videos);
 }
