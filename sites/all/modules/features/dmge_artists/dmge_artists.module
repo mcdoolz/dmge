@@ -123,6 +123,7 @@ function dmge_artists_import_videos() {
         )
       );
       node_save($node);
+      break;
     }
   }
 }
