@@ -14,7 +14,7 @@ include_once 'dmge_artists.features.inc';
  */
 
 /**
- * Doing this on cron.
+ * Doing this on cron?
  */
 function dmge_artists_cron() {
   //
@@ -23,7 +23,7 @@ function dmge_artists_cron() {
 /**
  * Hard Coded to Manny.
  */
-function dmge_artists_retrieve_uploads($channelId = 'UCrsCjHT8tJ1vpSkvLoYji3g', $author_node_id = 5 {
+function dmge_artists_retrieve_uploads($channelId = 'UCrsCjHT8tJ1vpSkvLoYji3g', $author_node_id = 5) {
   $apiKey = variable_get('youtube_apikey', 'AIzaSyAE_8NGF6cwkpDZ4nKrogAIASzxpdT-gcw');
   $baseUrl = 'https://www.googleapis.com/youtube/v3/';
 
