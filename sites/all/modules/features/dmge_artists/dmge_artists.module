@@ -95,19 +95,28 @@ function dmge_artists_import_videos() {
       $node->title = $video['title'];
       $node->type = 'resource';
       node_object_prepare($node);
+      print 'Prepared node.';
+      print "\n";
       $node->language = LANGUAGE_NONE;
       $node->uid = 1;
       $node->status = 1;
       $node->promote = 0;
       $node->comment = 0;
-
+      print 'Retrieving taxonomies.';
+      print "\n";
       $taxonomy = taxonomy_vocabulary_machine_name_load('resource_link');
       $tid = taxonomy_get_term_by_name('YouTube');
-
+      print 'Assigned taxonomies.';
+      print "\n";
+      print 'Getting thumbnail.';
+      print "\n\n";
       $file = system_retrieve_file($video['thumbnail'], NULL, TRUE);
       $file->status = 1;
-      $node->field_image[LANGUAGE_NONE][0] = (array) $file;
-
+      $node->field_image[LANGUAGE_NONE][0]['fid'] = $file->fid;
+      print 'Got thumbnail.';
+      print "\n";
+      print 'Assigning resource links.';
+      print "\n\n";
       $node->field_resource_links = array(
         LANGUAGE_NONE => array(
           0 => array(
@@ -128,6 +137,8 @@ function dmge_artists_import_videos() {
           )
         )
       );
+      print 'Done.  Saving node.';
+      print "\n";
       $nid = node_save($node);
       print 'Saved ' . $nid . ' for vid ' . $vid;
       print "\n";
