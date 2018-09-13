@@ -83,7 +83,6 @@ function dmge_artists_retrieve_uploads($channelId = 'UCrsCjHT8tJ1vpSkvLoYji3g', 
 /**
  * Import videos as nodes.
  */
-
 function dmge_artists_import_videos($author_node_id = 5) {
   if ($videos = dmge_artists_retrieve_uploads()) {
     foreach ($videos as $vid => $video) {
