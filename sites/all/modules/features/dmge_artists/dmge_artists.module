@@ -21,6 +21,7 @@ function dmge_artists_cron() {
 }
 
 function dmge_artists_retrieve_uploads($channel_id = 'UCrsCjHT8tJ1vpSkvLoYji3g') {
+  ini_set("allow_url_fopen", 1);
   $youtube_apikey = variable_get('youtube_apikey', 'AIzaSyAE_8NGF6cwkpDZ4nKrogAIASzxpdT-gcw');
   $url = 'https://www.googleapis.com/youtube/v3/search?part=snippet&channelId=' . $channel_id . '&key=' . $youtube_apikey;
   $json = file_get_contents($url);
