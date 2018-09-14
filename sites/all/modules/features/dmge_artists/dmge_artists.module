@@ -113,7 +113,7 @@ function dmge_artists_import_videos($author_node_id = 5) {
       print "\n";
       $taxonomy = taxonomy_vocabulary_machine_name_load('resource_link');
       print_r($taxonomy);
-      $term = array_shift($term));
+      $term = array_shift($term);
       print_r($term);
       $tid = $term->tid;
       print 'Assigned taxonomies.';
