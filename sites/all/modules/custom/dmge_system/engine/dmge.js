@@ -678,6 +678,23 @@
     $('#map_innerwrapper').html('<iframe src="' + _url + '" frameborder="0" allowfullscreen></iframe>');
   }
 
+  /**
+   * Set gif.
+   */
+  // function do_gif(_id, _url, ext) {
+  //   let gtag;
+  //   gtag = $('<img />', {
+  //     class: 'map_gif',
+  //     src: _url,
+  //     id: _id
+  //   });
+  //   $('#map_video_wrapper').append(gtag[0]);
+  //   return gtag;
+  // }
+
+  /**
+   * Set video.
+   */
   function do_video(_id, _url, ext) {
     let vtag;
     vtag = $('<video />', {
@@ -743,7 +760,7 @@
   }
 
   $('#map_reset_zoom').click(function() {
-    map_reset_zoom();
+    window.parent.document.body.style.zoom = 1
   });
 
   $('#map_clear').click(function() {
@@ -826,8 +843,8 @@
     setupTimers();
     fow_reset();
     let params = getQueryParams();
+    console.log(params);
     if (params.v) {
-      console.log(params);
       console.log(params.v);
       do_youtube(params.v);
     }
@@ -929,131 +946,130 @@
   function set_grid(_size) {
     grid_canvas.clear();
     var _type = $('input[name=map_grid_type]:checked').val();
-    if (_type !== 'None') {
-      var __map = $('#map_wrapper');
-      var __grid_wrapper = $('#grid_wrapper');
+    if (_type == 'None') {
+      return;
+    }
+    var __map = $('#map_wrapper');
+    var __grid_wrapper = $('#grid_wrapper');
 
-      console.time();
+    __grid_wrapper.css('opacity', get_opacity($('#map_grid_opacity')));
 
-      __grid_wrapper.css('opacity', get_opacity($('#map_grid_opacity')));
+    if (!_size) {
+      var _size = parseInt($('#map_grid_size').val());
+    }
 
-      if (!_size) {
-        var _size = parseInt($('#map_grid_size').val());
-      }
+    var _width = $('#map_width').val() ? $('#map_width').val() : screensize.width;
+    var _height = $('#map_height').val() ? $('#map_height').val() : screensize.height;
 
-      var _width = $('#map_width').val() ? $('#map_width').val() : screensize.width;
-      var _height = $('#map_height').val() ? $('#map_height').val() : screensize.height;
+    var _cols = (_width / _size);
+    var _rows = (_height / _size);
 
-      var _cols = (_width / _size);
-      var _rows = (_height / _size);
+    var __gridoptions = {size: _size};
 
-      var __gridoptions = {size: _size};
+    // Single option switch sets an otherwise default.
+    switch (_type) {
+      case 'H_Hex':
+      __gridoptions.orientation = 'Flat';
+        break;
+    }
+    const Hex = Honeycomb.extendHex(__gridoptions);
 
-      // Single option switch sets an otherwise default.
-      switch (_type) {
-        case 'H_Hex':
-        __gridoptions.orientation = 'Flat';
-          break;
-      }
-      const Hex = Honeycomb.extendHex(__gridoptions);
+    var Grid = Honeycomb.defineGrid(Hex)
 
-      var Grid = Honeycomb.defineGrid(Hex)
+    _cols = (_width / _size);
+    _rows = (_height / _size);
 
-      _cols = (_width / _size);
-      _rows = (_height / _size);
-
-      const __grid = Grid.rectangle({width: _cols, height: _rows});
+    const __grid = Grid.rectangle({width: _cols, height: _rows});
 
 
-      if (_type === 'H_Hex' || _type === 'V_Hex') {
-        var _points = regularPolygonPoints(6, _size);
-        var corners = Hex().corners();
+    if (_type === 'H_Hex' || _type === 'V_Hex') {
+      var _points = regularPolygonPoints(6, _size);
+      var corners = Hex().corners();
 
-        __grid.forEach(hex => {
-          const {x, y} = hex.toPoint();
-          var _corners = corners.map(({x, y}) => `${x}, ${y}`);
+      __grid.forEach(hex => {
+        const {x, y} = hex.toPoint();
+        var _corners = corners.map(({x, y}) => `${x}, ${y}`);
 
-          let _props = {
-            angle: 0,
-            left: x,
-            top: y,
-            width: _size,
-            height: _size,
-            stroke: 'white',
-            strokeWidth: 1,
-            fill: '',
-            originX: 'left',
-            originY: 'top',
-            centeredRotation: true,
-            hasRotatingPoint: false,
-            selectable: false,
-            lockMovementX: true,
-            lockMovementY: true,
-            objectCaching: true
-          };
+        let _props = {
+          angle: 0,
+          left: x,
+          top: y,
+          width: _size,
+          height: _size,
+          stroke: 'white',
+          strokeWidth: 1,
+          fill: '',
+          originX: 'left',
+          originY: 'top',
+          centeredRotation: true,
+          hasRotatingPoint: false,
+          selectable: false,
+          lockMovementX: true,
+          lockMovementY: true,
+          objectCaching: true
+        };
 
-          let hexSymbol = new fabric.Polygon(corners, _props, false);
+        let hexSymbol = new fabric.Polygon(corners, _props, false);
 
-          grid_canvas.add(hexSymbol);
+        grid_canvas.add(hexSymbol);
 
-        });
-      }
+      });
+    }
 
-      if (_type === 'Quad') {
-        const __grid = Grid.rectangle({ width: _cols, height: _rows });
+    if (_type === 'Quad') {
+      const __grid = Grid.rectangle({ width: _cols, height: _rows });
 
-        __grid.forEach(quad => {
-          let _props = {
-            left: quad.x*_size,
-            top: quad.y*_size,
-            width: _size,
-            height: _size,
-            stroke: 'white',
-            strokeWidth: 1,
-            fill: '',
-            originX: 'left',
-            originY: 'top',
-            centeredRotation: true,
-            selectable: false,
-            lockMovementX: true,
-            lockMovementY: true,
-            objectCaching: true
-          };
+      __grid.forEach(quad => {
+        let _props = {
+          left: quad.x*_size,
+          top: quad.y*_size,
+          width: _size,
+          height: _size,
+          stroke: 'white',
+          strokeWidth: 1,
+          fill: '',
+          originX: 'left',
+          originY: 'top',
+          centeredRotation: true,
+          selectable: false,
+          lockMovementX: true,
+          lockMovementY: true,
+          objectCaching: true
+        };
 
-          let quadSymbol = new fabric.Rect(_props);
-          grid_canvas.add(quadSymbol);
-        });
+        let quadSymbol = new fabric.Rect(_props);
+        grid_canvas.add(quadSymbol);
+      });
 
-        /**
-         * This doesn't work because:
-         * We're using Fabric because:
-         * We want to interact with the grid because:
-         * Grid marking, etc.
-         */
-        // var canvas = $('#grid').get(0);
-        // var context = canvas.getContext("2d");
-        // context.beginPath();
-        // for (var x = 0; x <= _width; x += _size) {
-        //   context.moveTo(0.5 + x, 0);
-        //   context.lineTo(0.5 + x, _height);
-        // }
-        // for (var x = 0; x <= _height; x += _size) {
-        //   context.moveTo(p, 0.5 + x);
-        //   context.lineTo(bw, 0.5 + x);
-        // }
-        // context.closePath();
-        // context.strokeStyle = "white";
-        // context.lineWidth = 1;
-        // context.stroke();
-      }
-      console.timeEnd();
-      grid_canvas.renderAll();
+      /**
+       * This doesn't work because:
+       * We're using Fabric because:
+       * We want to interact with the grid because:
+       * Grid marking, etc.
+       */
+      // var canvas = $('#grid').get(0);
+      // var context = canvas.getContext("2d");
+      // context.beginPath();
+      // for (var x = 0; x <= _width; x += _size) {
+      //   context.moveTo(0.5 + x, 0);
+      //   context.lineTo(0.5 + x, _height);
+      // }
+      // for (var x = 0; x <= _height; x += _size) {
+      //   context.moveTo(p, 0.5 + x);
+      //   context.lineTo(bw, 0.5 + x);
+      // }
+      // context.closePath();
+      // context.strokeStyle = "white";
+      // context.lineWidth = 1;
+      // context.stroke();
+    }
 
-      if (player_grid) {
-        player_grid.width = grid_canvas.width;
-        player_grid.height = grid_canvas.height;
-        player_grid.getContext('2d').drawImage(grid_canvas.getElement(), 0, 0, grid_canvas.width, grid_canvas.height);
-      }
+    grid_canvas.renderAll();
+
+    if (player_grid) {
+      player_grid.width = grid_canvas.width;
+      player_grid.height = grid_canvas.height;
+      player_grid.getContext('2d').drawImage(grid_canvas.getElement(), 0, 0, grid_canvas.width, grid_canvas.height);
     }
   }
 
@@ -1075,80 +1091,89 @@
         relative_path = files[0].webkitRelativePath,
         folder = relative_path.split("/");
 
-    loadFile(files);
+    loadFiles(files);
 
     // for(let i = 0; i < len; i += 1) {
-    //   loadFile(files[i]);
+    //   loadFiles(files[i]);
     // }
   });
 
   // File loaders.
   $('#file_load').click(function() {
-    loadFile($('#file'));
+    loadFiles($('#file'));
   })
   $('#file').change(function(){
-    loadFile($(this));
+    loadFiles($(this));
   })
 
+  if (!Array.isArray) {
+    Array.isArray = function(arg) {
+      return Object.prototype.toString.call(arg) === '[object Array]';
+    };
+  }
+
   /**
-   * Helper loads files.
+   * Helper loads files from input or dialog.
    */
-  function loadFile(files, load = true) {
+  function loadFiles(files) {
     files = files.prop('files');
     if (!files) {
       console.error('No files selected?');
       return;
     }
-    console.log(files);
-    $.each(files, function(key, file) {
-      console.log(file);
-      let _file = file;
+    $.each(files, function(key, _file) {
       let _url = window.URL.createObjectURL(_file);
       let _id = make_file_id(_url);
       let _thumbnail = _url;
       let _type = 'Static';
       let ext = getExtension(_file.name);
-      let txt = null;
 
-      if (load) {
-        switch (ext) {
-          case 'pdf':
-            do_pdf(_url);
-            break;
-
-          case 'jpg':
-          case 'jpeg':
-          case 'gif':
-          case 'bmp':
-          case 'png':
-            do_image(_url, ext);
-            break;
-
-          case 'm4v':
-            ext = 'x-m4v';
-          case 'mpg':
-          case 'mp4':
-            _type = 'Animated';
-            _vtag = do_video(_id, _url, ext);
-            break;
-
-          case 'txt':
-            let reader = new FileReader();
-            reader.addEventListener('load', function (e) {
-              console.log(e.target.result);
-            });
-            reader.readAsBinaryString(_url);
-            break;
-        default:
-         items = ['You look great, by the way :)', 'You look very nice today.  I hope you\'re well.', 'That tickled.', 'I wish all my friends looked as good as you :)'];
-         var item = items[Math.floor(Math.random()*items.length)];
-         alert('Sorry, I don\'t know what you are trying to load.\n\n' + item);
-         break;
-        }
+      if (loadFile(_url, ext, _id)) {
+        $('#files').jsGrid('insertItem', {'id': _id, 'Filename': _file.name, 'Blob': _url, 'Type': _type, 'Thumbnail': _thumbnail });
       }
-
-      $('#files').jsGrid('insertItem', {'id': _id, 'Filename': _file.name, 'Blob': _url, 'Type': _type, 'Thumbnail': _thumbnail });
     });
+  }
+
+  function loadFile(_url, ext, _id = NULL) {
+    switch (ext) {
+      case 'pdf':
+        do_pdf(_url);
+        break;
+
+      case 'jpg':
+      case 'jpeg':
+      case 'bmp':
+      case 'png':
+      case 'gif':
+        do_image(_url, ext);
+        break;
+      // case 'gif':
+      //   _type = 'Animated';
+      //   do_gif(_id, _url, ext);
+      //   break;
+
+      case 'm4v':
+        ext = 'x-m4v';
+      case 'mpg':
+      case 'mp4':
+        _type = 'Animated';
+        do_video(_id, _url, ext);
+        break;
+
+      case 'txt':
+        let reader = new FileReader();
+        reader.addEventListener('load', function (e) {
+          console.log(e.target.result);
+        });
+        reader.readAsBinaryString(_url);
+        break;
+    default:
+     items = ['You look great, by the way :)', 'You look very nice today.  I hope you\'re well.', 'That tickled.', 'I wish all my friends looked as good as you :)'];
+     var item = items[Math.floor(Math.random()*items.length)];
+     alert('Sorry, I don\'t know what you are trying to load.\n\n' + item);
+     break;
+    }
+    return true;
   }
 
   /**
@@ -1199,26 +1224,39 @@
 
     onItemInserted: function(e) {
       let item = e.item;
-      if ((item.Type === 'Animated') || (item.Type === 'YouTube')) {
-        let vId = $('#' + item.id);
-        let vtag = document.getElementById(item.id);
-        $(vId).on('play', function(e) {
+      let _id = $('#' + item.id);
+      let tag = document.getElementById(item.id);
+      if (_id.is('video.map_video')) {
+        $(_id).on('play', function(e) {
           let thumbnail = make_video_thumbnail(item.id, item.Type);
           $('#files').jsGrid("updateItem", item, {'Thumbnail': thumbnail });
-          // VIDEO TAGS GET A MAP_VIDEO_ PREFIX
+          // VIDEO TAGS GET A MAP_VIDEO_ PREFIX.
           let item_id = 'map_video_' + item.id;
-          window[item_id] = new fabric.Image(vtag, {
+          window[item_id] = new fabric.Image(tag, {
             id: item.id,
             originX: 'left',
             originY: 'top',
-            height: vtag.videoHeight,
-            width: vtag.videoWidth,
+            height: tag.videoHeight,
+            width: tag.videoWidth,
             left: 0,
             top: 0
           });
           map_canvas.add(window[item_id]);
         });
       }
+      // if (_id.is('video.map_gif')) {
+      //   let item_id = 'map_gif_' + item.id;
+      //   window[item_id] = new fabric.Image(tag, {
+      //     id: item.id,
+      //     originY: 'top',
+      //     originX: 'left',
+      //     height: tag.height,
+      //     width: tag.width,
+      //     left: 0,
+      //     top: 0
+      //   });
+      //   map_canvas.add(window[item_id]);
+      // }
     },
 
     fields: [
@@ -1247,13 +1285,15 @@
       { name: 'Add',
         itemTemplate: function(val, item) {
           return $('<button>').html('<i class="fa fa-puzzle-piece" aria-hidden="true"></i> Add').attr({'class': 'file_add_to_canvas'}).css({ 'display': 'block' }).on('click', function(e) {
-            var obj;
+            let obj;
             if (obj = getObjectFromCanvasById(item.id, map_canvas)) {
               obj = fabric.util.object.clone();
+              console.log(obj);
               map_canvas.add(obj);
             }
             else {
-
+              console.log(item);
+              loadFiles(item, true);
             }
           });
         },
@@ -1363,7 +1403,6 @@
    * Selection function opens element dialog and should set controls to match properties of object.
    */
   map_canvas.on('selection:created', function (e) {
-    console.log(e);
     if (e.shiftKey) {
       if (!$('#map_element_options').dialog('isOpen')) {
         $('#map_element_options').dialog('open');
