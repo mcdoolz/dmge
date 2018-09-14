@@ -239,11 +239,11 @@ $age = $incept_date->diff($today)->days;
       </div>
 
       <div id="sidebar_tray">
-        <button id="save_map"class="sidebar_tray_button"><i class="fas fa-save"></i> Save</button>
-        <button id="fullscreener" class="sidebar_tray_button"><i class="fas fa-desktop"></i> Fullscreen</button>
-        <button id="map_reset_zoom" class="sidebar_tray_button"><i class="fas fa-bullseye"></i> Reset Zoom</button>
-        <button id="map_clear" class="sidebar_tray_button"><i class="fas fa-eraser"></i> Clear Map</button>
-        <button id="player_view_open" class="sidebar_tray_button"><i class="fas fa-chess-knight"></i> Player View</button>
+        <button id="save_map"class="sidebar_tray_button" title="Save"><i class="fas fa-save"></i></button>
+        <button id="fullscreener" class="sidebar_tray_button" title="Fullscreen"><i class="fas fa-desktop"></i></button>
+        <button id="map_reset_zoom" class="sidebar_tray_button" title="Reset Zoom"><i class="fas fa-bullseye"></i></button>
+        <button id="map_clear" class="sidebar_tray_button" title="Clear Map"><i class="fas fa-eraser"></i></button>
+        <button id="player_view_open" class="sidebar_tray_button" title="Player View"><i class="fas fa-chess-knight"></i></button>
       </div>
 
     </div>
