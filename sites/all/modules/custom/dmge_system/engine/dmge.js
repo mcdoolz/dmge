@@ -1470,7 +1470,7 @@
     thumb_canvas[0].getContext('2d').drawImage(video, 0, 0, thumb_canvas[0].width, thumb_canvas[0].height);
     while (!_shot) {
       _shot = thumb_canvas[0].toDataURL();
-      // window[vid] = _shot;
+      window[vid] = _shot;
     }
     if (_shot) {
       thumb_canvas.remove();
