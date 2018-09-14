@@ -1,7 +1,7 @@
 @charset "UTF-8";
 /* DGME */
 @import url("https://fonts.googleapis.com/css?family=Passion+One|Roboto");
-/* line 5, ../../../../../../../../../../var/lib/gems/2.3.0/gems/compass-core-1.0.3/stylesheets/compass/reset/_utilities.scss */
+/* line 5, C:/Ruby23-x64/lib/ruby/gems/2.3.0/gems/compass-core-1.0.3/stylesheets/compass/reset/_utilities.scss */
 html, body, div, span, applet, object, iframe,
 h1, h2, h3, h4, h5, h6, p, blockquote, pre,
 a, abbr, acronym, address, big, cite, code,
@@ -23,45 +23,45 @@ time, mark, audio, video {
   vertical-align: baseline;
 }
 
-/* line 22, ../../../../../../../../../../var/lib/gems/2.3.0/gems/compass-core-1.0.3/stylesheets/compass/reset/_utilities.scss */
+/* line 22, C:/Ruby23-x64/lib/ruby/gems/2.3.0/gems/compass-core-1.0.3/stylesheets/compass/reset/_utilities.scss */
 html {
   line-height: 1;
 }
 
-/* line 24, ../../../../../../../../../../var/lib/gems/2.3.0/gems/compass-core-1.0.3/stylesheets/compass/reset/_utilities.scss */
+/* line 24, C:/Ruby23-x64/lib/ruby/gems/2.3.0/gems/compass-core-1.0.3/stylesheets/compass/reset/_utilities.scss */
 ol, ul {
   list-style: none;
 }
 
-/* line 26, ../../../../../../../../../../var/lib/gems/2.3.0/gems/compass-core-1.0.3/stylesheets/compass/reset/_utilities.scss */
+/* line 26, C:/Ruby23-x64/lib/ruby/gems/2.3.0/gems/compass-core-1.0.3/stylesheets/compass/reset/_utilities.scss */
 table {
   border-collapse: collapse;
   border-spacing: 0;
 }
 
-/* line 28, ../../../../../../../../../../var/lib/gems/2.3.0/gems/compass-core-1.0.3/stylesheets/compass/reset/_utilities.scss */
+/* line 28, C:/Ruby23-x64/lib/ruby/gems/2.3.0/gems/compass-core-1.0.3/stylesheets/compass/reset/_utilities.scss */
 caption, th, td {
   text-align: left;
   font-weight: normal;
   vertical-align: middle;
 }
 
-/* line 30, ../../../../../../../../../../var/lib/gems/2.3.0/gems/compass-core-1.0.3/stylesheets/compass/reset/_utilities.scss */
+/* line 30, C:/Ruby23-x64/lib/ruby/gems/2.3.0/gems/compass-core-1.0.3/stylesheets/compass/reset/_utilities.scss */
 q, blockquote {
   quotes: none;
 }
-/* line 103, ../../../../../../../../../../var/lib/gems/2.3.0/gems/compass-core-1.0.3/stylesheets/compass/reset/_utilities.scss */
+/* line 103, C:/Ruby23-x64/lib/ruby/gems/2.3.0/gems/compass-core-1.0.3/stylesheets/compass/reset/_utilities.scss */
 q:before, q:after, blockquote:before, blockquote:after {
   content: "";
   content: none;
 }
 
-/* line 32, ../../../../../../../../../../var/lib/gems/2.3.0/gems/compass-core-1.0.3/stylesheets/compass/reset/_utilities.scss */
+/* line 32, C:/Ruby23-x64/lib/ruby/gems/2.3.0/gems/compass-core-1.0.3/stylesheets/compass/reset/_utilities.scss */
 a img {
   border: none;
 }
 
-/* line 116, ../../../../../../../../../../var/lib/gems/2.3.0/gems/compass-core-1.0.3/stylesheets/compass/reset/_utilities.scss */
+/* line 116, C:/Ruby23-x64/lib/ruby/gems/2.3.0/gems/compass-core-1.0.3/stylesheets/compass/reset/_utilities.scss */
 article, aside, details, figcaption, figure, footer, header, hgroup, main, menu, nav, section, summary {
   display: block;
 }
@@ -151,38 +151,39 @@ video {
   z-index: 100;
   left: 0px;
   top: 0px;
+  border: 1px solid white;
 }
-/* line 68, ../sass/screen.sass */
+/* line 69, ../sass/screen.sass */
 #dmge canvas.grid_canvas {
   z-index: 500;
 }
-/* line 70, ../sass/screen.sass */
+/* line 71, ../sass/screen.sass */
 #dmge canvas.fow_canvas {
   display: none;
   z-index: 150;
 }
-/* line 73, ../sass/screen.sass */
+/* line 74, ../sass/screen.sass */
 #dmge canvas.fow_canvas.active {
   cursor: none;
   pointer-events: all;
   display: block;
 }
 
-/* line 78, ../sass/screen.sass */
+/* line 79, ../sass/screen.sass */
 .hideBrush {
   opacity: 0;
 }
-/* line 80, ../sass/screen.sass */
+/* line 81, ../sass/screen.sass */
 .fow_canvas .hideBrush {
   cursor: pointer !important;
 }
 
-/* line 83, ../sass/screen.sass */
+/* line 84, ../sass/screen.sass */
 .active {
   display: block;
 }
 
-/* line 86, ../sass/screen.sass */
+/* line 87, ../sass/screen.sass */
 #fow_wrapper {
   position: absolute;
   z-index: 150;
@@ -190,7 +191,7 @@ video {
   opacity: 0.5;
 }
 
-/* line 92, ../sass/screen.sass */
+/* line 93, ../sass/screen.sass */
 #grid_wrapper {
   position: absolute;
   top: 0;
@@ -198,47 +199,47 @@ video {
   z-index: 500;
   pointer-events: none;
 }
-/* line 98, ../sass/screen.sass */
+/* line 99, ../sass/screen.sass */
 #grid_wrapper.grid_marking {
   pointer-events: all;
 }
 
-/* line 101, ../sass/screen.sass */
+/* line 102, ../sass/screen.sass */
 #map_wrapper {
   z-index: 100;
   position: absolute;
 }
 
-/* line 105, ../sass/screen.sass */
+/* line 106, ../sass/screen.sass */
 #map_video_wrapper {
   display: none;
 }
 
-/* line 108, ../sass/screen.sass */
+/* line 109, ../sass/screen.sass */
 .map_grid_type, .map_grid_property, .fow_brush_property {
   position: relative;
   margin: 0 0 20px;
 }
 
-/* line 112, ../sass/screen.sass */
+/* line 113, ../sass/screen.sass */
 .map_grid_type {
   display: inline-block;
   white-space: nowrap;
   margin: 0 20px 20px 0;
 }
 
-/* line 117, ../sass/screen.sass */
+/* line 118, ../sass/screen.sass */
 #map_file_settings, #fow_settings, #grid_settings {
   padding: 20px 0;
   position: relative;
 }
 
-/* line 121, ../sass/screen.sass */
+/* line 122, ../sass/screen.sass */
 input[type=range] {
   width: auto;
 }
 
-/* line 124, ../sass/screen.sass */
+/* line 125, ../sass/screen.sass */
 output {
   background: darkred;
   width: 40px;
@@ -252,7 +253,7 @@ output {
   pointer-events: none;
 }
 
-/* line 136, ../sass/screen.sass */
+/* line 137, ../sass/screen.sass */
 #wrench {
   position: fixed;
   top: 0;
@@ -265,16 +266,16 @@ output {
   background: white;
   cursor: pointer;
 }
-/* line 147, ../sass/screen.sass */
+/* line 148, ../sass/screen.sass */
 #wrench:hover {
   background: black;
   color: white;
 }
-/* line 151, ../sass/screen.sass */
+/* line 152, ../sass/screen.sass */
 #wrench.newbie #wrench_innerwrapper {
   animation: wrench 2.5s ease infinite;
 }
-/* line 153, ../sass/screen.sass */
+/* line 154, ../sass/screen.sass */
 #wrench.newbie:before {
   position: absolute;
   content: "";
@@ -290,7 +291,7 @@ output {
   animation: horizontal 2s ease-in-out infinite;
 }
 
-/* line 167, ../sass/screen.sass */
+/* line 168, ../sass/screen.sass */
 #menu {
   position: absolute;
   top: 0;
@@ -298,19 +299,19 @@ output {
   height: auto;
   display: block;
 }
-/* line 173, ../sass/screen.sass */
+/* line 174, ../sass/screen.sass */
 #menu ul, #menu li, #menu ul li {
   margin: 0;
   padding: 0;
 }
-/* line 176, ../sass/screen.sass */
+/* line 177, ../sass/screen.sass */
 #menu a {
   display: block;
   font-size: 32px;
   padding: 16px;
 }
 
-/* line 181, ../sass/screen.sass */
+/* line 182, ../sass/screen.sass */
 #sidebar {
   top: 0;
   right: 0;
@@ -324,40 +325,40 @@ output {
   z-index: 1000;
   height: 100%;
 }
-/* line 193, ../sass/screen.sass */
+/* line 194, ../sass/screen.sass */
 #sidebar.active {
   display: block;
 }
 
-/* line 196, ../sass/screen.sass */
+/* line 197, ../sass/screen.sass */
 #sidebar_innerwrapper {
   padding: 20px 20px 80px 80px;
   height: 100%;
 }
 
-/* line 200, ../sass/screen.sass */
+/* line 201, ../sass/screen.sass */
 #sidebar_tray {
   position: fixed;
   bottom: 0;
   text-align: center;
 }
-/* line 205, ../sass/screen.sass */
+/* line 206, ../sass/screen.sass */
 #sidebar_tray button, #sidebar_tray input[type="button"] {
   display: inline-block;
 }
-/* line 207, ../sass/screen.sass */
+/* line 208, ../sass/screen.sass */
 #sidebar_tray button, #sidebar_tray button:visited, #sidebar_tray input[type="button"], #sidebar_tray input[type="button"]:visited {
   background: white;
   border: none;
   padding: 20px;
 }
-/* line 211, ../sass/screen.sass */
+/* line 212, ../sass/screen.sass */
 #sidebar_tray button:hover, #sidebar_tray button:active, #sidebar_tray input[type="button"]:hover, #sidebar_tray input[type="button"]:active {
   background: black;
   color: white;
 }
 
-/* line 215, ../sass/screen.sass */
+/* line 216, ../sass/screen.sass */
 .css-triangle {
   display: block;
   float: left;
