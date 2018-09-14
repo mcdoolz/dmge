@@ -6,10 +6,10 @@
  */
 
 $aliases['live'] = array(
-  'uri' => 'dmge.digitalforge.ca',
+  'uri' => 'dmge.net',
   'root' => '/home/dforge/ddmge',
-  'remote-host' => 'dmge.digitalforge.ca',
-  'remote-user' => 'dforge',
+  'remote-host' => 'dmge.net',
+  'remote-user' => 'dmge',
   'ssh-options' => '-o PasswordAuthentication=no -i /home/mcdoolz/.ssh/authorized_keys/dmge_rsa',
   'path-aliases' => array(
     '%dump-dir' => '/tmp/.drush/drush-dumps',
