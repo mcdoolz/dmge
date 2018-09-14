@@ -525,3 +525,23 @@ html.js input
     &.rowTitle
       font-size: 20px
       font-weight: 400
+
+#block-menu-menu-footer
+  +zen-clear()
+  +zen-float(none)
+  ul.menu
+    &, li
+      margin: 0
+      padding: 0
+      list-style: none
+      list-style-type: none
+      display: inline
+    li
+      a
+        display: inline-block
+        padding: $zen-gutter-width
+        margin: 0
+        text-align: left
+        &:hover
+          background: black
+          color: white

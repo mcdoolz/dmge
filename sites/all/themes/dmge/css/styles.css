@@ -2569,4 +2569,30 @@ html.js input.throbbing {
   font-weight: 400;
 }
 
+/* line 529, ../sass/_theme.sass */
+#block-menu-menu-footer {
+  clear: left;
+  float: none;
+}
+/* line 533, ../sass/_theme.sass */
+#block-menu-menu-footer ul.menu, #block-menu-menu-footer ul.menu li {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  list-style-type: none;
+  display: inline;
+}
+/* line 540, ../sass/_theme.sass */
+#block-menu-menu-footer ul.menu li a {
+  display: inline-block;
+  padding: 20px;
+  margin: 0;
+  text-align: left;
+}
+/* line 545, ../sass/_theme.sass */
+#block-menu-menu-footer ul.menu li a:hover {
+  background: black;
+  color: white;
+}
+
 /* @import "theme-B"; */
