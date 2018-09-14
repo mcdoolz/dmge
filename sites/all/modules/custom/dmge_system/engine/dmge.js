@@ -97,8 +97,16 @@
 
   map_canvas.on('object:added', function(e) {
     check_object_vs_map(e);
-    $('#layering').jsGrid('insertItem', {'id': e.target.id, 'index': map_canvas.getObjects().indexOf(getObjectFromCanvasById(e.target.id, map_canvas))});
+    $('#layering').jsGrid('insertItem', {'thumbnail': get_thumbnail(e.target.id), 'id': e.target.id, 'index': map_canvas.getObjects().indexOf(getObjectFromCanvasById(e.target.id, map_canvas))});
   });
+
+  function get_thumbnail(id = null) {
+    var d = $('#files').jsGrid('option', 'data');
+    idx = d.findIndex(function(e) {
+      return e.id == id;
+    });
+    return d[idx].Thumbnail;
+  }
 
   fabric.util.requestAnimFrame(function render() {
     map_canvas.renderAll();
@@ -1335,6 +1343,21 @@
     },
 
     fields: [
+      { name: 'Thumbnail',
+        itemTemplate: function(val, item) {
+          console.log(item);
+          return $('<img>').attr('src', item.thumbnail).css({ height: 50, width: 50 });
+        },
+        insertTemplate: function() {
+            var insertControl = this.insertControl = $('<input>').prop('type', 'file');
+            return insertControl;
+        },
+        insertValue: function() {
+            return this.insertControl[0].files[0];
+        },
+        align: 'center',
+        width: 120
+      },
       { name: 'id', type: 'number', visible: false },
       { name: 'Index', type: 'integer' },
       { name: 'Filename', type: 'text', width: '25%' },
@@ -1361,7 +1384,7 @@
           var indexes = $.map($gridData.sortable('toArray', {
             attribute: 'class'
           }), function(classes) {
-            console.log(clientIndexRegExp.exec(classes));
+            // console.log(clientIndexRegExp.exec(classes));
             return clientIndexRegExp.exec(classes)[1];
           });
 
@@ -1369,9 +1392,9 @@
           var items = $.map($gridData.find("tr"), function(row) {
             return $(row).data("JSGridItem");
           });
-          console && console.log("Reordered items", items);
+          // console && console.log("Reordered items", items);
           items.forEach(function(e) {
-            console.log(e);
+            // console.log(e);
             map_canvas.moveTo(getObjectFromCanvasById(e.id, map_canvas), e.row);
           });
         }
@@ -1425,11 +1448,11 @@
   /**
    * Grab video tag by id and make a screen shot.
    */
-  function make_video_thumbnail(video, type) {
+  function make_video_thumbnail(vid, type) {
     if (type == 'YouTube') {
       return;
     }
-    video = document.getElementById(video);
+    video = document.getElementById(vid);
 
     if ($('#thumb_video_canvas')) {
       $('#thumb_video_canvas').remove();
@@ -1446,12 +1469,9 @@
     thumb_canvas[0].height = 256;
     thumb_canvas[0].getContext('2d').drawImage(video, 0, 0, thumb_canvas[0].width, thumb_canvas[0].height);
     while (!_shot) {
-        _shot = thumb_canvas[0].toDataURL();
-      // if (type == 'YouTube') {
-      //   _shot = thumb_canvas[0].getImageData(0, 0, thumb_canvas[0].width, thumb_canvas[0].height);
-      // }
+      _shot = thumb_canvas[0].toDataURL();
+      // window[vid] = _shot;
     }
-
     if (_shot) {
       thumb_canvas.remove();
     }
