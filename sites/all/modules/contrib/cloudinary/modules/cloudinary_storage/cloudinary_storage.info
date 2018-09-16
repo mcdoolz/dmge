@@ -1,0 +1,14 @@
+name = Cloudinary Storage
+description = The module provides stores information locally to reduce network requests and improve loading speed for uploaded Cloudinary files.
+package = Cloudinary
+core = 7.x
+dependencies[] = cloudinary_stream_wrapper
+files[] = CloudinaryStorage.inc
+configure = admin/config/media/cloudinary
+
+; Information added by Drupal.org packaging script on 2018-03-14
+version = "7.x-1.3+0-dev"
+core = "7.x"
+project = "cloudinary"
+datestamp = "1521046984"
+
