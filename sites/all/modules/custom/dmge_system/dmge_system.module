@@ -242,6 +242,22 @@ function dmge_system_main() {
  * Implements hook_menu().
  */
 function dmge_system_menu() {
+  $items['engine/gif2mp4'] = array(
+  // Accepts only GIFs and returns the access URL as an MP4 for instant embedding.
+    'title' => 'DMGE',
+    'description' => 'GIF 2 MP4.',
+    'page callback' => 'dmge_system_gif_to_mp4',
+    'type' => MENU_CALLBACK,
+    'access arguments' => array('access content'),
+  );
+  // Cloudinary submissions
+  $items['engine/cloudinary/upload'] = array(
+    'title' => 'DMGE',
+    'description' => 'Upload',
+    'page callback' => 'dmge_system_gif_to_mp4',
+    'type' => MENU_CALLBACK,
+    'access arguments' => array('access content'),
+  );
   // Engine
   $items['engine'] = array(
     'title' => 'DMGE',
