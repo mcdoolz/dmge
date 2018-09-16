@@ -42,7 +42,7 @@ function dmge_system_clear_patreon_roles() {
 function dmge_system_make_patrons() {
   // If we don't have what we need, bail out.
   if (!module_exists('patreon') || !function_exists('patreon_fetch_user')) {
-    drupal_set_message('Need the patreon user module installed and enabled.', 'error');
+    drupal_set_message(t('Need the patreon user module installed and enabled.'), 'error');
     return;
   }
 
