@@ -702,4 +702,27 @@ function dmge_system_gif_to_mp4_process($files) {
     return FALSE;
   }
 }
+
+/**
+ * Hook into the Cloudinary SDK API and alter the config with user values, if they exist.
+ */
+function dmge_system_cloudinary_config_alter($config) {
+  global $user;
+  if ($user->uid) {
+    $wrapper = entity_metadata_wrapper('user', $user);
+    $cloud_name = $wrapper->field_cloudinary_cloudname->value();
+    $api_key = $wrapper->field_cloudinary_apikey->value();
+    $api_secret = $wrapper->field_cloudinary_apisecret->value();
+    // If we have all three elements filled in, let's replace the login data.
+    if (!empty($cloud_name) &&
+    !empty($api_secret) &&
+    !empty($api_key)) {
+      $config = array(
+        'cloud_name' => $cloud_name,
+        'api_secret' => $api_secret,
+        'api_key' => $api_key,
+      );
+    }
+  }
+  return $config;
 }
