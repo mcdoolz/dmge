@@ -2,19 +2,16 @@
 
 /**
  * @file
- * Render an administrative menu as a dropdown menu at the top of the window.
+ * The DMGE behind the scenes systems.
  */
-
-define('CLOUDINARY_API_KEY', '688726213211648');
-define('CLOUDINARY_API_SECRET', 'quk3sv4FXVXV3xcwqOVveFCfHj0');
-define('CLOUDINARY_NAME', 'dmge');
-define('CLOUDINARY_ENV_VAR', 'cloudinary://688726213211648:quk3sv4FXVXV3xcwqOVveFCfHj0@dmge/');
 
 /**
  * Invokes hook_cron().
  */
 function dmge_system_cron() {
+  // Clears all patreon roles before readding them.
   dmge_system_clear_patreon_roles();
+  // Adds respective patreon roles to patrons.
   dmge_system_make_patrons();
 }
 
