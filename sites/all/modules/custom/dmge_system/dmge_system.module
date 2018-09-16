@@ -673,4 +673,33 @@ function dmge_system_gif_to_mp4_form_submit(&$form, &$form_state) {
     return $files;
   }
 }
+
+/**
+ * Helper uploads gifs and returns URLs.
+ */
+function dmge_system_gif_to_mp4_process($files) {
+  $uploaded = array();
+  foreach ($files as $file) {
+    $upload = \Cloudinary\Uploader::upload($file['tmp_name'], array("use_filename" => TRUE));
+
+    if (!empty($upload) && !empty($upload['secure_url'])) {
+      $uploaded[] = $upload;
+    }
+    if (!empty($upload['error'])) {
+      drupal_set_message(t('Cloudinary says..<br><pre>' . $upload['error'] . '</pre>'));
+    }
+  }
+  foreach ($uploaded as &$file) {
+    $ext = 'mp4';
+    $info = pathinfo($file['secure_url']);
+    $file = $info['dirname'] . '/' . $info['filename'] . '.' . $ext;
+  }
+  if (!empty($uploaded)) {
+    return $uploaded;
+  }
+  else {
+    drupal_set_message(t('Sad days.  The upload failed.  It not you.  It\'s me', 'error'));
+    return FALSE;
+  }
+}
 }
