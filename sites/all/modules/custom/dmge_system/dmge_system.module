@@ -625,4 +625,31 @@ function reArrayFiles(&$file_post) {
   return $file_ary;
 }
 
+/**
+ * Returns the form elements and loads the library for cloudinary.
+ */
+function dmge_system_gif_to_mp4_form($form = array(), $form_state = array()) {
+  $cloudinary = libraries_load('cloudinary');
+  $form = array('#attributes' => array('enctype' => 'multipart/form-data'));
+  $form['upload'] = array(
+    '#name' => 'dmge_gif2mp4[]',
+    '#type' => 'file',
+    '#title' => t('Select some .gif files to convert to .mp4'),
+    '#title_display' => 'visible',
+    '#size' => 22,
+    '#attributes' => array('multiple' => 'multiple'),
+    '#theme_wrappers' => array(),
+    '#weight' => -10,
+    '#upload_validators'  => array(
+      'file_validate_extensions' => array('gif'),
+    ),
+  );
+  $form['actions']['submit'] = array(
+    '#type' => 'submit',
+    '#value' => t('Upload'),
+    '#weight' => 10,
+  );
+  return $form;
+}
+
 }
