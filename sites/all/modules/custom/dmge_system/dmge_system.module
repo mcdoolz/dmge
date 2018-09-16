@@ -135,6 +135,9 @@ function dmge_system_theme() {
   );
 }
 
+/**
+ * The Players window generation.
+ */
 function dmge_system_players() {
   global $user;
   $path = drupal_get_path('module', 'dmge_system');
@@ -173,6 +176,9 @@ function dmge_system_init() {
   drupal_add_js($data, 'setting');
 }
 
+/**
+ * The Main DMGE window generation.
+ */
 function dmge_system_main() {
   global $user;
   if (!user_access('access dmge')) {
@@ -291,7 +297,9 @@ function dmge_system_menu() {
   return $items;
 }
 
-
+/**
+ * I have no settings.
+ */
 function dmge_system_theme_settings($form = array()) {
   $form['markup']['#markup'] = "I should do something with this.";
   return $form;
@@ -329,6 +337,9 @@ function _dmge_rewrite_url($url) {
   return $url;
 }
 
+/**
+ * Alter ALL the forms!
+ */
 function dmge_system_form_user_login_block_alter(&$form, &$form_state) {
   _dmge_system_login_form_alter($form, $form_state);
 }
@@ -342,6 +353,9 @@ function dmge_system_form_passwordless_login_alter(&$form, &$form_state) {
   _dmge_system_login_form_alter($form, $form_state);
 }
 
+/**
+ * Alter the log in form with Patreon user account links.
+ */
 function _dmge_system_login_form_alter(&$form, &$form_state = NULL) {
   if (module_exists('patreon_user')) {
     if (user_is_anonymous()) {
@@ -551,6 +565,9 @@ function dmge_system_form_patreon_admin_form_alter(&$form, &$form_state) {
 
 }
 
+/**
+ * Helper returns the patreon roles for the form.
+ */
 function dmge_system_patreon_roles_ajax_add_patreon_roles($form, &$form_state) {
   return $form['dmge_system_patreon_roles'];
 }
@@ -562,6 +579,9 @@ function _sort_by_amount($a, $b) {
   return $a['pledge'] - $b['pledge'];
 }
 
+/**
+ * Helper checks if the pledge field is empty.
+ */
 function _dmge_system_roles_empty($var) {
   return !empty($var['pledge']);
 }
