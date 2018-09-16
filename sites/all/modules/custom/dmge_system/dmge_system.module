@@ -652,4 +652,25 @@ function dmge_system_gif_to_mp4_form($form = array(), $form_state = array()) {
   return $form;
 }
 
+/**
+ * On submission of form, upload, track and retrieve converted data.
+ */
+function dmge_system_gif_to_mp4_form_submit(&$form, &$form_state) {
+  $files = reArrayFiles($_FILES['dmge_gif2mp4']);
+  foreach ($files as $key => $file) {
+    if ($file['type'] !== 'image/gif') {
+      unset($files[$key]);
+    }
+  }
+  $file = reset($files);
+  if (empty($file['name'])) {
+    drupal_set_message(t('No GIFs selected?'), 'error');
+    return;
+  }
+  // We've cleaned up the files list to include only gifs, now we'll upload.
+  // If we get a good response, we're good to go.
+  if ($files = dmge_system_gif_to_mp4_process($files)) {
+    return $files;
+  }
+}
 }
