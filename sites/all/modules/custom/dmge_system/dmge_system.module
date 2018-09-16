@@ -603,6 +603,26 @@ function dmge_system_patreon_roles_configure_form_submit($form, $form_state) {
 /**
  * Helper to submit files to cloudinary and get response.
  */
-function dmge_system_gif_to_mp4($form, $form_state) {
+function dmge_system_gif_to_mp4() {
+  $form = drupal_get_form('dmge_system_gif_to_mp4_form');
+  return $form;
+}
+
+/**
+ * Helper rearrays files.
+ * Code lifted from http://php.net/manual/en/features.file-upload.multiple.php
+ */
+function reArrayFiles(&$file_post) {
+  $file_ary = array();
+  $file_count = count($file_post['name']);
+  $file_keys = array_keys($file_post);
+  // Cycle files and add them to a new array.
+  for ($i=0; $i<$file_count; $i++) {
+    foreach ($file_keys as $key) {
+      $file_ary[$i][$key] = $file_post[$key][$i];
+    }
+  }
+  return $file_ary;
+}
 
 }
