@@ -1247,8 +1247,8 @@
     pageSize: 15,
     pageButtonCount: 5,
 
-    confirmDeleting: true,
-    deleteConfirm: 'Remove?',
+    // confirmDeleting: true,
+    // deleteConfirm: 'Remove?',
     onItemDeleted: function(e) {
       let id = e.row[0].id;
       while (getObjectFromCanvasById(id, map_canvas)) {
@@ -1346,8 +1346,8 @@
     pageSize: 999,
     // pageButtonCount: 5,
 
-    confirmDeleting: true,
-    deleteConfirm: 'Remove?',
+    // confirmDeleting: true,
+    // deleteConfirm: 'Remove?',
     onItemDeleted: function(e) {
       let id = e.row[0].id;
       removeObjectFromCanvas(id, map_canvas);
