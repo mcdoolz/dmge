@@ -97,7 +97,11 @@
 
   map_canvas.on('object:added', function(e) {
     check_object_vs_map(e);
-    $('#layering').jsGrid('insertItem', {'thumbnail': get_thumbnail(e.target.id), 'id': e.target.id, 'index': map_canvas.getObjects().indexOf(getObjectFromCanvasById(e.target.id, map_canvas))});
+    $('#layering').jsGrid('insertItem', {
+      'id': e.target.id,
+      'Thumbnail': get_thumbnail(e.target.id),
+      'index': map_canvas.getObjects().indexOf(getObjectFromCanvasById(e.target.id, map_canvas))
+    });
   });
 
   function get_thumbnail(id = null) {
@@ -1246,11 +1250,11 @@
     confirmDeleting: true,
     deleteConfirm: 'Remove?',
     onItemDeleted: function(e) {
-      let _id = e.row[0].id;
-      while (getObjectFromCanvasById(_id, map_canvas)) {
-        removeObjectFromCanvas(_id, map_canvas);
-        $('#' + _id).remove();
+      let id = e.row[0].id;
+      while (getObjectFromCanvasById(id, map_canvas)) {
+        removeObjectFromCanvas(id, map_canvas);
       }
+      $('#' + id).remove();
     },
 
     onItemInserted: function(e) {
@@ -1261,8 +1265,7 @@
         $(_id).on('play', function(e) {
           let thumbnail = make_video_thumbnail(item.id, item.Type);
           $('#files').jsGrid("updateItem", item, {'Thumbnail': thumbnail });
-          // VIDEO TAGS GET A MAP_VIDEO_ PREFIX.
-          let item_id = 'map_video_' + item.id;
+          let item_id = item.id;
           window[item_id] = new fabric.Image(tag, {
             id: item.id,
             originX: 'left',
@@ -1275,19 +1278,6 @@
           map_canvas.add(window[item_id]);
         });
       }
-      // if (_id.is('video.map_gif')) {
-      //   let item_id = 'map_gif_' + item.id;
-      //   window[item_id] = new fabric.Image(tag, {
-      //     id: item.id,
-      //     originY: 'top',
-      //     originX: 'left',
-      //     height: tag.height,
-      //     width: tag.width,
-      //     left: 0,
-      //     top: 0
-      //   });
-      //   map_canvas.add(window[item_id]);
-      // }
     },
 
     fields: [
@@ -1318,12 +1308,12 @@
           return $('<button>').html('<i class="fa fa-puzzle-piece" aria-hidden="true"></i> Add').attr({'class': 'file_add_to_canvas'}).css({ 'display': 'block' }).on('click', function(e) {
             let obj;
             if (obj = getObjectFromCanvasById(item.id, map_canvas)) {
-              obj = fabric.util.object.clone();
-              console.log(obj);
-              map_canvas.add(obj);
+              let clone = fabric.util.object.clone(obj);
+              if (!$.isEmptyObject(clone)) {
+                map_canvas.add(clone);
+              }
             }
             else {
-              console.log(item);
               loadFile(item.url, getExtension(item.url), item.id);
             }
           });
@@ -1335,6 +1325,7 @@
         itemTemplate: function(val, item) {
           return $('<button>').html('<i class="fa fa-trash" aria-hidden="true"></i> Delete').attr({'class': 'file_delete_from_canvas'}).css({ 'display': 'block' }).on('click', function(e) {
             $('#files').jsGrid('deleteItem', $(item));
+            $('#layering').jsGrid('deleteItem', $(item));
           });
         },
         align: 'center',
@@ -1358,17 +1349,14 @@
     confirmDeleting: true,
     deleteConfirm: 'Remove?',
     onItemDeleted: function(e) {
-      let _id = e.row[0].id;
-      while (getObjectFromCanvasById(_id, map_canvas)) {
-        removeObjectFromCanvas(_id, map_canvas);
-        $('#' + _id).remove();
-      }
+      let id = e.row[0].id;
+      removeObjectFromCanvas(id, map_canvas);
+      $('#' + id).remove();
     },
 
     fields: [
       { name: 'Thumbnail',
         itemTemplate: function(val, item) {
-          // console.log(item);
           return $('<img>').attr('src', item.thumbnail).css({ height: 50, width: 50 });
         },
         insertTemplate: function() {
@@ -1388,6 +1376,7 @@
         itemTemplate: function(val, item) {
           return $('<button>').html('<i class="fa fa-trash" aria-hidden="true"></i> Delete').attr({'class': 'file_delete_from_canvas'}).css({ 'display': 'block' }).on('click', function(e) {
             $('#files').jsGrid('deleteItem', $(item));
+            $('#layering').jsGrid('deleteItem', $(item));
           });
         },
         align: 'center',
