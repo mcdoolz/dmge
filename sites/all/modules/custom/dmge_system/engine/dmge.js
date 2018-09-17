@@ -688,17 +688,26 @@
 
   /**
    * Set gif.
+   * url is actually a file.
    */
-  // function do_gif(_id, _url, ext) {
-  //   let gtag;
-  //   gtag = $('<img />', {
-  //     class: 'map_gif',
-  //     src: _url,
-  //     id: _id
-  //   });
-  //   $('#map_video_wrapper').append(gtag[0]);
-  //   return gtag;
-  // }
+  function do_gif(_id, _file) {
+    var data = new FormData();
+    data.append('dmge_gif2mp4', _file);
+    $.ajax({
+      url: Drupal.settings.basePath + 'engine/gif2mp4',
+      processData: false,
+      method: 'POST',
+      type: 'POST',
+      contentType: false,
+      dataType: 'json',
+      data: data,
+      success: function(data) {
+        do_video(_id, data[0], 'mp4');
+        $('#files').jsGrid('insertItem', {'id': _id, 'Blob': data[0], 'Type': 'Animated', 'Thumbnail': window.URL.createObjectURL(_file) });
+      }
+    });
+    return true;
+  }
 
   /**
    * Set video.
@@ -733,9 +742,20 @@
    */
   $('#map_embed_submit').on('touchend, click', function(e) {
     // A serverside PHP callback fires the URL to YouTube and parses an mp4 url from the response, for us to embed.
-    let code = get_youtube_code($('#map_embed').val());
-    // Fire our backend script with our id code.
-    do_youtube(code);
+    if (code = get_youtube_code($('#map_embed').val())) {
+      // Fire our backend script with our id code.
+      do_youtube(code);
+    };
+    // If we got bupkiss, let's look for an extension?  Maybe it's an mp4.
+    if (!code) {
+      let url = $('#map_embed').val();
+      let ext = getExtension(url);
+      if (ext === 'mp4') {
+        let id = make_file_id(url);
+        do_video(id, url, 'mp4');
+        $('#files').jsGrid('insertItem', {'id': id, 'Blob': url, 'Type': 'Animated' });
+      }
+    }
   });
 
   /**
@@ -748,7 +768,7 @@
           let _url = response[0].url;
           let _id = make_file_id(_url);
           do_video(_id, _url, 'mp4');
-          $('#files').jsGrid('insertItem', {'id': _id, 'Blob': _url, 'Type': 'YouTube' });
+          $('#files').jsGrid('insertItem', {'id': _id, 'Blob': _url, 'Type': 'Animated' });
         }
       }
     });
@@ -851,9 +871,7 @@
     setupTimers();
     fow_reset();
     let params = getQueryParams();
-    console.log(params);
     if (params.v) {
-      console.log(params.v);
       do_youtube(params.v);
     }
   });
@@ -1135,9 +1153,14 @@
       let _thumbnail = _url;
       let _type = 'Static';
       let ext = getExtension(_file.name);
+      if (ext == 'gif') {
+        _url = _file;
+      }
 
       if (loadFile(_url, ext, _id)) {
-        $('#files').jsGrid('insertItem', {'id': _id, 'Filename': _file.name, 'Blob': _url, 'Type': _type, 'Thumbnail': _thumbnail });
+        if (ext !== 'gif') {
+          $('#files').jsGrid('insertItem', {'id': _id, 'Filename': _file.name, 'Blob': _url, 'Type': _type, 'Thumbnail': _thumbnail });
+        }
       }
     });
   }
@@ -1152,13 +1175,13 @@
       case 'jpeg':
       case 'bmp':
       case 'png':
-      case 'gif':
+      // case 'gif':
         do_image(_url, ext);
         break;
-      // case 'gif':
-      //   _type = 'Animated';
-      //   do_gif(_id, _url, ext);
-      //   break;
+      case 'gif':
+        _type = 'Animated';
+        do_gif(_id, _url);
+        break;
 
       case 'm4v':
         ext = 'x-m4v';
@@ -1301,7 +1324,7 @@
             }
             else {
               console.log(item);
-              loadFiles(item, true);
+              loadFile(item.url, getExtension(item.url), item.id);
             }
           });
         },
@@ -1345,7 +1368,7 @@
     fields: [
       { name: 'Thumbnail',
         itemTemplate: function(val, item) {
-          console.log(item);
+          // console.log(item);
           return $('<img>').attr('src', item.thumbnail).css({ height: 50, width: 50 });
         },
         insertTemplate: function() {
@@ -1449,7 +1472,7 @@
    * Grab video tag by id and make a screen shot.
    */
   function make_video_thumbnail(vid, type) {
-    if (type == 'YouTube') {
+    if (new Array('youtube', 'gif').indexOf(type.toLowerCase())) {
       return;
     }
     video = document.getElementById(vid);

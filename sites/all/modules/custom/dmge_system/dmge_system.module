@@ -186,6 +186,12 @@ function dmge_system_main() {
   }
   $path = drupal_get_path('module', 'dmge_system');
 
+  $cloudinary = libraries_load('cloudinary');
+  if (empty($cloudinary['loaded'])) {
+    drupal_set_message(t('Cloudinary SDK PHP didn\'t load.', 'error'));
+    return;
+  }
+
   $header_javascripts = array(
     $path . '/lib/honeycomb.min.js',
     $path . '/lib/jsgrid.min.js',
@@ -252,17 +258,17 @@ function dmge_system_menu() {
   // Accepts only GIFs and returns the access URL as an MP4 for instant embedding.
     'title' => 'DMGE',
     'description' => 'GIF 2 MP4.',
-    'page callback' => 'dmge_system_gif_to_mp4',
+    'page callback' => 'dmge_system_gif_to_mp4_process',
     'type' => MENU_CALLBACK,
-    'access arguments' => array('access content'),
+    'access arguments' => array('access dmge'),
   );
   // Cloudinary submissions
   $items['engine/cloudinary/upload'] = array(
     'title' => 'DMGE',
     'description' => 'Upload',
-    'page callback' => 'dmge_system_gif_to_mp4',
+    'page callback' => 'dmge_system_cloudinary_upload',
     'type' => MENU_CALLBACK,
-    'access arguments' => array('access content'),
+    'access arguments' => array('access dmge'),
   );
   // Engine
   $items['engine'] = array(
@@ -270,7 +276,7 @@ function dmge_system_menu() {
     'description' => 'The Dynamic Maps Game Engine.',
     'page callback' => 'dmge_system_main',
     'type' => MENU_CALLBACK,
-    'access arguments' => array('access content'),
+    'access arguments' => array('access dmge'),
   );
   // Player view
   $items['engine/players'] = array(
@@ -291,7 +297,7 @@ function dmge_system_menu() {
   $items['engine/youtube'] = array(
     'title' => 'Ajax callback for YouTube URLs.',
     'page callback' => '_dmge_system_get_youtube_url',
-    'access arguments' => array('access content'),
+    'access arguments' => array('access dmge'),
     'type' => MENU_CALLBACK,
   );
   return $items;
@@ -613,23 +619,22 @@ function dmge_system_gif_to_mp4() {
  * Code lifted from http://php.net/manual/en/features.file-upload.multiple.php
  */
 function reArrayFiles(&$file_post) {
-  $file_ary = array();
+  $file_array = array();
   $file_count = count($file_post['name']);
   $file_keys = array_keys($file_post);
   // Cycle files and add them to a new array.
   for ($i=0; $i<$file_count; $i++) {
     foreach ($file_keys as $key) {
-      $file_ary[$i][$key] = $file_post[$key][$i];
+      $file_array[$i][$key] = $file_post[$key][$i];
     }
   }
-  return $file_ary;
+  return $file_array;
 }
 
 /**
  * Returns the form elements and loads the library for cloudinary.
  */
 function dmge_system_gif_to_mp4_form($form = array(), $form_state = array()) {
-  $cloudinary = libraries_load('cloudinary');
   $form = array('#attributes' => array('enctype' => 'multipart/form-data'));
   $form['upload'] = array(
     '#name' => 'dmge_gif2mp4[]',
@@ -656,6 +661,10 @@ function dmge_system_gif_to_mp4_form($form = array(), $form_state = array()) {
  * On submission of form, upload, track and retrieve converted data.
  */
 function dmge_system_gif_to_mp4_form_submit(&$form, &$form_state) {
+  if (!user_access('access dmge')) {
+    drupal_access_denied();
+    return FALSE;
+  }
   $files = reArrayFiles($_FILES['dmge_gif2mp4']);
   foreach ($files as $key => $file) {
     if ($file['type'] !== 'image/gif') {
@@ -677,10 +686,31 @@ function dmge_system_gif_to_mp4_form_submit(&$form, &$form_state) {
 /**
  * Helper uploads gifs and returns URLs.
  */
-function dmge_system_gif_to_mp4_process($files) {
+function dmge_system_gif_to_mp4_process($files = array()) {
+  if (!user_access('access dmge')) {
+    drupal_access_denied();
+    return FALSE;
+  }
+
+  if (!empty($_FILES)) {
+    $files = $_FILES;
+  }
+
+  $cloudinary = libraries_load('cloudinary');
+  if (empty($cloudinary['loaded'])) {
+    drupal_set_message(t('Cloudinary SDK PHP didn\'t load.', 'error'));
+    return;
+  }
+
   $uploaded = array();
-  foreach ($files as $file) {
-    $upload = \Cloudinary\Uploader::upload($file['tmp_name'], array("use_filename" => TRUE));
+  foreach ($files as $key => $file) {
+    if (!empty($file['tmp_name'])) {
+      $upload = \Cloudinary\Uploader::upload($file['tmp_name'], array("use_filename" => TRUE));
+    }
+    else {
+      drupal_set_message(t('Couldn\'t find the file.'), 'error');
+      return;
+    }
 
     if (!empty($upload) && !empty($upload['secure_url'])) {
       $uploaded[] = $upload;
@@ -695,10 +725,9 @@ function dmge_system_gif_to_mp4_process($files) {
     $file = $info['dirname'] . '/' . $info['filename'] . '.' . $ext;
   }
   if (!empty($uploaded)) {
-    return $uploaded;
+    return drupal_json_output($uploaded);
   }
   else {
-    drupal_set_message(t('Sad days.  The upload failed.  It not you.  It\'s me', 'error'));
     return FALSE;
   }
 }

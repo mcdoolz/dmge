@@ -81,7 +81,7 @@ $age = $incept_date->diff($today)->days;
             </form>
             <label for="map_embed">Paste the URL to a Video</label>
             <form><input type="text" id="map_embed"><input type="button" id="map_embed_submit" value="Import"></form>
-            <p><sup>Currently recognizes YouTube videos only.</sup></p>
+            <p><sup>Recognizes YouTube URLs and any publically available MP4.</sup></p>
           </div>
           <div id="files_storage_path">
             <div id="files_storage_path"><label for="files_storage_path_configure">Select Resource Folder</label>
