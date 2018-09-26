@@ -158,6 +158,27 @@
     a.remove();
   }
 
+  function save_show_save_icon() {
+    if (!$('#save_icon')) {
+      let div = document.createElement('div');
+      div.setAttribute('id', 'save_icon');
+      $('#save_icon').hide().html('<i class="far fa-save"></i>');
+    }
+    $('#save_icon').fadeIn();
+  }
+
+  function save_show_error() {
+    if (!$('#error')) {
+      let div = document.createElement('div');
+      div.setAttribute('id', 'error');
+    }
+    $('#error').hide().html('<i class="fas fa-exclamation-triangle"></i>').append('Error saving map.');
+  }
+
+  function save_hide_save_icon() {
+    $('#save_icon').fadeOut();
+  }
+
   function save_canvases() {
     let map_name = document.getElementById('map_name').value;
     if (!map_name) {
