@@ -88,8 +88,8 @@
     let _height = (screensize.height < e.target.height);
     if ((_width) || (_height)) {
       let _screensize = {
-        width: (_width) ? e.target.width : screensize.width,
-        height: (_width) ? e.target.height : screensize.height
+        width: (_width) ? e.target.width : screen.availWidth,
+        height: (_height) ? e.target.height : screen.availHeight
       }
       set_canvas_dimensions(_screensize);
     }
