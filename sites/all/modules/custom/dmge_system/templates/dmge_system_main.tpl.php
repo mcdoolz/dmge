@@ -7,22 +7,30 @@ $today = new \DateTime;
 $age = $incept_date->diff($today)->days;
 ?>
 <div id="dmge">
+  <div id="questions" class="dialog" title="">
+
+  </div>
+  <div id="library" class="dialog" title="Map Library">
+
+  </div>
+
   <div id="about" class="dialog" title="How to use the DMGE">
     <h4>How to Use</h4>
     <ol>
       <li>Click the File tab, then Choose File and select an image or video to use as a map.</li>
-      <li>You can import YouTube videos by inputting their address in the provided field, then clicking Import.</li>
-      <li>Click and drag the corner of the map to scale it to your liking.  Zoom out using your browsers control if you need more space.</li>
+      <li>You can import any online MP4 video by inputting the address in the provided field, then clicking Import.</li>
+      <li>Click and drag the corner of the map to scale it to your liking.  Zoom out using your browsers control if you need more space.  You will need to increase the canvas size in the map settings.</li>
       <li>If the Fog of War is enabled, left click drag to remove the fog, hold shift to repaint it.  Use the slider to change the opacity.</li>
     </ol>
     <h4>Tips &amp; Tricks</h4>
     <ol>
-      <li>Press Ctrl-Z to reposition the grid.  Shift-Z clears dragging mode.</li>
-      <li>Press Ctrl-X to mark the grid before scrolling it, so you can track where your miniatures were.  Shift-X clears marking mode.</li>
-      <li>Press Backspace to clear marking or dragging mode.</li>
+      <!-- <li>Press Ctrl-X to mark the grid before scrolling it, so you can track where your miniatures were.  Shift-X clears marking mode.</li> -->
+      <!-- <li>Press Backspace to clear marking or dragging mode.</li> -->
       <!-- <li>Press Ctrl-Backspace to clear all marks.</li> -->
-      <li>Press Alt to pan around.</li>
-      <li>Press Ctrl-Shift-V to open the player view window.</li>
+      <!-- <li>Press Alt to pan around.</li> -->
+      <li>Press Escape to toggle the sidebar.</li>
+      <li>Use the numeric keys to quickly switch between tool sets.</li>
+      <li>Press Ctrl-P to open the player view window.</li>
       <li>Zoom out and in by holding Ctrl and rolling your scroll wheel.  You can scale your map larger then the available space this way.</li>
       <li>If you lose the ability to interact with the board in some way, click the wrench and your mouse should start reacting.</li>
     </ol>
@@ -66,21 +74,24 @@ $age = $incept_date->diff($today)->days;
         <div id="files_settings" class="sidebar_section">
           <h2>Files</h2>
           <div id="files_wrapper">
-            <h4>Files</h4>
             <div id="files"></div>
             <form method="post">
               <input id="file" type="file" multiple />
               <input id="file_load" type="button" value="Load File">
+            </form>
+            <!-- <form>
               <label for="file_functions">Bulk Operations</label>
-              <select id="file_functions">
-                <options>
+                <select id="file_functions">
+                  <options>
                   <option>Remove</option>
                 </options>
               </select>
               <input id="file_bulkop" type="button" value="Do Bulk Op">
+            </form> -->
+            <label for="map_embed">Paste the URL to any MP4 Video</label>
+            <form>
+              <input type="text" id="map_embed"><input type="button" id="map_embed_submit" value="Import">
             </form>
-            <label for="map_embed">Paste the URL to a Video</label>
-            <form><input type="text" id="map_embed"><input type="button" id="map_embed_submit" value="Import"></form>
             <p><sup>Recognizes YouTube URLs and any publically available MP4.</sup></p>
           </div>
           <div id="files_storage_path">
@@ -175,18 +186,23 @@ $age = $incept_date->diff($today)->days;
             <label for="template_colour">Template Size</label>
             <input type="color" id="template_colour">
           </div>
+          <h3>Labels</h3>
+          <div class="text_controls" id="text_controls">
+            <label for="text_create">New Label</label>
+            <input type="text" id="text_create" />
+            <input type="button" value="Create Label" />
+          </div>
         </div>
 
         <div id="grid_settings" class="sidebar_section">
           <h3>Grid Settings</h3>
 
-          <div id="grid_snap_wrapper">
+          <div id="grid_snap_wrapper" class="grid_setting">
             <label for="grid_snap">Grid Snap</label>
             <input type="checkbox" id="grid_snap" class="grid_snap_checkbox">
           </div>
 
-          <div id="map_grid_type">
-            <h3>Grid Type</h3>
+          <div id="map_grid_type" class="grid_setting">
 
             <div class="map_grid_type">
               <label for="quad_grid">Quad</label>
@@ -205,7 +221,8 @@ $age = $incept_date->diff($today)->days;
               <input type="radio" id="no_grid" name="map_grid_type" value="None" checked="checked">
             </div>
           </div>
-          <div class="map_grid_property">
+
+          <div id="map_grid_properties" class="grid_setting">
             <label for="map_grid_size">Grid Size</label>
             <input type="number" id="map_grid_size" value="60">
             <p><sup>Lower sizes take longer to process.</sup></p>
@@ -215,16 +232,21 @@ $age = $incept_date->diff($today)->days;
               <p><sup>This is the grid in pixels with your zoom level considered (Reset Zoom with Ctrl-Z or Ctrl-R).</sup></p>
             </div>
           </div>
+
           <div class="map_grid_property">
             <div id="map_grid_auto">
-              <label for="screen_x">Width Pixels</label>
-              <input placeholder="1920" type="text" id="screen_x"/><br />
-              <label for="screen_y">Height Pixels</label>
-              <input placeholder="1080" type="text" id="screen_y"><br />
-              <label for="screen_inch">Screen Inches</label>
-              <input type="text" placeholder="40" id="screen_inch"><br />
-              <label for="screen_result" title="Pixels Per Inch">PPI</label>
-              <input type="text" disabled id="screen_result" value=""><br />
+              <div class="grid_setting">
+                <label for="screen_x">Width Pixels</label>
+                <input placeholder="1920" type="text" id="screen_x"/><br />
+                <label for="screen_y">Height Pixels</label>
+                <input placeholder="1080" type="text" id="screen_y"><br />
+              </div>
+              <div class="grid_setting">
+                <label for="screen_inch">Screen Inches</label>
+                <input type="text" placeholder="40" id="screen_inch"><br />
+                <label for="screen_result" title="Pixels Per Inch">PPI</label>
+                <input type="text" disabled id="screen_result" value=""><br />
+              </div>
               <button id="screen_calculate">Calculate</button>
             </div>
           </div>
@@ -244,6 +266,7 @@ $age = $incept_date->diff($today)->days;
         <button id="map_reset_zoom" class="sidebar_tray_button" title="Reset Zoom"><i class="fas fa-bullseye"></i></button>
         <button id="map_clear" class="sidebar_tray_button" title="Clear Map"><i class="fas fa-eraser"></i></button>
         <button id="player_view_open" class="sidebar_tray_button" title="Player View"><i class="fas fa-chess-knight"></i></button>
+        <button id="map_catalog" class="sidebar_tray_button" title="Map Catalogue"><i class="fas fa-database"></i></button>
       </div>
 
     </div>
