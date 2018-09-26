@@ -425,50 +425,106 @@
    * When we press a key, the world changes.
    */
   $(document).bind('keydown', function(e) {
-    if (e.which == 27) {
-      $('#sidebar').toggle('slide', {direction:'right'});
+
+    // If it's one of the number keys at the top then count off and activate a sidebar menu item.
+    if ($('input').is(':focus')) {
+      return;
     }
-    if (e.which == 81) {
-      __toggle = Drupal.howto.dialog('isOpen') ? 'close' : 'open';
-      Drupal.howto.dialog(__toggle);
-    }
-    if (e.which == 70) {
-      if (e.altKey) {
-        __fow = localStorage.getItem('fow_content');
+    if ((e.which >= 48) && (e.which <= 57)) {
+      $('#sidebar_sections .sidebar_section').hide();
+      try {
+        var hash = $('#menu a').get(e.which - 56).hash.substr(1);
+      } catch (e) {
+        console.log('Nothing there.');
+      } finally {
+        $('#' + hash).toggle('slide', {direction:'up'});
       }
     }
-    if (e.which == 86) {
-      if ((e.ctrlKey) && (e.shiftKey)) {
-        player_view_open();
-      }
-    }
-    if (e.which == 90) {
-      if (e.ctrlKey) {
-        // $('#grid_wrapper').removeClass();
-        // $('#grid_wrapper').addClass('active grid_canvas_drag');
-        // $('#grid_wrapper').draggable({disabled: false});
-      }
-      if (e.shiftKey) {
-        // $('#grid_wrapper').removeClass();
-        // $('#grid_wrapper').draggable({disabled: true});
-      }
-    }
-    if (e.which == 88) {
-      if (e.ctrlKey) {
+
+    switch (e.which) {
+      // Escape
+      case 27:
+        $('#sidebar').toggle('slide', {direction:'right'});
+        break;
+
+      // f1
+      case 112:
+      // Qqqq
+      case 81:
+        __toggle = Drupal.howto.dialog('isOpen') ? 'close' : 'open';
+        Drupal.howto.dialog(__toggle);
+        break;
+
+      // Ffff
+      case 70:
+        e.preventDefault();
+        if (e.altKey) {
+          __fow = localStorage.getItem('fow_content');
+        }
+        if (e.ctrlKey) {
+          $('#questions').html('Store this FOW?');
+          $('#questions').dialog({
+            resizable: false,
+            height: "auto",
+            width: 400,
+            modal: true,
+            buttons: {
+              "Yes": function() {
+                __fow = localStorage.setItem('fow_content', fow_canvas.toDataURL());
+                $(this).dialog( "close" );
+              },
+              Cancel: function() {
+                $( this ).dialog( "close" );
+              }
+            }
+          });
+        }
+        break;
+
+      // Pppplayer view
+      case 80:
+        if (e.ctrlKey) {
+          e.preventDefault();
+          player_view_open();
+        }
+        break;
+
+      // Zzzz
+      case 90:
+        if (e.ctrlKey) {
+          // $('#grid_wrapper').removeClass();
+          // $('#grid_wrapper').addClass('active grid_canvas_drag');
+          // $('#grid_wrapper').draggable({disabled: false});
+        }
+        if (e.shiftKey) {
+          // $('#grid_wrapper').removeClass();
+          // $('#grid_wrapper').draggable({disabled: true});
+        }
+        break;
+
+      // XXX
+      case 88:
+        if (e.ctrlKey) {
+          $('#grid_wrapper').removeClass();
+          $('#grid_wrapper').addClass('active grid_canvas_marking');
+        }
+        if (e.shiftKey) {
+          $('#grid_wrapper').removeClass();
+        }
+        break;
+
+      // Backspace
+      case 8:
+        e.preventDefault();
         $('#grid_wrapper').removeClass();
-        $('#grid_wrapper').addClass('active grid_canvas_marking');
-      }
-      if (e.shiftKey) {
-        $('#grid_wrapper').removeClass();
-      }
-    }
-    if (e.which == 8) {
-      e.preventDefault();
-      $('#grid_wrapper').removeClass();
-      // $('#grid_wrapper').draggable('disable');
-      if (e.ctrlKey) {
-        $('.map_token').remove();
-      }
+        // $('#grid_wrapper').draggable('disable');
+        if (e.ctrlKey) {
+          $('.map_token').remove();
+        }
+        break;
+
+      default:
+
     }
   });
 
