@@ -9,7 +9,6 @@
  * Invokes hook_cron().
  */
 function dmge_system_cron() {
-  // Clears all patreon roles before readding them.
   dmge_system_clear_patreon_roles();
   // Adds respective patreon roles to patrons.
   dmge_system_make_patrons();
@@ -81,17 +80,20 @@ function dmge_system_make_patrons() {
     // Get this users PID.
     $pid = $user_wrapper->field_user_patreon_id->value();
     // If the users PID is in the list of PIDS, then we have a Patron.
+    $roles_to_assign = array();
     if (in_array($pid, $pids)) {
-      $roles_to_assign = array();
       foreach ($patreon_roles as $key => $role) {
         if ($role['pledge'] <= $patrons[$pid]) {
           $roles_to_assign[$role['role']] = user_role_load($role['role']);
         }
       }
     }
-    foreach ($roles_to_assign as $rid => $role) {
-      // Add the role.
-      user_multiple_role_edit(array($user->uid), 'add_role', $rid);
+    if (!empty($roles_to_assign)) {
+      // Clears all patreon roles before readding them.
+      foreach ($roles_to_assign as $rid => $role) {
+        // Add the role.
+        user_multiple_role_edit(array($user->uid), 'add_role', $rid);
+      }
     }
   }
 }
@@ -363,6 +365,7 @@ function dmge_system_form_passwordless_login_alter(&$form, &$form_state) {
  * Alter the log in form with Patreon user account links.
  */
 function _dmge_system_login_form_alter(&$form, &$form_state = NULL) {
+  $patreon_link = '';
   if (module_exists('patreon_user')) {
     if (user_is_anonymous()) {
       if ($settings = (variable_get('patreon_user_registration', 0))) {
@@ -384,7 +387,9 @@ function _dmge_system_login_form_alter(&$form, &$form_state = NULL) {
       }
     }
   }
-  $form['links']['#markup'] = '<div class="item-list"><ul><li class="first">' . $patreon_link . '</li><li class="last"><a href="/user/password" title="Request new password via e-mail." class="password-reset-link"><i class="fas fa-unlock-alt">&nbsp;</i> Request new password</a></li></ul></div>';
+  if (!empty($patreon_link)) {
+    $form['links']['#markup'] = '<div class="item-list"><ul><li class="first">' . $patreon_link . '</li><li class="last"><a href="/user/password" title="Request new password via e-mail." class="password-reset-link"><i class="fas fa-unlock-alt">&nbsp;</i> Request new password</a></li></ul></div>';
+  }
 }
 
 /**
