@@ -1524,6 +1524,42 @@
     player_view_open();
   });
 
+  $('#library').dialog({
+    autoOpen: false,
+    modal: true,
+    width: 100+'%',
+    height: screen.availHeight,
+    position: {
+      my: "center",
+      at: "top",
+      of: $('#map_wrapper')
+    }
+  });
+
+  $('#map_catalog').click(function() {
+    $.ajax({
+      url: '/views/ajax',
+      type: 'post',
+      data: {
+        view_name: 'library',
+        view_display_id: 'editor_library', //your display id
+        view_args: '', // your views arguments
+      },
+      dataType: 'json',
+      success: function (response) {
+        let library = $('#library');
+        if (library.dialog('isOpen')) {
+          $('#library .views').fadeOut();
+        }
+        if (response[1] !== undefined) {
+          let data = response[1].data; // do something with the view
+          library.html(data);
+          library.dialog('open');
+        }
+      }
+    });
+  });
+
   /**
    * Helper opens the player window and sets the reference to local storage.
    */
