@@ -848,7 +848,7 @@
   }
 
   $('#map_reset_zoom').click(function() {
-    window.parent.document.body.style.zoom = 1
+    window.parent.document.body.style.zoom = 1;
   });
 
   $('#map_clear').click(function() {
