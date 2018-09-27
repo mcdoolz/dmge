@@ -1428,8 +1428,7 @@
         $(_id).on('play', function(e) {
           let thumbnail = make_video_thumbnail(item.id, item.Type);
           $('#files').jsGrid("updateItem", item, {'Thumbnail': thumbnail });
-          let item_id = item.id;
-          window[item_id] = new fabric.Image(tag, {
+          window[item.id] = new fabric.Image(tag, {
             id: item.id,
             originX: 'left',
             originY: 'top',
@@ -1438,7 +1437,7 @@
             left: 0,
             top: 0
           });
-          map_canvas.add(window[item_id]);
+          map_canvas.add(window[item.id]);
         });
       }
     },
