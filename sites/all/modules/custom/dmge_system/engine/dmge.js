@@ -823,9 +823,20 @@
       contentType: false,
       dataType: 'json',
       data: data,
+      beforeSend: function() {
+        $('#file_status').html('<div id="file_remote_load_progress"><i class="fas fa-cog fa-spin"></i> Loading ' + _file.name + ' to Cloudinary</div>');
+      },
       success: function(data) {
         do_video(_id, data[0], 'mp4');
-        $('#files').jsGrid('insertItem', {'id': _id, 'Blob': data[0], 'Type': 'Animated', 'Thumbnail': window.URL.createObjectURL(_file) });
+        $('#file_status').html('<div id="file_remote_load_progress" class="success"><i class="fas fa-check"></i> Loaded ' + _file.name + '</div>');
+        $('#files').jsGrid('insertItem', {'id': _id, 'Filename': _file.name, 'Blob': data[0], 'Type': 'Animated', 'Thumbnail': window.URL.createObjectURL(_file) });
+      },
+      error: function(data) {
+        console.error(data);
+        $('#file_status').html('<div id="file_remote_load_progress"><i class="fas fa-exclamation-triangle"></i> Something has tragically failed.</div>');
+      },
+      complete: function() {
+        $('#file_remote_load_progress').fadeOut(2000);
       }
     });
     return true;
@@ -874,8 +885,19 @@
       let ext = getExtension(url);
       if (ext === 'mp4') {
         let id = make_file_id(url);
-        do_video(id, url, 'mp4');
-        $('#files').jsGrid('insertItem', {'id': id, 'Blob': url, 'Type': 'Animated' });
+        let name = url.split(/(\\|\/)/g).pop();
+        $('#file_status').html('<div id="file_remote_load_progress"><i class="fas fa-cog fa-spin"></i> Reaching out for ' + name + '</div>');
+        let vtag = do_video(id, url, 'mp4');
+        vtag.on('loadeddata', function() {
+          $('#file_status').html('<div id="file_remote_load_progress"><i class="fas fa-check"></i> Loaded ' + name + '</div>');
+          $('#file_remote_load_progress').fadeOut(2000);
+        });
+        vtag.on('error', function(error) {
+          console.error(error);
+          $('#file_status').html('<div id="file_remote_load_progress"><i class="fas fa-exclamation-triangle"></i> Something failed.</div>');
+          $('#file_remote_load_progress').fadeOut(2000);
+        });
+        $('#files').jsGrid('insertItem', {'id': id, 'Filename': name, 'Blob': url, 'Type': 'Animated' });
       }
     }
   });
@@ -884,14 +906,37 @@
    * Helper fires GET and then sets off code and video processing.
    */
   function do_youtube(code) {
-    $.get('/engine/youtube?v=' + code, null, function(response) {
-      if (response[0]) {
-        if (response[0].url) {
-          let _url = response[0].url;
-          let _id = make_file_id(_url);
-          do_video(_id, _url, 'mp4');
-          $('#files').jsGrid('insertItem', {'id': _id, 'Blob': _url, 'Type': 'Animated' });
+    $.ajax({
+      url: '/engine/youtube?v=' + code,
+      type: 'get',
+      data: {
+        view_name: 'library',
+        view_display_id: 'editor_library', //your display id
+        view_args: '', // your views arguments
+      },
+      dataType: 'json',
+      success: function(response) {
+        if (response[0]) {
+          if (response[0].url) {
+            let _url = response[0].url;
+            let _id = make_file_id(_url);
+            do_video(_id, _url, 'mp4');
+            $('#files').jsGrid('insertItem', {'id': _id, 'Blob': _url, 'Type': 'Animated' });
+            return true;
+          }
         }
+        console.error(response);
+        $('#file_status').html('<div id="file_remote_load_progress"><i class="fas fa-exclamation-triangle"></i> YouTube has failed us.</div>');
+      },
+      beforeSend: function() {
+        $('#file_status').html('<div id="file_remote_load_progress"><i class="fas fa-cog fa-spin"></i> Reaching out to YouTube for  ' + code + '</div>');
+      },
+      error: function(data) {
+        console.error(data);
+        $('#file_status').html('<div id="file_remote_load_progress"><i class="fas fa-exclamation-triangle"></i> Something has tragically failed.</div>');
+      },
+      complete: function() {
+        $('#file_remote_load_progress').fadeOut(2000);
       }
     });
   }
