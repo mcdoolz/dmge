@@ -445,7 +445,7 @@
   /**
    * When we press a key, the world changes.
    */
-  $(document).bind('keydown', function(e) {
+  $(document).on('keydown', function(e) {
 
     // If it's one of the number keys at the top then count off and activate a sidebar menu item.
     if ($('input').is(':focus')) {
