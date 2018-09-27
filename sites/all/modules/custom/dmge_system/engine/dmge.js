@@ -537,9 +537,10 @@
 
       // Backspace
       case 8:
+      // Delete
+      case 46:
         e.preventDefault();
-        $('#grid_wrapper').removeClass();
-        // $('#grid_wrapper').draggable('disable');
+        delete_objects();
         if (e.ctrlKey) {
           $('.map_token').remove();
         }
@@ -549,6 +550,21 @@
 
     }
   });
+
+  function delete_objects() {
+    if (!map_canvas.getActiveObject()) {
+      return;
+    }
+    // if (map_canvas.getActiveObject().type !== 'activeSelection') {
+    //   return;
+    // }
+    if (map_canvas.getActiveObject()) {
+      if (confirm('Are you sure?')) {
+        console.log(map_canvas.getActiveObject().id);
+        map_canvas.remove(map_canvas.getActiveObject());
+      }
+    }
+  }
 
   /**
    * Helper gets opacity from the grid_canvas and returns percentile.
@@ -1333,7 +1349,7 @@
     pageSize: 15,
     pageButtonCount: 5,
 
-    // confirmDeleting: true,
+    confirmDeleting: false,
     // deleteConfirm: 'Remove?',
     onItemDeleted: function(e) {
       let id = e.row[0].id;
@@ -1432,7 +1448,7 @@
     pageSize: 999,
     // pageButtonCount: 5,
 
-    // confirmDeleting: true,
+    confirmDeleting: false,
     // deleteConfirm: 'Remove?',
     onItemDeleted: function(e) {
       let id = e.row[0].id;
@@ -1518,6 +1534,28 @@
       at: "top",
       of: $('#map_wrapper')
     }
+  });
+
+  /**
+   * Helper function for searching an array.
+   * https://stackoverflow.com/a/7178381/4942292
+   */
+  function find_attr(array, attr, value) {
+    for(var i = 0; i < array.length; i += 1) {
+      if(array[i][attr] === value) {
+        return i;
+      }
+    }
+    return -1;
+  }
+
+  /**
+   * Helper fires when object is deleted.
+   */
+  map_canvas.on('object:removed', function (e) {
+    let data = $('#layering').jsGrid('option', 'data');
+    let row = data[find_attr(data, 'id', e.target.id)];
+    $('#layering').jsGrid('deleteItem', row);
   });
 
   /**
