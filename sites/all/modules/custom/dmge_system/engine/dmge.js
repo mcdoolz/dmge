@@ -909,11 +909,6 @@
     $.ajax({
       url: '/engine/youtube?v=' + code,
       type: 'get',
-      data: {
-        view_name: 'library',
-        view_display_id: 'editor_library', //your display id
-        view_args: '', // your views arguments
-      },
       dataType: 'json',
       success: function(response) {
         if (response[0]) {
