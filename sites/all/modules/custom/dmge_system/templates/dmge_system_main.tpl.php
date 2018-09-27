@@ -138,7 +138,8 @@ $age = $incept_date->diff($today)->days;
             <label for="fow_toggle">Fog of War</label>
             <input type="checkbox" id="fow_toggle">
           </div>
-          <div class="fow_control">
+          <div id="fow_storage" class="fow_control">
+            <label for="fow_storage">FoW Storage / Recall</label>
             <input type="button" id="fow_store" value="Store FoW">
             <input type="button" id="fow_recall" value="Recall FoW">
             <input type="button" id="fow_reset" value="Reset FoW">
@@ -148,7 +149,11 @@ $age = $incept_date->diff($today)->days;
             <input type="number" id="fow_opacity" value="100">
           </div>
           <div class="fow_brush_property">
-            <label for="fow_brush_size">FoW Brush</label>
+            <label for="fow_brush_toggle">FoW Brush</label>
+            <input type="checkbox" id="fow_brush_toggle">
+          </div>
+          <div class="fow_brush_property">
+            <label for="fow_brush_size">FoW Brush Size</label>
             <input type="number" id="fow_brush_size" value="100">
           </div>
           <div class="fow_brush_property">

@@ -50,7 +50,19 @@ ol
   -webkit-user-select: none
   -moz-user-select: none
 
+=notouchie
+  pointer-events: none
+  user-select: none
+  -webkit-user-select: none
+  -moz-user-select: none
+
 .touchme
+  pointer-events: all
+  user-select: all
+  -webkit-user-select: all
+  -moz-user-select: all
+
+=touchme
   pointer-events: all
   user-select: all
   -webkit-user-select: all
@@ -69,12 +81,14 @@ video
     &.grid_canvas
       z-index: 500
     &.fow_canvas
+      pointer-events: none
       display: none
       z-index: 150
       &.active
-        cursor: none
-        pointer-events: all
         display: block
+      &.brush-active
+        pointer-events: all
+        cursor: none
 
 .hideBrush
   opacity: 0

@@ -688,11 +688,15 @@
    */
   $("#fow_toggle").change(function() {
     fow_store_content();
-    $('canvas[id^=fow]').toggleClass('active', this.checked);
-    $('#cursor').toggleClass('active', this.checked);
-    if ($('canvas[id^=fow]').hasClass('active')) {
+    $('canvas#fow').toggleClass('active', this.checked);
+    if ($(this).hasClass('active')) {
       fow_recall_content();
     }
+  }).change();
+
+  $('#fow_brush_toggle').change(function() {
+    $('#cursor').toggleClass('active', this.checked);
+    $('#fow').toggleClass('brush-active', this.checked);
   }).change();
 
   /**
