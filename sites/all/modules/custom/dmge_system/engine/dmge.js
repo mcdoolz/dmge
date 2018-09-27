@@ -137,21 +137,24 @@
   });
 
   // Using jQuery with fabricjs to call the canvas function
-  function load_canvas_data() {
+  function load_canvas_data(data = null) {
+    if (data) {
+      let data = JSON.parse(data);
+      console.log(data);
+    }
     canvases.forEach(function(e) {
       let _canvas_content = e + '_canvas_content';
-      window[_canvas_content] = localStorage.getItem(canvas + '_canvas_content');
+      // window[_canvas_content] = localStorage.getItem(canvas + '_canvas_content');
       window.e.loadFromJSON(window[_canvas_content]);
-      window[e].renderAll();
     });
   }
 
   /**
    * Helper assigns json to txt and link, then clicks for download.
    */
-  function file_storage(content, filename, contentType) {
+  function file_storage(content, filename, content_type = 'text/json') {
     var a = document.createElement("a");
-    var file = new Blob([content], {type: 'text/json'});
+    var file = new Blob([content], {type: content_type});
     a.href = URL.createObjectURL(file);
     a.download = filename;
     a.click();
@@ -159,6 +162,7 @@
   }
 
   function save_show_save_icon() {
+    console.log('saving.');
     if (!$('#save_icon')) {
       let div = document.createElement('div');
       div.setAttribute('id', 'save_icon');
@@ -188,25 +192,34 @@
     canvases.forEach(function(e) {
       // eval finds the object, and the next line gets the json from the canvas ala fabricjs.
       let _e = eval(e + '_canvas');
+      console.log('saving ' + _e);
       let _e_json = _e.toJSON();
 
       // Set content variable for local storage.
-      let _e_content = e + '_content';
-      localStorage.setItem(_e_content, _e_json);
+      // let _e_content = e + '_content';
+      // localStorage.setItem(_e_content, _e_json);
 
       // Set up object for json export.
       storage._e_content = _e_json;
     });
     if (storage) {
-      let file = file_storage(JSON.stringify(storage), map_name + '.txt', 'text/plain');
+      let file = file_storage(JSON.stringify(storage), map_name + '.dmge');
       if (file) {
-        console.log(file);
+        return true;
       }
     }
+    // If we failed to generate content, return false.
+    return false;
   }
 
   $('#save_map').click(function(e) {
-    save_canvases();
+    save_show_save_icon();
+    if (save_canvases()) {
+      save_hide_save_icon();
+    }
+    else {
+      save_show_error();
+    }
   });
 
   function dragging_initialize() {
@@ -243,6 +256,9 @@
         clicked = false;
         map_canvas.selection = true;
         $('html').css('cursor', 'auto');
+        if ($('#error')) {
+          $('#error').fadeOut();
+        }
       }
   });
 
