@@ -505,6 +505,7 @@
       // Pppplayer view
       case 80:
         if (e.ctrlKey) {
+          e.cancelBubble = true;
           e.preventDefault();
           player_view_open();
         }
@@ -643,13 +644,11 @@
    * Helper recalls FoW content.
    */
   function fow_recall_content() {
+    fow_reset();
     // window.fow_content = JSON.parse(localStorage.getItem('current_fow_content'));
     if (window.fow_content) {
       fow_ctx.putImageData(window.fow_content, 0, 0);
       render_fow_canvas();
-    }
-    else {
-      fow_reset();
     }
   }
   $('#fow_recall').click(function(e) {
