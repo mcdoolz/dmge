@@ -672,10 +672,16 @@
     fow_ctx.globalCompositeOperation = 'source-over';
     fow_ctx.fillStyle = 'rgba( 0, 0, 0, 1 )';
     fow_ctx.fillRect(0, 0, fow_canvas.width, fow_canvas.height);
+    if (player_fow) {
+      player_fow.width = fow_canvas.width;
+      player_fow.height = fow_canvas.height;
+      render_fow_canvas();
+    }
   }
   $('#fow_reset').click(function(e) {
     fow_reset();
   });
+  fow_reset()
 
   /**
    * Fog On!
