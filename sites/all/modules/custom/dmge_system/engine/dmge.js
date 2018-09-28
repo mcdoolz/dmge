@@ -558,13 +558,13 @@
 
       // XXX
       case 88:
-        if (e.ctrlKey) {
-          $('#grid_wrapper').removeClass();
-          $('#grid_wrapper').addClass('active grid_canvas_marking');
-        }
-        if (e.shiftKey) {
-          $('#grid_wrapper').removeClass();
-        }
+        // if (e.ctrlKey) {
+        //   $('#grid_wrapper').removeClass();
+        //   $('#grid_wrapper').addClass('active grid_canvas_marking');
+        // }
+        // if (e.shiftKey) {
+        //   $('#grid_wrapper').removeClass();
+        // }
         break;
 
       // Backspace
@@ -1446,9 +1446,10 @@
       let item = e.item;
       let _id = $('#' + item.id);
       let tag = document.getElementById(item.id);
+      const types = new Array('YouTube', 'Remote');
       if (_id.is('video.map_video')) {
         $(_id).on('play', function(e) {
-          if (!new Array('YouTube', 'Remote').indexOf(item.Type)) {
+          if (!types.indexOf(item.Type)) {
             item.Thumbnail = make_video_thumbnail(item.id);
           }
           $('#files').jsGrid("updateItem", item, {'Thumbnail': item.Thumbnail});
