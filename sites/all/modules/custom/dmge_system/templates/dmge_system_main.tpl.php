@@ -136,6 +136,7 @@ $age = $incept_date->diff($today)->days;
 
         <div id="layers" class="sidebar_section">
           <h3>Layers</h3>
+          <p>Click and drag the entries to sort them on the map.</p>
           <div id="layering"></div>
         </div>
 
