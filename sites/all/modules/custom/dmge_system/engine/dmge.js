@@ -879,6 +879,7 @@
     if (code = get_youtube_code($('#map_embed').val())) {
       // Fire our backend script with our id code.
       do_youtube(code);
+      return;
     };
     // If we got bupkiss, let's look for an extension?  Maybe it's an mp4.
     if (!code) {
