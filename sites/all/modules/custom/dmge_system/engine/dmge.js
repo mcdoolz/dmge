@@ -1530,7 +1530,7 @@
     fields: [
       { name: 'Thumbnail',
         itemTemplate: function(val, item) {
-          return $('<img>').attr('src', item.thumbnail).css({ height: 50, width: 50 });
+          return $('<img>').attr('src', item.Thumbnail).css({ height: 50, width: 50 });
         },
         insertTemplate: function() {
             var insertControl = this.insertControl = $('<input>').prop('type', 'file');
