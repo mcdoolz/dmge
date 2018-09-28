@@ -1449,7 +1449,7 @@
       const types = new Array('YouTube', 'Remote');
       if (_id.is('video.map_video')) {
         $(_id).on('play', function(e) {
-          if (!types.indexOf(item.Type)) {
+          if (types.indexOf(item.Type) == -1) {
             item.Thumbnail = make_video_thumbnail(item.id);
           }
           $('#files').jsGrid("updateItem", item, {'Thumbnail': item.Thumbnail});
