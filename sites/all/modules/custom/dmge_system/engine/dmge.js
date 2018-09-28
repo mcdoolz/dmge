@@ -899,8 +899,6 @@
           $('#file_status').html('<div id="file_remote_load_progress"><i class="fas fa-exclamation-triangle"></i> Something failed.</div>');
           $('#file_remote_load_progress').fadeOut(2000);
         });
-        // let thumbnail = make_video_thumbnail(id);
-        // $('#files').jsGrid('insertItem', {'id': id, 'Filename': name, 'Blob': url, 'Type': 'Animated', 'Thumbnail': thumbnail});
         $('#files').jsGrid('insertItem', {'id': id, 'Filename': name, 'Blob': url, 'Type': 'Animated'});
       }
     }
@@ -920,8 +918,8 @@
             let _url = response[0].url;
             let _id = make_file_id(_url);
             do_video(_id, _url, 'mp4');
-            let thumbnail = response['thumbnail'];
-            $('#files').jsGrid('insertItem', {'id': _id, 'Blob': _url, 'Type': 'Animated', 'Thumbnail': thumbnail });
+            $('#files').jsGrid('insertItem', {'id': _id, 'Filename': response['title'], 'Blob': _url, 'Type': 'Animated', 'Thumbnail': response['thumbnail'] });
+            $('#file_status').html('<div id="file_remote_load_progress"><i class="fas fa-check"></i> Loaded  ' + response['title'] + '</div>');
             return true;
           }
         }
@@ -1454,8 +1452,8 @@
 
     fields: [
       { name: 'id', type: 'number', visible: false },
-      { name: 'Bulk Op', type: 'checkbox' },
-      { name: 'Filename', type: 'text', width: '25%' },
+      // { name: 'Bulk Op', type: 'checkbox' },
+      { name: 'Filename', type: 'text', width: '50%' },
       { name: 'Blob', type: 'text', width: '25%' },
       { name: 'Type', type: 'select', items: ['Static', 'Animated'] },
       { name: 'Thumbnail',

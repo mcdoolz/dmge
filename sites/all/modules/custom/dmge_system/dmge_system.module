@@ -494,6 +494,7 @@ function _dmge_system_get_youtube_url($id = '') {
         $y = urldecode($v);
         $t[$n] = $v;
     }
+    $title = urldecode($t['title']);
     $thumbnail = urldecode($t['thumbnail_url']);
     $streams = explode(',', urldecode($t['url_encoded_fmt_stream_map']));
     foreach($streams as $dt) {
@@ -505,6 +506,7 @@ function _dmge_system_get_youtube_url($id = '') {
       }
       $g[] = $h;
     }
+    $g['title'] = $title;
     $g['thumbnail'] = $thumbnail;
     drupal_json_output($g);
   }
