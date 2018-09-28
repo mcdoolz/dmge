@@ -897,7 +897,9 @@
           $('#file_status').html('<div id="file_remote_load_progress"><i class="fas fa-exclamation-triangle"></i> Something failed.</div>');
           $('#file_remote_load_progress').fadeOut(2000);
         });
-        $('#files').jsGrid('insertItem', {'id': id, 'Filename': name, 'Blob': url, 'Type': 'Animated' });
+        // let thumbnail = make_video_thumbnail(id);
+        // $('#files').jsGrid('insertItem', {'id': id, 'Filename': name, 'Blob': url, 'Type': 'Animated', 'Thumbnail': thumbnail});
+        $('#files').jsGrid('insertItem', {'id': id, 'Filename': name, 'Blob': url, 'Type': 'Animated'});
       }
     }
   });
@@ -912,11 +914,13 @@
       dataType: 'json',
       success: function(response) {
         if (response[0]) {
+          console.log(response);
           if (response[0].url) {
             let _url = response[0].url;
             let _id = make_file_id(_url);
             do_video(_id, _url, 'mp4');
-            $('#files').jsGrid('insertItem', {'id': _id, 'Blob': _url, 'Type': 'Animated' });
+            let thumbnail = make_video_thumbnail(_id);
+            $('#files').jsGrid('insertItem', {'id': _id, 'Blob': _url, 'Type': 'Animated', 'Thumbnail': thumbnail });
             return true;
           }
         }
@@ -1319,15 +1323,21 @@
         _url = _file;
       }
 
-      if (loadFile(_url, ext, _id)) {
+      if (loaded = loadFile(_url, ext, _id)) {
         if (ext !== 'gif') {
-          $('#files').jsGrid('insertItem', {'id': _id, 'Filename': _file.name, 'Blob': _url, 'Type': _type, 'Thumbnail': _thumbnail });
+          $('#files').jsGrid('insertItem', {'id': _id, 'Filename': _file.name, 'Blob': _url, 'Type': loaded.type, 'Thumbnail': _thumbnail });
         }
       }
     });
   }
 
   function loadFile(_url, ext, _id = NULL) {
+    let file = {
+      type: 'Static',
+      url: _url,
+      ext: ext,
+      id: _id
+    };
     switch (ext) {
       case 'pdf':
         do_pdf(_url);
@@ -1337,11 +1347,10 @@
       case 'jpeg':
       case 'bmp':
       case 'png':
-      // case 'gif':
         do_image(_url, ext);
         break;
       case 'gif':
-        _type = 'Animated';
+        file.type = 'Animated';
         do_gif(_id, _url);
         break;
 
@@ -1349,7 +1358,7 @@
         ext = 'x-m4v';
       case 'mpg':
       case 'mp4':
-        _type = 'Animated';
+        file.type = 'Animated';
         do_video(_id, _url, ext);
         break;
 
@@ -1366,7 +1375,7 @@
      alert('Sorry, I don\'t know what you are trying to load.\n\n' + item);
      break;
     }
-    return true;
+    return file;
   }
 
   /**
@@ -1406,7 +1415,6 @@
     pageButtonCount: 5,
 
     confirmDeleting: false,
-    // deleteConfirm: 'Remove?',
     onItemDeleted: function(e) {
       let id = e.row[0].id;
       while (getObjectFromCanvasById(id, map_canvas)) {
@@ -1421,8 +1429,9 @@
       let tag = document.getElementById(item.id);
       if (_id.is('video.map_video')) {
         $(_id).on('play', function(e) {
-          let thumbnail = make_video_thumbnail(item.id, item.Type);
-          $('#files').jsGrid("updateItem", item, {'Thumbnail': thumbnail });
+          let thumbnail = make_video_thumbnail(item.id);
+          $('#files').jsGrid("updateItem", item, {'Thumbnail': thumbnail});
+          $('#layering').jsGrid("updateItem", item, {'Thumbnail': thumbnail });
           window[item.id] = new fabric.Image(tag, {
             id: item.id,
             originX: 'left',
@@ -1639,10 +1648,7 @@
   /**
    * Grab video tag by id and make a screen shot.
    */
-  function make_video_thumbnail(vid, type) {
-    if (new Array('youtube', 'gif').indexOf(type.toLowerCase())) {
-      return;
-    }
+  function make_video_thumbnail(vid) {
     video = document.getElementById(vid);
 
     if ($('#thumb_video_canvas')) {
