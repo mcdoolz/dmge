@@ -856,6 +856,7 @@
       loop: true,
       id: _id
     });
+    vtag.prop('volume', $('#map_master_volume').val());
     vtag.crossOrigin = '';
     $('#map_video_wrapper').append(vtag[0]);
     return vtag;
@@ -1274,6 +1275,10 @@
     }
     return color;
   }
+
+  $('#map_master_volume').on('change, input', function(e) {
+    $('video').prop('volume', $(this).val());
+  }).change();
 
   $('#files_storage_path_configure').on('change, input', function(e) {
     let files = e.target.files;

@@ -126,6 +126,11 @@ $age = $incept_date->diff($today)->days;
             <input type="checkbox" id="map_scroll_synch" name="map_scroll_synch">
           </div>
 
+          <div class="map_setting">
+            <label for="map_master_volume">Map Master Volume</label>
+            <input type="range" min="0" max="1" step="0.01" value="0" id="map_master_volume" name="map_master_volume">
+          </div>
+
         </div>
 
         <div id="layers" class="sidebar_section">
