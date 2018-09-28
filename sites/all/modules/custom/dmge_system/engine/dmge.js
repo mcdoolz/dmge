@@ -918,7 +918,7 @@
             let _url = response[0].url;
             let _id = make_file_id(_url);
             do_video(_id, _url, 'mp4');
-            $('#files').jsGrid('insertItem', {'id': _id, 'Filename': response['title'], 'Blob': _url, 'Type': 'Animated', 'Thumbnail': response['thumbnail'] });
+            $('#files').jsGrid('insertItem', {'id': _id, 'Filename': response['title'], 'Blob': _url, 'Type': 'YouTube', 'Thumbnail': response['thumbnail'] });
             $('#file_status').html('<div id="file_remote_load_progress"><i class="fas fa-check"></i> Loaded  ' + response['title'] + '</div>');
             return true;
           }
@@ -1432,7 +1432,10 @@
       let tag = document.getElementById(item.id);
       if (_id.is('video.map_video')) {
         $(_id).on('play', function(e) {
-          let thumbnail = make_video_thumbnail(item.id);
+          console.log(item);
+          if (item.Type !== 'YouTube') {
+            let thumbnail = make_video_thumbnail(item.id);
+          }
           if (thumbnail) {
             $('#files').jsGrid("updateItem", item, {'Thumbnail': thumbnail});
           }
@@ -1455,7 +1458,7 @@
       // { name: 'Bulk Op', type: 'checkbox' },
       { name: 'Filename', type: 'text', width: '50%' },
       { name: 'Blob', type: 'text', width: '25%' },
-      { name: 'Type', type: 'select', items: ['Static', 'Animated'] },
+      { name: 'Type', type: 'select', items: ['Static', 'Animated', 'YouTube'] },
       { name: 'Thumbnail',
         itemTemplate: function(val, item) {
           return $('<img>').attr('src', val).css({ height: 50, width: 50 }).on('click', function() {
