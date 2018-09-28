@@ -1649,7 +1649,7 @@
    * Grab video tag by id and make a screen shot.
    */
   function make_video_thumbnail(vid) {
-    video = document.getElementById(vid);
+    let video = document.getElementById(vid);
 
     if ($('#thumb_video_canvas')) {
       $('#thumb_video_canvas').remove();
