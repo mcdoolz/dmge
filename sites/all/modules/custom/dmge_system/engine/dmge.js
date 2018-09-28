@@ -856,6 +856,7 @@
       loop: true,
       id: _id
     });
+    vtag.crossOrigin = '';
     $('#map_video_wrapper').append(vtag[0]);
     return vtag;
   }
