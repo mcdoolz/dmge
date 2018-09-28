@@ -922,7 +922,7 @@
             let _url = response[0].url;
             let _id = make_file_id(_url);
             do_video(_id, _url, 'mp4');
-            let thumbnail = make_video_thumbnail(_id);
+            let thumbnail = response['thumbnail'];
             $('#files').jsGrid('insertItem', {'id': _id, 'Blob': _url, 'Type': 'Animated', 'Thumbnail': thumbnail });
             return true;
           }
