@@ -97,19 +97,21 @@
 
   map_canvas.on('object:added', function(e) {
     check_object_vs_map(e);
+    let row = get_row(e.target.id);
     $('#layering').jsGrid('insertItem', {
       'id': e.target.id,
-      'Thumbnail': get_thumbnail(e.target.id),
+      'Filename': row.Filename,
+      'Thumbnail': row.Thumbnail,
       'index': map_canvas.getObjects().indexOf(getObjectFromCanvasById(e.target.id, map_canvas))
     });
   });
 
-  function get_thumbnail(id = null) {
+  function get_row(id = null) {
     var d = $('#files').jsGrid('option', 'data');
     idx = d.findIndex(function(e) {
       return e.id == id;
     });
-    return d[idx].Thumbnail;
+    return d[idx];
   }
 
   fabric.util.requestAnimFrame(function render() {
