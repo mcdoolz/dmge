@@ -102,7 +102,7 @@
       'id': e.target.id,
       'Filename': row.Filename,
       'Thumbnail': row.Thumbnail,
-      'index': map_canvas.getObjects().indexOf(getObjectFromCanvasById(e.target.id, map_canvas))
+      // 'Index': map_canvas.getObjects().indexOf(getObjectFromCanvasById(e.target.id, map_canvas))
     });
   });
 
@@ -1542,7 +1542,7 @@
         width: 120
       },
       { name: 'id', type: 'number', visible: false },
-      { name: 'Index', type: 'integer' },
+      // { name: 'Index', type: 'integer' },
       { name: 'Filename', type: 'text', width: '25%' },
       { name: 'Delete',
         itemTemplate: function(val, item) {
@@ -1576,9 +1576,7 @@
           var items = $.map($gridData.find("tr"), function(row) {
             return $(row).data("JSGridItem");
           });
-          // console && console.log("Reordered items", items);
           items.forEach(function(e) {
-            // console.log(e);
             map_canvas.moveTo(getObjectFromCanvasById(e.id, map_canvas), e.row);
           });
         }
