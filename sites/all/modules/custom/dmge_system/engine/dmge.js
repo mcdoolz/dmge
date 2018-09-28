@@ -1606,6 +1606,14 @@
   }
 
   /**
+   * Helper for setting angle snap.
+   */
+  fabric.Object.prototype.set({
+    snapThreshold: 15,
+    snapAngle: 45
+  });
+
+  /**
    * Initialize map element properties dialog.
    */
   $('#map_element_options').dialog({
