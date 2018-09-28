@@ -1436,8 +1436,9 @@
       if (_id.is('video.map_video')) {
         $(_id).on('play', function(e) {
           let thumbnail = make_video_thumbnail(item.id);
-          $('#files').jsGrid("updateItem", item, {'Thumbnail': thumbnail});
-          $('#layering').jsGrid("updateItem", item, {'Thumbnail': thumbnail });
+          if (thumbnail) {
+            $('#files').jsGrid("updateItem", item, {'Thumbnail': thumbnail});
+          }
           window[item.id] = new fabric.Image(tag, {
             id: item.id,
             originX: 'left',
