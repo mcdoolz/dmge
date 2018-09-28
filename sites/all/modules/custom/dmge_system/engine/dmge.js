@@ -1432,13 +1432,10 @@
       let tag = document.getElementById(item.id);
       if (_id.is('video.map_video')) {
         $(_id).on('play', function(e) {
-          console.log(item);
           if (item.Type !== 'YouTube') {
-            let thumbnail = make_video_thumbnail(item.id);
+            item.Thumbnail = make_video_thumbnail(item.id);
           }
-          if (thumbnail) {
-            $('#files').jsGrid("updateItem", item, {'Thumbnail': thumbnail});
-          }
+          $('#files').jsGrid("updateItem", item, {'Thumbnail': item.Thumbnail});
           window[item.id] = new fabric.Image(tag, {
             id: item.id,
             originX: 'left',
