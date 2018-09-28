@@ -31,6 +31,7 @@ $age = $incept_date->diff($today)->days;
       <li>Press Escape to toggle the sidebar.</li>
       <li>Use the numeric keys to quickly switch between tool sets.</li>
       <li>Press Ctrl-P to open the player view window.</li>
+      <li>Press Delete or Backspace to remove selected elements from the map area.</li>
       <li>Zoom out and in by holding Ctrl and rolling your scroll wheel.  You can scale your map larger then the available space this way.</li>
       <li>If you lose the ability to interact with the board in some way, click the wrench and your mouse should start reacting.</li>
     </ol>

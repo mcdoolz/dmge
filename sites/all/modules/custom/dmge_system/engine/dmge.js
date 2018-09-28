@@ -497,10 +497,25 @@
       case 70:
         e.preventDefault();
         if (e.altKey) {
-          __fow = localStorage.getItem('fow_content');
+          $('#questions').html('Restore this FOW?');
+          $('#questions').dialog({
+            resizable: false,
+            height: "auto",
+            width: 400,
+            modal: true,
+            buttons: {
+              "Yes": function() {
+                __fow = localStorage.getItem('fow_content');
+                $(this).dialog( "close" );
+              },
+              Cancel: function() {
+                $( this ).dialog( "close" );
+              }
+            }
+          });
         }
         if (e.ctrlKey) {
-          $('#questions').html('Store this FOW?');
+          $('#questions').html('Save this FOW?');
           $('#questions').dialog({
             resizable: false,
             height: "auto",
