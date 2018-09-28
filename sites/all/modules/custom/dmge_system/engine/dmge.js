@@ -1661,27 +1661,16 @@
       'height': 256,
       'width': 256
     });
-    thumb_canvas2 = $('<canvas />', {
-      'class': 'thumb_video_canvas',
-      'id': 'thumb_video_canvas',
-      'height': 256,
-      'width': 256
-    });
     $('body').append(thumb_canvas);
-    $('body').append(thumb_canvas2);
     thumb_canvas[0].width = 256;
     thumb_canvas[0].height = 256;
     thumb_canvas[0].getContext('2d').drawImage(video, 0, 0, thumb_canvas[0].width, thumb_canvas[0].height);
-    thumb_canvas2[0].width = 256;
-    thumb_canvas2[0].height = 256;
-    thumb_canvas2[0].getContext('2d').drawImage(thumb_canvas[0], 0, 0, thumb_canvas2[0].width, thumb_canvas2[0].height);
     while (!_shot) {
-      _shot = thumb_canvas2[0].toDataURL();
+      _shot = thumb_canvas[0].toDataURL();
       window[vid] = _shot;
     }
     if (_shot) {
       thumb_canvas.remove();
-      thumb_canvas2.remove();
     }
     return _shot;
   }
