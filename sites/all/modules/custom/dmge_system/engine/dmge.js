@@ -101,8 +101,7 @@
     $('#layering').jsGrid('insertItem', {
       'id': e.target.id,
       'Filename': row.Filename,
-      'Thumbnail': row.Thumbnail,
-      // 'Index': map_canvas.getObjects().indexOf(getObjectFromCanvasById(e.target.id, map_canvas))
+      'Thumbnail': row.Thumbnail
     });
   });
 
@@ -901,7 +900,7 @@
           $('#file_status').html('<div id="file_remote_load_progress"><i class="fas fa-exclamation-triangle"></i> Something failed.</div>');
           $('#file_remote_load_progress').fadeOut(2000);
         });
-        $('#files').jsGrid('insertItem', {'id': id, 'Filename': name, 'Blob': url, 'Type': 'Animated'});
+        $('#files').jsGrid('insertItem', {'id': id, 'Filename': name, 'Blob': url, 'Type': 'Remote'});
       }
     }
   });
@@ -1434,7 +1433,7 @@
       let tag = document.getElementById(item.id);
       if (_id.is('video.map_video')) {
         $(_id).on('play', function(e) {
-          if (item.Type !== 'YouTube') {
+          if (!new Array('YouTube', 'Remote').indexOf(item.Type)) {
             item.Thumbnail = make_video_thumbnail(item.id);
           }
           $('#files').jsGrid("updateItem", item, {'Thumbnail': item.Thumbnail});
@@ -1457,7 +1456,7 @@
       // { name: 'Bulk Op', type: 'checkbox' },
       { name: 'Filename', type: 'text', width: '50%' },
       { name: 'Blob', type: 'text', width: '25%' },
-      { name: 'Type', type: 'select', items: ['Static', 'Animated', 'YouTube'] },
+      { name: 'Type', type: 'select', items: ['Static', 'Animated', 'YouTube', 'Remote'] },
       { name: 'Thumbnail',
         itemTemplate: function(val, item) {
           return $('<img>').attr('src', val).css({ height: 50, width: 50 }).on('click', function() {
@@ -1542,7 +1541,6 @@
         width: 120
       },
       { name: 'id', type: 'number', visible: false },
-      // { name: 'Index', type: 'integer' },
       { name: 'Filename', type: 'text', width: '25%' },
       { name: 'Delete',
         itemTemplate: function(val, item) {
