@@ -386,3 +386,8 @@ output {
   margin-right: 4em;
   text-align: center;
 }
+
+/* line 249, ../sass/screen.sass */
+.jsgrid-cell {
+  overflow: hidden;
+}
