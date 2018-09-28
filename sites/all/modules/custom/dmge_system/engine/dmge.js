@@ -851,13 +851,14 @@
       class: 'map_video',
       type: 'video/' + ext,
       src: _url,
+      crossOrigin: 'Anonymous',
       controls: false,
       autoplay: true,
       loop: true,
       id: _id
     });
     vtag.prop('volume', $('#map_master_volume').val());
-    vtag.crossOrigin = '';
+    vtag.crossOrigin = 'Anonymous';
     $('#map_video_wrapper').append(vtag[0]);
     return vtag;
   }
