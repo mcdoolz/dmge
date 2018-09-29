@@ -192,6 +192,8 @@ $age = $incept_date->diff($today)->days;
           <h3>Labels</h3>
           <div class="text_controls" id="text_controls">
             <label for="text_create">Text Labeler</label>
+            <input type="integer" id="text_size" placeholder="Size" size="4">
+            <input type="color" id="text_colour">
             <input type="text" id="text_create_text" />
             <input type="button" id="text_create_button" value="Create Text Label" />
           </div>
