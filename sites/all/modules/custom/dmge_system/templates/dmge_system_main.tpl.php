@@ -62,7 +62,7 @@ $age = $incept_date->diff($today)->days;
         <ul>
           <li><a href="#map_settings" title="Map"><i class="fas fa-map"></i></a></li>
           <li><a href="#files_settings" title="Files"><i class="fas fa-file"></i></a></li>
-          <li><a href="#layers" title="Layers"><i class="fas fa-align-justify"></i></a></li>
+          <li><a href="#layers" title="Layers"><i class="fas fa-layer-group"></i></a></li>
           <li><a href="#fow_settings" title="Fog of War"><i class="fas fa-eye"></i></a></li>
           <li><a href="#grid_settings" title="Grid"><i class="fas fa-th"></i></a></li>
           <li><a href="#paint_box" title="Painters Box"><i class="fas fa-paint-brush"></i></a></li>
