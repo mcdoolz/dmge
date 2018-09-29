@@ -76,7 +76,7 @@
   function update_canvases() {
     canvases.forEach(function(e) {
       let _canvas = e + '_canvas';
-      window[_canvas].requestRenderAll();
+      window[_canvas].renderAll();
     });
   }
 
@@ -125,7 +125,7 @@
   }
 
   fabric.util.requestAnimFrame(function render() {
-    map_canvas.requestRenderAll();
+    map_canvas.renderAll();
 
     /**
      * Update the player view on frame.
@@ -1298,7 +1298,7 @@
       // context.stroke();
     }
 
-    grid_canvas.requestRenderAll();
+    grid_canvas.renderAll();
 
     if (player_grid) {
       player_grid.width = grid_canvas.width;
