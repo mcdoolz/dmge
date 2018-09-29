@@ -79,17 +79,7 @@ $age = $incept_date->diff($today)->days;
             <div id="files"></div>
             <form id="file_local_load">
               <input id="file" type="file" multiple />
-              <input id="file_load" type="button" value="Load File">
             </form>
-            <!-- <form>
-              <label for="file_functions">Bulk Operations</label>
-                <select id="file_functions">
-                  <options>
-                  <option>Remove</option>
-                </options>
-              </select>
-              <input id="file_bulkop" type="button" value="Do Bulk Op">
-            </form> -->
             <form id="file_remote_load">
               <label for="map_embed">Paste the URL to any MP4 Video</label>
               <input type="text" id="map_embed"><input type="button" id="map_embed_submit" value="Import">
@@ -236,13 +226,15 @@ $age = $incept_date->diff($today)->days;
           </div>
 
           <div id="map_grid_properties" class="grid_setting">
-            <label for="map_grid_size">Grid Size</label>
-            <input type="number" id="map_grid_size" value="60">
-            <p><sup>Lower sizes take longer to process.</sup></p>
+            <div class="map_grid_property">
+              <label for="map_grid_size">Grid Size</label>
+              <input type="number" id="map_grid_size" value="60">
+              <p><sup>Lower sizes take longer to process.</sup></p>
+            </div>
             <div class="map_grid_property">
               <label for="map_grid_display_size">Grid Size at Scale</label>
               <input type="number" disabled id="map_grid_display_size" value="">
-              <p><sup>This is the grid in pixels with your zoom level considered (Reset Zoom with Ctrl-Z or Ctrl-R).</sup></p>
+              <p><sup>This is the grid in pixels with your zoom level considered.</sup></p>
             </div>
           </div>
 

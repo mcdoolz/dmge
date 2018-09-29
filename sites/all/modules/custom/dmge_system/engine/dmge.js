@@ -492,6 +492,16 @@
         __toggle = Drupal.howto.dialog('isOpen') ? 'close' : 'open';
         Drupal.howto.dialog(__toggle);
         break;
+      // rrrr
+      case 81:
+        // Disable ctrl r refresh.
+        if (e.ctrlKey) {
+          e.preventDefault();
+          e.cancelBubble = true;
+        }
+        __toggle = Drupal.howto.dialog('isOpen') ? 'close' : 'open';
+        Drupal.howto.dialog(__toggle);
+        break;
 
       // Ffff
       case 70:
@@ -572,10 +582,18 @@
       // Delete
       case 46:
         e.preventDefault();
+        e.cancelBubble = true;
         delete_objects();
         if (e.ctrlKey) {
           $('.map_token').remove();
         }
+        break;
+
+      // F5
+      case 116:
+        // Prevent accidental refresh.
+        e.preventDefault();
+        e.cancelBubble = true;
         break;
 
       default:
@@ -1303,16 +1321,9 @@
         folder = relative_path.split("/");
 
     loadFiles(files);
-
-    // for(let i = 0; i < len; i += 1) {
-    //   loadFiles(files[i]);
-    // }
   });
 
   // File loaders.
-  $('#file_load').click(function() {
-    loadFiles($('#file'));
-  })
   $('#file').change(function(){
     loadFiles($(this));
   })
