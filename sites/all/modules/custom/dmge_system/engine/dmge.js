@@ -1782,6 +1782,28 @@
     });
   });
 
+  $('#text_create_button').click(function() {
+    let text = new fabric.Text($('#text_create_text').val());
+    let ttag = $('<div />', {
+      class: 'temp_text',
+    }).html(text);
+    $('body').append(ttag[0]);
+    map_canvas.on('mouse:down', placeText(text, {'x': options.e.clientX, 'y': options.e.clientY}));
+    $(document).on('mousemove', function(e) {
+      ttag.css({
+         left:  e.pageX,
+         top:   e.pageY
+      });
+    });
+  });
+
+  function placeText(text, coords) {
+    text.left = coords.x;
+    text.top = coords.y;
+    map_canvas.add(text);
+    $('.temp_text').remove();
+  }
+
   /**
    * Helper opens the player window and sets the reference to local storage.
    */
