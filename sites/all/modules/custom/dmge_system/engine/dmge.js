@@ -614,12 +614,8 @@
     if (!map_canvas.getActiveObject()) {
       return;
     }
-    // if (map_canvas.getActiveObject().type !== 'activeSelection') {
-    //   return;
-    // }
     if (map_canvas.getActiveObject()) {
       if (confirm('Are you sure?')) {
-        console.log(map_canvas.getActiveObject().id);
         map_canvas.remove(map_canvas.getActiveObject());
       }
     }
