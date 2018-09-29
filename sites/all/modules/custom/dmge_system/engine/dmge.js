@@ -98,11 +98,22 @@
   map_canvas.on('object:added', function(e) {
     check_object_vs_map(e);
     let row = get_row(e.target.id);
-    $('#layering').jsGrid('insertItem', {
-      'id': e.target.id,
-      'Filename': row.Filename,
-      'Thumbnail': row.Thumbnail
-    });
+    if (row) {
+      $('#layering').jsGrid('insertItem', {
+        'id': e.target.id,
+        'Filename': row.Filename,
+        'Thumbnail': row.Thumbnail
+      });
+    }
+    else {
+      if (e.target && e.target.text) {
+        $('#layering').jsGrid('insertItem', {
+          'id': e.target.id,
+          'Filename': e.target.text,
+          'Thumbnail': 'data:image/svg+xml;base64,PHN2ZyBhcmlhLWhpZGRlbj0idHJ1ZSIgZGF0YS1wcmVmaXg9ImZhcyIgZGF0YS1pY29uPSJ0YWciIGNsYXNzPSJzdmctaW5saW5lLS1mYSBmYS10YWcgZmEtdy0xNiIgcm9sZT0iaW1nIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA1MTIgNTEyIj48cGF0aCBmaWxsPSJjdXJyZW50Q29sb3IiIGQ9Ik0wIDI1Mi4xMThWNDhDMCAyMS40OSAyMS40OSAwIDQ4IDBoMjA0LjExOGE0OCA0OCAwIDAgMSAzMy45NDEgMTQuMDU5bDIxMS44ODIgMjExLjg4MmMxOC43NDUgMTguNzQ1IDE4Ljc0NSA0OS4xMzcgMCA2Ny44ODJMMjkzLjgyMyA0OTcuOTQxYy0xOC43NDUgMTguNzQ1LTQ5LjEzNyAxOC43NDUtNjcuODgyIDBMMTQuMDU5IDI4Ni4wNTlBNDggNDggMCAwIDEgMCAyNTIuMTE4ek0xMTIgNjRjLTI2LjUxIDAtNDggMjEuNDktNDggNDhzMjEuNDkgNDggNDggNDggNDgtMjEuNDkgNDgtNDgtMjEuNDktNDgtNDgtNDh6Ij48L3BhdGg+PC9zdmc+'
+        });
+      }
+    }
   });
 
   function get_row(id = null) {
@@ -492,6 +503,14 @@
         __toggle = Drupal.howto.dialog('isOpen') ? 'close' : 'open';
         Drupal.howto.dialog(__toggle);
         break;
+      // rrrr
+      case 81:
+        // Disable ctrl r refresh.
+        if (e.ctrlKey) {
+          e.preventDefault();
+          e.cancelBubble = true;
+        }
+        break;
 
       // Ffff
       case 70:
@@ -572,10 +591,18 @@
       // Delete
       case 46:
         e.preventDefault();
+        e.cancelBubble = true;
         delete_objects();
         if (e.ctrlKey) {
           $('.map_token').remove();
         }
+        break;
+
+      // F5
+      case 116:
+        // Prevent accidental refresh.
+        e.preventDefault();
+        e.cancelBubble = true;
         break;
 
       default:
@@ -1303,16 +1330,9 @@
         folder = relative_path.split("/");
 
     loadFiles(files);
-
-    // for(let i = 0; i < len; i += 1) {
-    //   loadFiles(files[i]);
-    // }
   });
 
   // File loaders.
-  $('#file_load').click(function() {
-    loadFiles($('#file'));
-  })
   $('#file').change(function(){
     loadFiles($(this));
   })
@@ -1770,6 +1790,43 @@
       }
     });
   });
+
+  $('#text_create_button').click(function() {
+    map_canvas.off('mouse:down');
+    $('.temp_text').remove();
+    let text = new fabric.Text($('#text_create_text').val());
+    let textSize = ($('#text_size').val()) ? $('#text_size').val() : 15;
+    let ttag = $('<div />', {
+      class: 'temp_text',
+    }).html(text.text).css({
+      color: $('#text_colour').val(),
+      fontSize: textSize + 'px'
+    });
+
+    $('body').append(ttag[0]);
+    map_canvas.on('mouse:down', function(e) {
+      placeText(text, {'x': e.e.clientX, 'y': e.e.clientY});
+    });
+    $(document).on('mousemove', function(e) {
+      ttag.css({
+        color: $('#text_colour').val(),
+        fontSize: textSize + 'px',
+        left:  e.pageX,
+        top:   e.pageY
+      });
+    });
+  });
+
+  function placeText(text, coords) {
+    text.left = coords.x;
+    text.top = coords.y;
+    text.id = make_file_id(text.text);
+    text.fontSize = $('#text_size').val();
+    text.setColor($('#text_colour').val());
+    map_canvas.add(text);
+    map_canvas.off('mouse:down');
+    $('.temp_text').remove();
+  }
 
   /**
    * Helper opens the player window and sets the reference to local storage.

@@ -391,3 +391,10 @@ output {
 .jsgrid-cell {
   overflow: hidden;
 }
+
+/* line 252, ../sass/screen.sass */
+.temp_text {
+  z-index: 99999;
+  position: absolute;
+  pointer-events: none;
+}

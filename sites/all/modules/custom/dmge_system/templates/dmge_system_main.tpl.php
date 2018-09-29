@@ -62,7 +62,7 @@ $age = $incept_date->diff($today)->days;
         <ul>
           <li><a href="#map_settings" title="Map"><i class="fas fa-map"></i></a></li>
           <li><a href="#files_settings" title="Files"><i class="fas fa-file"></i></a></li>
-          <li><a href="#layers" title="Layers"><i class="fas fa-align-justify"></i></a></li>
+          <li><a href="#layers" title="Layers"><i class="fas fa-layer-group"></i></a></li>
           <li><a href="#fow_settings" title="Fog of War"><i class="fas fa-eye"></i></a></li>
           <li><a href="#grid_settings" title="Grid"><i class="fas fa-th"></i></a></li>
           <li><a href="#paint_box" title="Painters Box"><i class="fas fa-paint-brush"></i></a></li>
@@ -79,17 +79,7 @@ $age = $incept_date->diff($today)->days;
             <div id="files"></div>
             <form id="file_local_load">
               <input id="file" type="file" multiple />
-              <input id="file_load" type="button" value="Load File">
             </form>
-            <!-- <form>
-              <label for="file_functions">Bulk Operations</label>
-                <select id="file_functions">
-                  <options>
-                  <option>Remove</option>
-                </options>
-              </select>
-              <input id="file_bulkop" type="button" value="Do Bulk Op">
-            </form> -->
             <form id="file_remote_load">
               <label for="map_embed">Paste the URL to any MP4 Video</label>
               <input type="text" id="map_embed"><input type="button" id="map_embed_submit" value="Import">
@@ -201,9 +191,11 @@ $age = $incept_date->diff($today)->days;
           </div>
           <h3>Labels</h3>
           <div class="text_controls" id="text_controls">
-            <label for="text_create">New Label</label>
-            <input type="text" id="text_create" />
-            <input type="button" value="Create Label" />
+            <label for="text_create">Text Labeler</label>
+            <input type="integer" id="text_size" placeholder="Size" size="4">
+            <input type="color" id="text_colour">
+            <input type="text" id="text_create_text" />
+            <input type="button" id="text_create_button" value="Create Text Label" />
           </div>
         </div>
 
@@ -236,13 +228,15 @@ $age = $incept_date->diff($today)->days;
           </div>
 
           <div id="map_grid_properties" class="grid_setting">
-            <label for="map_grid_size">Grid Size</label>
-            <input type="number" id="map_grid_size" value="60">
-            <p><sup>Lower sizes take longer to process.</sup></p>
+            <div class="map_grid_property">
+              <label for="map_grid_size">Grid Size</label>
+              <input type="number" id="map_grid_size" value="60">
+              <p><sup>Lower sizes take longer to process.</sup></p>
+            </div>
             <div class="map_grid_property">
               <label for="map_grid_display_size">Grid Size at Scale</label>
               <input type="number" disabled id="map_grid_display_size" value="">
-              <p><sup>This is the grid in pixels with your zoom level considered (Reset Zoom with Ctrl-Z or Ctrl-R).</sup></p>
+              <p><sup>This is the grid in pixels with your zoom level considered.</sup></p>
             </div>
           </div>
 
