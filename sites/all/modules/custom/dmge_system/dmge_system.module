@@ -526,7 +526,10 @@ function dmge_system_form_patreon_admin_form_alter(&$form, &$form_state) {
       array('pledge' => '100', 'role' => 1)
     ));
     $roles = variable_get('dmge_system_patreon_roles', $roles);
-    $roles = unserialize($roles);
+    if (!is_array($roles)) {
+      $roles = unserialize($roles);
+    }
+    $roles = array_filter($roles, '_dmge_system_roles_empty');
   }
   $form['dmge_system_patreon_roles'] = array(
     '#tree' => TRUE,
@@ -570,11 +573,7 @@ function dmge_system_form_patreon_admin_form_alter(&$form, &$form_state) {
     ),
   );
 
-  $form['submit'] = array(
-    '#type' => 'submit',
-    '#value' => t('Save Configuration'),
-    '#submit' => array('dmge_system_patreon_roles_configure_form_submit'),
-  );
+  $form['#submit'][] = 'dmge_system_patreon_roles_configure_form_submit';
 
   return $form;
 
