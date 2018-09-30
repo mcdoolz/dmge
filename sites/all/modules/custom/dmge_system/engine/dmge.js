@@ -1054,9 +1054,11 @@
    * Helper for returning query string params as an object.
    * Thanks to https://stackoverflow.com/a/29546771/4942292
    */
-  function getQueryParams() {
+  function getQueryParams(url = '') {
     try {
-      let url = window.location.href;
+      if (!url) {
+        let url = window.location.href;
+      }
       let query_str = url.substr(url.indexOf('?')+1, url.length-1);
       let r_params = query_str.split('&');
       let params = {};
