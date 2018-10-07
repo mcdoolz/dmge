@@ -98,7 +98,28 @@
 
   function object_options(obj) {
     let html;
-    let remove_color_content = `
+    console.log(obj);
+    let blending_mode, color, remove_color, distance, opacity,
+    blending_mode_content ='', remove_color_content = '', opacity_content = '';
+
+    opacity = obj.opacity ? obj.opacity : 1;
+
+    // blending_mode = $(obj.id) ? $(obj.id).css('mix-blend-mode') : 'none';
+    // color = obj.filters[2].color ? obj.filters[2].color : null;
+    // let color = obj.filters[2].color;
+
+    blending_mode_content = `
+      <div id="element_blending_mode_wrapper">
+        <label for="element_blending_modes">Blending Mode</label>
+        <select id="element_blending_modes">
+          <options>
+            <option selected="selected" value="screen">Screen</option>
+            <option value="multiply">Multiply</option>
+          </options>
+        </select>
+      </div>
+    `;
+    remove_color_content = `
       <div id="element_remove_color_wrapper">
         <label for="element_remove_color">Remove Colour</label>
         <input id="element_remove_color" type="checkbox" value="${remove_color}" />
@@ -106,13 +127,15 @@
         <input id="element_remove_color_distance" type="range" value="${distance}" min="0" max="100" step="1" />
       </div>
     `;
-    let opacity_content = `
+    opacity_content = `
       <div id="element_opacity_wrapper">
         <label for="element_opacity">Opacity</label>
         <input id="element_opacity" type="range" value="${opacity}" min="0" max="1" step="0.01" />
       </div>
     `;
+
     html = blending_mode_content + remove_color_content + opacity_content;
+
     return html;
   }
 
