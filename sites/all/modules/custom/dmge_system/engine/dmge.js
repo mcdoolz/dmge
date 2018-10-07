@@ -1871,6 +1871,7 @@
    * Helper fires when object is deleted.
    */
   map_canvas.on('object:removed', function (e) {
+    // We are only worried about removing layers.
     let data = $('#layering').jsGrid('option', 'data');
     let row = data[find_attr(data, 'id', e.target.id)];
     $('#layering').jsGrid('deleteItem', row);
