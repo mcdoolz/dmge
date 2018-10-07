@@ -1675,6 +1675,17 @@
       },
       { name: 'id', type: 'number', visible: false },
       { name: 'Filename', type: 'text', width: '25%' },
+      { name: 'Options',
+        itemTemplate: function(val, item) {
+          return $('<button>').html('<i class="fas fa-wrench"></i> Options').attr({'class': 'layer_options'}).css({ 'display': 'block' }).on('click', function(e) {
+            let id = item.id;
+            let obj = getObjectFromCanvasById(id, map_canvas);
+            open_layer_options(obj);
+          });
+        },
+        align: 'center',
+        width: 120
+      },
       { name: 'Delete',
         itemTemplate: function(val, item) {
           return $('<button>').html('<i class="fa fa-trash" aria-hidden="true"></i> Delete').attr({'class': 'file_delete_from_canvas'}).css({ 'display': 'block' }).on('click', function(e) {
