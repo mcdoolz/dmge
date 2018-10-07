@@ -415,6 +415,10 @@
       }
   });
 
+  /**
+   * Got it from stack overflow.
+   * Snaps to grid.
+   */
   map_canvas.on('object:moving', function(options) {
     let grid_snap = document.getElementById('grid_snap');
     if (!grid_snap.checked) {
