@@ -108,25 +108,25 @@
     // color = obj.filters[2].color ? obj.filters[2].color : null;
     // let color = obj.filters[2].color;
 
-    blending_mode_content = `
-      <div id="element_blending_mode_wrapper">
-        <label for="element_blending_modes">Blending Mode</label>
-        <select id="element_blending_modes">
-          <options>
-            <option selected="selected" value="screen">Screen</option>
-            <option value="multiply">Multiply</option>
-          </options>
-        </select>
-      </div>
-    `;
-    remove_color_content = `
-      <div id="element_remove_color_wrapper">
-        <label for="element_remove_color">Remove Colour</label>
-        <input id="element_remove_color" type="checkbox" value="${remove_color}" />
-        <input id="element_remove_color_color" type="color" value="${color}" />
-        <input id="element_remove_color_distance" type="range" value="${distance}" min="0" max="100" step="1" />
-      </div>
-    `;
+    // blending_mode_content = `
+    //   <div id="element_blending_mode_wrapper">
+    //     <label for="element_blending_modes">Blending Mode</label>
+    //     <select id="element_blending_modes">
+    //       <options>
+    //         <option selected="selected" value="screen">Screen</option>
+    //         <option value="multiply">Multiply</option>
+    //       </options>
+    //     </select>
+    //   </div>
+    // `;
+    // remove_color_content = `
+    //   <div id="element_remove_color_wrapper">
+    //     <label for="element_remove_color">Remove Colour</label>
+    //     <input id="element_remove_color" type="checkbox" value="${remove_color}" />
+    //     <input id="element_remove_color_color" type="color" value="${color}" />
+    //     <input id="element_remove_color_distance" type="range" value="${distance}" min="0" max="100" step="1" />
+    //   </div>
+    // `;
     opacity_content = `
       <div id="element_opacity_wrapper">
         <label for="element_opacity">Opacity</label>
