@@ -98,7 +98,6 @@
 
   function object_options(obj) {
     let html;
-    console.log(obj);
     let blending_mode, color, remove_color, distance, opacity,
     blending_mode_content ='', remove_color_content = '', opacity_content = '';
 
@@ -191,7 +190,6 @@
   }
 
   map_canvas.on('object:selected', function(e) {
-    console.log(e);
     if (e.e.ctrlKey) {
       open_layer_options(e.target);
     }
@@ -254,7 +252,7 @@
   function load_canvas_data(data = null) {
     if (data) {
       let data = JSON.parse(data);
-      console.log(data);
+      // console.log(data);
     }
     canvases.forEach(function(e) {
       let _canvas_content = e + '_canvas_content';
@@ -276,7 +274,7 @@
   }
 
   function save_show_save_icon() {
-    console.log('saving.');
+    // console.log('saving.');
     if (!$('#save_icon')) {
       let div = document.createElement('div');
       div.setAttribute('id', 'save_icon');
