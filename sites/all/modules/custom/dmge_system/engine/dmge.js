@@ -189,11 +189,39 @@
     });
   }
 
-  map_canvas.on('object:selected', function(e) {
-    if (e.e.ctrlKey) {
-      open_layer_options(e.target);
+  function selected(e) {
+    console.log(e);
+    let id = -1;
+    id = e.id;
+    if (!id) {
+      id = e.target.id;
     }
-  });
+    if (!id) {
+      console.log('Nothing selected; nothing gained.');
+      return;
+    }
+    let row = get_row(id, $("#layering").jsGrid('option', 'data')),
+    selected_layer = $("#layering").find('table tr.highlight');
+    if (selected_layer.length) {
+        selected_layer.removeClass('highlight');
+    };
+    if (row) {
+      $(row).addClass("highlight");
+    }
+    if (e.e && e.e.ctrlKey) {
+      let obj = -1
+      if (e.target) {
+        obj = e.target;
+      }
+      if (!obj) {
+        obj = e.selected[0];
+      }
+      open_layer_options(obj);
+    }
+  }
+
+  map_canvas.on('object:selected', function(e) {selected(e);});
+  map_canvas.on('selection:updated', function(e) {selected(e);});
 
   map_canvas.on('object:added', function(e) {
     // check map size vs object size and adjust canvas to contain.
