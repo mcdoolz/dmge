@@ -18,8 +18,10 @@ function dmge_system_cron() {
  * Return the unserialized list of patreon roles.
  */
 function dmge_system_get_patreon_roles() {
-  $patreon_roles = variable_get('dmge_system_patreon_roles', 1);
-  $patreon_roles = unserialize($patreon_roles);
+  $patreon_roles = variable_get('dmge_system_patreon_roles', array(100 => 'patron'));
+  if (!is_array($patreon_roles)) {
+    $patreon_roles = unserialize($patreon_roles);
+  }
   return $patreon_roles;
 }
 
@@ -74,6 +76,10 @@ function dmge_system_make_patrons() {
 
   // Get array of patreon roles and pledge amounts.
   $patreon_roles = dmge_system_get_patreon_roles();
+  if (empty($patreon_roles)) {
+    watchdog('DMGE Patreon', 'No user roles to assign.');
+    return;
+  }
   // We have our users and our patreon roles.  Let's get to work.
   foreach ($users as $key => $user) {
     $user_wrapper = entity_metadata_wrapper('user', $user);
