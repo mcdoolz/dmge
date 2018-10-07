@@ -1881,20 +1881,27 @@
       type: 'post',
       data: {
         view_name: 'library',
-        view_display_id: 'editor_library', //your display id
-        view_args: '', // your views arguments
+        view_display_id: 'editor_library',
+        view_args: '',
       },
       dataType: 'json',
-      success: function (response) {
+      success: function(response) {
         let library = $('#library');
         if (library.dialog('isOpen')) {
           $('#library .views').fadeOut();
         }
         if (response[1] !== undefined) {
-          let data = response[1].data; // do something with the view
+          // we have data!
+          let data = response[1].data;
           library.html(data);
           library.dialog('open');
         }
+      },
+      error: function(response) {
+        console.log(response);
+      },
+      complete: function(response) {
+        console.log(response);
       }
     });
   });
