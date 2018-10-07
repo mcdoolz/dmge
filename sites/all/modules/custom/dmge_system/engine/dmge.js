@@ -1632,13 +1632,9 @@
     pageSize: 15,
     pageButtonCount: 5,
 
-    confirmDeleting: false,
+    confirmDeleting: true,
     onItemDeleted: function(e) {
-      let id = e.row[0].id;
-      while (getObjectFromCanvasById(id, map_canvas)) {
-        removeObjectFromCanvas(id, map_canvas);
-      }
-      $('#' + id).remove();
+
     },
 
     onItemInserted: function(e) {
@@ -1696,7 +1692,11 @@
             if (obj = getObjectFromCanvasById(item.id, map_canvas)) {
               let clone = fabric.util.object.clone(obj);
               clone.id = make_file_id(item.id);
-              clone.from_id = item.id;
+              clone.from_id = obj.id;
+              // Keep the original if one exists.
+              if (obj.from_id) {
+                clone.from_id = obj.from_id;
+              }
               if (!$.isEmptyObject(clone)) {
                 map_canvas.add(clone);
               }
@@ -1719,8 +1719,18 @@
       { name: 'Delete',
         itemTemplate: function(val, item) {
           return $('<button>').html('<i class="fa fa-trash" aria-hidden="true"></i> Delete').attr({'class': 'file_delete_from_canvas'}).css({ 'display': 'block' }).on('click', function(e) {
+            let id = item.id;
+            let from_id = -1;
+            let obj = -1;
+            obj = getObjectFromCanvasById(id, map_canvas);
+            if (obj) {
+              removeObjectFromCanvas(id, map_canvas);
+              while (clone = getObjectFromCanvasByFromId(id, map_canvas)) {
+                removeObjectFromCanvas(obj.from_id, map_canvas);
+              }
+            }
             $('#files').jsGrid('deleteItem', $(item));
-            $('#layering').jsGrid('deleteItem', $(item));
+            $('#' + item.id).remove();
           });
         },
         align: 'center',
@@ -1744,17 +1754,21 @@
     confirmDeleting: false,
     // deleteConfirm: 'Remove?',
     onItemDeleted: function(e) {
-      let id = e.row[0].id;
-      removeObjectFromCanvas(id, map_canvas);
+      let id = -1;
+      id = e.row[0].id;
+      if (id) {
+        removeObjectFromCanvas(id, map_canvas);
+        // id = e.row[0];
+      }
     },
-    rowClick: function(e) {
-      let row = this.rowByItem(e.item),
-          selected_row = $("#layering").find('table tr.highlight');
-      if (selected_row.length) {
-          selected_row.removeClass('highlight');
-      };
-      row.addClass("highlight");
-    },
+    // rowClick: function(e) {
+    //   let row = this.rowByItem(e.item),
+    //       selected_row = $("#layering").find('table tr.highlight');
+    //   if (selected_row.length) {
+    //       selected_row.removeClass('highlight');
+    //   };
+    //   row.addClass("highlight");
+    // },
 
     fields: [
       { name: 'Thumbnail',
@@ -1781,6 +1795,10 @@
               let clone = fabric.util.object.clone(obj);
               clone.id = make_file_id(item.id);
               clone.from_id = item.id;
+              // Keep the original if one exists.
+              if (obj.from_id) {
+                clone.from_id = obj.from_id;
+              }
               if (!$.isEmptyObject(clone)) {
                 map_canvas.add(clone);
               }
@@ -1815,7 +1833,7 @@
       { name: 'Delete',
         itemTemplate: function(val, item) {
           return $('<button>').html('<i class="fa fa-trash" aria-hidden="true"></i> Delete').attr({'class': 'file_delete_from_canvas'}).css({ 'display': 'block' }).on('click', function(e) {
-            $('#layering').jsGrid('deleteItem', $(item.id));
+            $('#layering').jsGrid('deleteItem', $(item));
           });
         },
         align: 'center',
@@ -1898,8 +1916,13 @@
   map_canvas.on('object:removed', function (e) {
     // We are only worried about removing layers.
     let data = $('#layering').jsGrid('option', 'data');
-    let row = data[find_attr(data, 'id', e.target.id)];
-    $('#layering').jsGrid('deleteItem', row);
+    let row = -1;
+    if (e.target && e.target.id) {
+      row = data[find_attr(data, 'id', e.target.id)];
+    }
+    if (row) {
+      $('#layering').jsGrid('deleteItem', row);
+    }
   });
 
   /**
