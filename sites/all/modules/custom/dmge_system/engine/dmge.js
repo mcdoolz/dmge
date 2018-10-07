@@ -1171,6 +1171,26 @@
     return ext;
   }
 
+
+  $('#template_circle, #template_square, #template_triangle').click(function(e) {
+
+    console.log('Selected ' + e.id);
+
+    switch (e.id) {
+      case 'template_circle':
+
+        break;
+      case 'template_square':
+
+        break;
+      case 'template_triangle':
+
+        break;
+      default:
+
+    }
+  });
+
   /**
    * Make a polygon.
    * Stolen from https://stackoverflow.com/questions/29319677/fabric-js-geometric-shapes
