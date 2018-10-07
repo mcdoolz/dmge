@@ -9,7 +9,6 @@
  * Invokes hook_cron().
  */
 function dmge_system_cron() {
-  dmge_system_clear_patreon_roles();
   // Adds respective patreon roles to patrons.
   dmge_system_make_patrons();
 }
@@ -80,6 +79,10 @@ function dmge_system_make_patrons() {
     watchdog('DMGE Patreon', 'No user roles to assign.');
     return;
   }
+
+  // Clear the slate before assigning roles.
+  dmge_system_clear_patreon_roles();
+
   // We have our users and our patreon roles.  Let's get to work.
   foreach ($users as $key => $user) {
     $user_wrapper = entity_metadata_wrapper('user', $user);
