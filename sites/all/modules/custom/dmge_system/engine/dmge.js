@@ -533,17 +533,24 @@
   /**
    * Helper function get canvas object.
    */
-  function getObjectFromCanvasById(id, canvas) {
+  function getObjectFromCanvasById(id, canvas = map_canvas) {
     let objs = canvas.getObjects().filter((item) => {
       return item.id === parseInt(id);
     });
-    return objs[0];
+    if (objs) {
+      return objs[0];
+    }
+    return false;
   }
+
   function getObjectFromCanvasByFromId(id, canvas) {
     let objs = canvas.getObjects().filter((item) => {
       return item.from_id === parseInt(id);
     });
-    return objs[0];
+    if (objs) {
+      return objs[0];
+    }
+    return false;
   }
 
   /**
@@ -1919,11 +1926,24 @@
     let row = -1;
     if (e.target && e.target.id) {
       row = data[find_attr(data, 'id', e.target.id)];
+      if (row) {
+        $('#layering').jsGrid('deleteItem', row);
+      }
     }
-    if (row) {
-      $('#layering').jsGrid('deleteItem', row);
-    }
+
+    clean_videos();
   });
+
+  function clean_videos() {
+    let videos = $('video').toArray();
+    if (videos) {
+      videos.forEach(function(video) {
+        if (!getObjectFromCanvasById(video.id, map_canvas)) {
+          $('#' + video.id).remove();
+        }
+      });
+    }
+  }
 
   /**
    * Selection function opens element dialog and should set controls to match properties of object.
