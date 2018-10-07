@@ -1463,6 +1463,7 @@
   // File loaders.
   $('#file').change(function(){
     loadFiles($(this));
+    this.value = '';
   })
 
   if (!Array.isArray) {
@@ -1549,6 +1550,7 @@
    * Helper makes unique ID from hash of current time and url.
    */
   function make_file_id(filename) {
+    filename = filename + '';
     let t = todays_date.getTime();
     t = filename.hashCode() + t;
     return t;
