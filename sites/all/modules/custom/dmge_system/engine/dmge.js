@@ -3,6 +3,7 @@
   window.resizeTo(screen.availWidth, screen.availHeight);
 
   const todays_date = new Date();
+  const f = fabric.Image.filters;
 
   // We set these now for assignment later.
   var player_view, player_map, player_fow, player_grid, player_paint, map_scroll_synch,
@@ -97,6 +98,14 @@
 
   function object_options(obj) {
     let html;
+    let remove_color_content = `
+      <div id="element_remove_color_wrapper">
+        <label for="element_remove_color">Remove Colour</label>
+        <input id="element_remove_color" type="checkbox" value="${remove_color}" />
+        <input id="element_remove_color_color" type="color" value="${color}" />
+        <input id="element_remove_color_distance" type="range" value="${distance}" min="0" max="100" step="1" />
+      </div>
+    `;
     let opacity_content = `
       <div id="element_opacity_wrapper">
         <label for="element_opacity">Opacity</label>
@@ -115,6 +124,32 @@
         });
       }
     }).change();
+
+    $('#element_remove_color').on('click', function () {
+      // applyFilter(2, this.checked && new f.RemoveColor({
+      //   distance: $('#element_remove_color_distance').value,
+      //   color: $('#element_remove_color_color').value
+      // }));
+    });
+  }
+
+  /**
+   * Lifted directly from http://fabricjs.com/image-filters
+   */
+  function applyFilterValue(index, prop, value) {
+    var obj = canvas.getActiveObject();
+    if (obj.filters[index]) {
+      obj.filters[index][prop] = value;
+      var timeStart = +new Date();
+      obj.applyFilters();
+      var timeEnd = +new Date();
+      var dimString = canvas.getActiveObject().width + ' x ' +
+        canvas.getActiveObject().height;
+      $('bench').innerHTML = dimString + 'px ' +
+        parseFloat(timeEnd-timeStart) + 'ms';
+      canvas.renderAll();
+    }
+  }
 
   function open_layer_options(obj) {
     $('#questions').html(object_options(obj));
