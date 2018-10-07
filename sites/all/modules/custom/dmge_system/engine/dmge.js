@@ -257,8 +257,10 @@
     }
   });
 
-  function get_row(id = null) {
-    var d = $('#files').jsGrid('option', 'data');
+  function get_row(id = null, d = false) {
+    if (!d) {
+      d = $('#files').jsGrid('option', 'data');
+    }
     idx = d.findIndex(function(e) {
       return e.id == id;
     });
