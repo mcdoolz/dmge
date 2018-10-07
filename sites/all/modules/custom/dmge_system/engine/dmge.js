@@ -196,11 +196,21 @@
   });
 
   map_canvas.on('object:added', function(e) {
+    // check map size vs object size and adjust canvas to contain.
     check_object_vs_map(e);
-    let row = get_row(e.target.id);
+    let id, row;
+    if (e.target.id) {
+      id = e.target.id;
+    }
+    if (id) {
+      row = get_row(id);
+      if (e.target.from_id) {
+        row = get_row(e.target.from_id);
+      }
+    }
     if (row) {
       $('#layering').jsGrid('insertItem', {
-        'id': e.target.id,
+        'id': id,
         'Filename': row.Filename,
         'Thumbnail': row.Thumbnail
       });
@@ -208,7 +218,7 @@
     else {
       if (e.target && e.target.text) {
         $('#layering').jsGrid('insertItem', {
-          'id': e.target.id,
+          'id': id,
           'Filename': e.target.text,
           'Thumbnail': 'data:image/svg+xml;base64,PHN2ZyBhcmlhLWhpZGRlbj0idHJ1ZSIgZGF0YS1wcmVmaXg9ImZhcyIgZGF0YS1pY29uPSJ0YWciIGNsYXNzPSJzdmctaW5saW5lLS1mYSBmYS10YWcgZmEtdy0xNiIgcm9sZT0iaW1nIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA1MTIgNTEyIj48cGF0aCBmaWxsPSJjdXJyZW50Q29sb3IiIGQ9Ik0wIDI1Mi4xMThWNDhDMCAyMS40OSAyMS40OSAwIDQ4IDBoMjA0LjExOGE0OCA0OCAwIDAgMSAzMy45NDEgMTQuMDU5bDIxMS44ODIgMjExLjg4MmMxOC43NDUgMTguNzQ1IDE4Ljc0NSA0OS4xMzcgMCA2Ny44ODJMMjkzLjgyMyA0OTcuOTQxYy0xOC43NDUgMTguNzQ1LTQ5LjEzNyAxOC43NDUtNjcuODgyIDBMMTQuMDU5IDI4Ni4wNTlBNDggNDggMCAwIDEgMCAyNTIuMTE4ek0xMTIgNjRjLTI2LjUxIDAtNDggMjEuNDktNDggNDhzMjEuNDkgNDggNDggNDggNDgtMjEuNDkgNDgtNDgtMjEuNDktNDgtNDgtNDh6Ij48L3BhdGg+PC9zdmc+'
         });
@@ -1634,6 +1644,8 @@
             let obj;
             if (obj = getObjectFromCanvasById(item.id, map_canvas)) {
               let clone = fabric.util.object.clone(obj);
+              clone.id = make_file_id(item.id);
+              clone.from_id = item.id;
               if (!$.isEmptyObject(clone)) {
                 map_canvas.add(clone);
               }
@@ -1696,11 +1708,39 @@
       },
       { name: 'id', type: 'number', visible: false },
       { name: 'Filename', type: 'text', width: '25%' },
+      { name: 'Add',
+        itemTemplate: function(val, item) {
+          return $('<button>').html('<i class="fa fa-puzzle-piece" aria-hidden="true"></i> Add').attr({'class': 'file_add_to_canvas'}).css({ 'display': 'block' }).on('click', function(e) {
+            let obj;
+            if (obj = getObjectFromCanvasById(item.id, map_canvas)) {
+              let clone = fabric.util.object.clone(obj);
+              clone.id = make_file_id(item.id);
+              clone.from_id = item.id;
+              if (!$.isEmptyObject(clone)) {
+                map_canvas.add(clone);
+              }
+            }
+            else {
+              let data;
+              if (item.url) {
+                data = item.url
+              }
+              if (item.Blob) {
+                data = item.Blob;
+              }
+              loadFile(data, getExtension(item.Filename), item.id);
+            }
+          });
+        },
+        align: 'center',
+        width: 120
+      },
       { name: 'Options',
         itemTemplate: function(val, item) {
           return $('<button>').html('<i class="fas fa-wrench"></i> Options').attr({'class': 'layer_options'}).css({ 'display': 'block' }).on('click', function(e) {
             let id = item.id;
             let obj = getObjectFromCanvasById(id, map_canvas);
+            map_canvas.setActiveObject(obj);
             open_layer_options(obj);
           });
         },
