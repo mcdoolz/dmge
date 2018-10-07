@@ -1670,7 +1670,7 @@
       { name: 'id', type: 'number', visible: false },
       // { name: 'Bulk Op', type: 'checkbox' },
       { name: 'Filename', type: 'text', width: '50%' },
-      { name: 'Blob', type: 'text', width: '25%' },
+      { name: 'Blob', type: 'text', width: '25%', visible: false },
       { name: 'Type', type: 'select', items: ['Static', 'Animated', 'YouTube', 'Remote', 'GIF'] },
       { name: 'Thumbnail',
         itemTemplate: function(val, item) {
