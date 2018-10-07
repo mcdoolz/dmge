@@ -7,12 +7,8 @@ $today = new \DateTime;
 $age = $incept_date->diff($today)->days;
 ?>
 <div id="dmge">
-  <div id="questions" class="dialog" title="">
-
-  </div>
-  <div id="library" class="dialog" title="Map Library">
-
-  </div>
+  <div id="questions" class="dialog" title=""></div>
+  <div id="library" class="dialog" title="Map Library"></div>
 
   <div id="about" class="dialog" title="How to use the DMGE">
     <h4>How to Use</h4>
