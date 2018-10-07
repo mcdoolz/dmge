@@ -1727,7 +1727,14 @@
     onItemDeleted: function(e) {
       let id = e.row[0].id;
       removeObjectFromCanvas(id, map_canvas);
-      $('#' + id).remove();
+    },
+    rowClick: function(e) {
+      let row = this.rowByItem(e.item),
+          selected_row = $("#layering").find('table tr.highlight');
+      if (selected_row.length) {
+          selected_row.removeClass('highlight');
+      };
+      row.addClass("highlight");
     },
 
     fields: [
