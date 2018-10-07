@@ -344,7 +344,7 @@ output {
 /* line 216, ../sass/screen.sass */
 #sidebar_tray {
   position: fixed;
-  top: 0;
+  bottom: 0;
   text-align: center;
 }
 /* line 220, ../sass/screen.sass */
@@ -364,6 +364,11 @@ output {
 }
 
 /* line 230, ../sass/screen.sass */
+.highlight {
+  background: lightblue;
+}
+
+/* line 233, ../sass/screen.sass */
 .css-triangle {
   display: block;
   float: left;
@@ -375,24 +380,24 @@ output {
   border-color: transparent transparent #000000 transparent;
 }
 
-/* line 240, ../sass/screen.sass */
+/* line 243, ../sass/screen.sass */
 .dialog {
   z-index: 1080;
 }
 
-/* line 243, ../sass/screen.sass */
+/* line 246, ../sass/screen.sass */
 .grid_setting {
   display: inline-block;
   margin-right: 4em;
   text-align: center;
 }
 
-/* line 248, ../sass/screen.sass */
+/* line 251, ../sass/screen.sass */
 .jsgrid-cell {
   overflow: hidden;
 }
 
-/* line 251, ../sass/screen.sass */
+/* line 254, ../sass/screen.sass */
 .temp_text {
   z-index: 99999;
   position: absolute;
