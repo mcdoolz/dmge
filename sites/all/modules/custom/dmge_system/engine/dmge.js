@@ -1152,7 +1152,7 @@
     }
   }
 
-  $(document).ready(function(){
+  $(document).ready(function() {
     setupTimers();
     fow_reset();
     let params = getQueryParams();
