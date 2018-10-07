@@ -1,7 +1,7 @@
 @charset "UTF-8";
 /* DGME */
 @import url("https://fonts.googleapis.com/css?family=Passion+One|Roboto");
-/* line 5, ../../../../../../../../../../var/lib/gems/2.3.0/gems/compass-core-1.0.3/stylesheets/compass/reset/_utilities.scss */
+/* line 5, C:/Ruby23-x64/lib/ruby/gems/2.3.0/gems/compass-core-1.0.3/stylesheets/compass/reset/_utilities.scss */
 html, body, div, span, applet, object, iframe,
 h1, h2, h3, h4, h5, h6, p, blockquote, pre,
 a, abbr, acronym, address, big, cite, code,
@@ -23,45 +23,45 @@ time, mark, audio, video {
   vertical-align: baseline;
 }
 
-/* line 22, ../../../../../../../../../../var/lib/gems/2.3.0/gems/compass-core-1.0.3/stylesheets/compass/reset/_utilities.scss */
+/* line 22, C:/Ruby23-x64/lib/ruby/gems/2.3.0/gems/compass-core-1.0.3/stylesheets/compass/reset/_utilities.scss */
 html {
   line-height: 1;
 }
 
-/* line 24, ../../../../../../../../../../var/lib/gems/2.3.0/gems/compass-core-1.0.3/stylesheets/compass/reset/_utilities.scss */
+/* line 24, C:/Ruby23-x64/lib/ruby/gems/2.3.0/gems/compass-core-1.0.3/stylesheets/compass/reset/_utilities.scss */
 ol, ul {
   list-style: none;
 }
 
-/* line 26, ../../../../../../../../../../var/lib/gems/2.3.0/gems/compass-core-1.0.3/stylesheets/compass/reset/_utilities.scss */
+/* line 26, C:/Ruby23-x64/lib/ruby/gems/2.3.0/gems/compass-core-1.0.3/stylesheets/compass/reset/_utilities.scss */
 table {
   border-collapse: collapse;
   border-spacing: 0;
 }
 
-/* line 28, ../../../../../../../../../../var/lib/gems/2.3.0/gems/compass-core-1.0.3/stylesheets/compass/reset/_utilities.scss */
+/* line 28, C:/Ruby23-x64/lib/ruby/gems/2.3.0/gems/compass-core-1.0.3/stylesheets/compass/reset/_utilities.scss */
 caption, th, td {
   text-align: left;
   font-weight: normal;
   vertical-align: middle;
 }
 
-/* line 30, ../../../../../../../../../../var/lib/gems/2.3.0/gems/compass-core-1.0.3/stylesheets/compass/reset/_utilities.scss */
+/* line 30, C:/Ruby23-x64/lib/ruby/gems/2.3.0/gems/compass-core-1.0.3/stylesheets/compass/reset/_utilities.scss */
 q, blockquote {
   quotes: none;
 }
-/* line 103, ../../../../../../../../../../var/lib/gems/2.3.0/gems/compass-core-1.0.3/stylesheets/compass/reset/_utilities.scss */
+/* line 103, C:/Ruby23-x64/lib/ruby/gems/2.3.0/gems/compass-core-1.0.3/stylesheets/compass/reset/_utilities.scss */
 q:before, q:after, blockquote:before, blockquote:after {
   content: "";
   content: none;
 }
 
-/* line 32, ../../../../../../../../../../var/lib/gems/2.3.0/gems/compass-core-1.0.3/stylesheets/compass/reset/_utilities.scss */
+/* line 32, C:/Ruby23-x64/lib/ruby/gems/2.3.0/gems/compass-core-1.0.3/stylesheets/compass/reset/_utilities.scss */
 a img {
   border: none;
 }
 
-/* line 116, ../../../../../../../../../../var/lib/gems/2.3.0/gems/compass-core-1.0.3/stylesheets/compass/reset/_utilities.scss */
+/* line 116, C:/Ruby23-x64/lib/ruby/gems/2.3.0/gems/compass-core-1.0.3/stylesheets/compass/reset/_utilities.scss */
 article, aside, details, figcaption, figure, footer, header, hgroup, main, menu, nav, section, summary {
   display: block;
 }
@@ -325,9 +325,9 @@ output {
   position: fixed;
   min-width: 300px;
   background: white;
-  overflow-y: scroll;
   overflow: hidden;
-  z-index: 1000;
+  overflow-y: scroll;
+  z-index: 420;
   height: 100%;
 }
 /* line 209, ../sass/screen.sass */
@@ -344,26 +344,26 @@ output {
 /* line 216, ../sass/screen.sass */
 #sidebar_tray {
   position: fixed;
-  bottom: 0;
+  top: 0;
   text-align: center;
 }
-/* line 221, ../sass/screen.sass */
+/* line 220, ../sass/screen.sass */
 #sidebar_tray button, #sidebar_tray input[type="button"] {
   display: inline-block;
 }
-/* line 223, ../sass/screen.sass */
+/* line 222, ../sass/screen.sass */
 #sidebar_tray button, #sidebar_tray button:visited, #sidebar_tray input[type="button"], #sidebar_tray input[type="button"]:visited {
   background: white;
   border: none;
   padding: 20px;
 }
-/* line 227, ../sass/screen.sass */
+/* line 226, ../sass/screen.sass */
 #sidebar_tray button:hover, #sidebar_tray button:active, #sidebar_tray input[type="button"]:hover, #sidebar_tray input[type="button"]:active {
   background: black;
   color: white;
 }
 
-/* line 231, ../sass/screen.sass */
+/* line 230, ../sass/screen.sass */
 .css-triangle {
   display: block;
   float: left;
@@ -375,24 +375,24 @@ output {
   border-color: transparent transparent #000000 transparent;
 }
 
-/* line 241, ../sass/screen.sass */
+/* line 240, ../sass/screen.sass */
 .dialog {
   z-index: 1080;
 }
 
-/* line 244, ../sass/screen.sass */
+/* line 243, ../sass/screen.sass */
 .grid_setting {
   display: inline-block;
   margin-right: 4em;
   text-align: center;
 }
 
-/* line 249, ../sass/screen.sass */
+/* line 248, ../sass/screen.sass */
 .jsgrid-cell {
   overflow: hidden;
 }
 
-/* line 252, ../sass/screen.sass */
+/* line 251, ../sass/screen.sass */
 .temp_text {
   z-index: 99999;
   position: absolute;
