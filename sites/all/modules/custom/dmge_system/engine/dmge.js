@@ -1795,7 +1795,7 @@
         },
         align: 'center',
         width: 120
-      }
+      },
     ],
     rowClass: function(item, itemIndex) {
       return "idx-" + itemIndex;
