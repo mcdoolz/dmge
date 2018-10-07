@@ -1600,7 +1600,8 @@
   function make_file_id(filename) {
     filename = filename + '';
     let t = todays_date.getTime();
-    t = filename.hashCode() + t;
+    let random = Math.round(Math.random() * 1000);
+    t = filename.hashCode() + (t + random);
     return t;
   }
 
