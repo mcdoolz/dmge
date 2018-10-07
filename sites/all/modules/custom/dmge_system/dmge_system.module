@@ -9,7 +9,7 @@
  * Invokes hook_cron().
  */
 function dmge_system_cron() {
-  // dmge_system_clear_patreon_roles();
+  dmge_system_clear_patreon_roles();
   // Adds respective patreon roles to patrons.
   dmge_system_make_patrons();
 }
