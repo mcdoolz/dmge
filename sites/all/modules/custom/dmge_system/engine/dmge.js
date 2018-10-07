@@ -1866,8 +1866,8 @@
   $('#library').dialog({
     autoOpen: false,
     modal: true,
-    width: 100+'%',
-    height: screen.availHeight,
+    width: 80+'%',
+    height: screen.availHeight * 0.8,
     position: {
       my: "center",
       at: "top",
