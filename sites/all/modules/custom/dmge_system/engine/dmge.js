@@ -189,8 +189,10 @@
     });
   }
 
+  /**
+   * Checks incoming for id, or target.id for either invoking function.
+   */
   function selected(e) {
-    console.log(e);
     let id = -1;
     id = e.id;
     if (!id) {
