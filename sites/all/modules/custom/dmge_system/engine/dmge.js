@@ -1690,7 +1690,14 @@
               }
             }
             else {
-              loadFile(item.url, getExtension(item.url), item.id);
+              let data;
+              if (item.url) {
+                data = item.url
+              }
+              if (item.Blob) {
+                data = item.Blob;
+              }
+              loadFile(data, getExtension(item.Filename), item.id);
             }
           });
         },
