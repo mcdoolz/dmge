@@ -229,16 +229,16 @@
     // check map size vs object size and adjust canvas to contain.
     check_object_vs_map(e);
     let id, from_id, row;
-    if (e.target.id) {
+    if (e.target && e.target.id) {
       id = e.target.id;
-    }
-    if (e.target.from_id) {
-      from_id = e.target.from_id;
+      if (e.target.from_id) {
+        from_id = e.target.from_id;
+      }
     }
     if (id) {
       row = get_row(id);
       if (from_id) {
-        row = get_row(from_id);
+        row = get_row(from_id, $('#layering').jsGrid('option', 'data'));
       }
     }
     if (row) {
