@@ -1165,10 +1165,10 @@
    * Quick helper to return the extension.
    */
   function getExtension(filename) {
-      let parts = filename.split('.');
-      let ext = parts[parts.length - 1]
-      ext = ext.toLowerCase();
-      return ext;
+    let parts = filename.split('.');
+    let ext = parts[parts.length - 1]
+    ext = ext.toLowerCase();
+    return ext;
   }
 
   /**
