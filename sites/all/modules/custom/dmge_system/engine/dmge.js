@@ -116,22 +116,26 @@
       }
     }).change();
 
+  function open_layer_options(obj) {
+    $('#questions').html(object_options(obj));
+    object_options_events(obj);
+    $('#questions').dialog({
+      resizable: false,
+      height: "auto",
+      width: 400,
+      modal: true,
+      buttons: {
+        'Close': function() {
+          $(this).dialog('close');
+        }
+      }
+    });
+  }
+
   map_canvas.on('object:selected', function(e) {
     console.log(e);
     if (e.e.ctrlKey) {
-      $('#questions').html(object_options(e.target));
-      object_options_events(e.target);
-      $('#questions').dialog({
-        resizable: false,
-        height: "auto",
-        width: 400,
-        modal: true,
-        buttons: {
-          'Close': function() {
-            $(this).dialog('close');
-          }
-        }
-      });
+      open_layer_options(e.target);
     }
   });
 
