@@ -95,6 +95,46 @@
     }
   }
 
+  function object_options(obj) {
+    let html;
+    let opacity_content = `
+      <div id="element_opacity_wrapper">
+        <label for="element_opacity">Opacity</label>
+        <input id="element_opacity" type="range" value="${opacity}" min="0" max="1" step="0.01" />
+      </div>
+    `;
+    html = blending_mode_content + remove_color_content + opacity_content;
+    return html;
+  }
+
+  function object_options_events(obj) {
+    $('#element_opacity').on('change, input', function($this) {
+      if (obj) {
+        obj.set({
+          opacity: this.value
+        });
+      }
+    }).change();
+
+  map_canvas.on('object:selected', function(e) {
+    console.log(e);
+    if (e.e.ctrlKey) {
+      $('#questions').html(object_options(e.target));
+      object_options_events(e.target);
+      $('#questions').dialog({
+        resizable: false,
+        height: "auto",
+        width: 400,
+        modal: true,
+        buttons: {
+          'Close': function() {
+            $(this).dialog('close');
+          }
+        }
+      });
+    }
+  });
+
   map_canvas.on('object:added', function(e) {
     check_object_vs_map(e);
     let row = get_row(e.target.id);
