@@ -1789,8 +1789,7 @@
       { name: 'Delete',
         itemTemplate: function(val, item) {
           return $('<button>').html('<i class="fa fa-trash" aria-hidden="true"></i> Delete').attr({'class': 'file_delete_from_canvas'}).css({ 'display': 'block' }).on('click', function(e) {
-            $('#files').jsGrid('deleteItem', $(item));
-            $('#layering').jsGrid('deleteItem', $(item));
+            $('#layering').jsGrid('deleteItem', $(item.id));
           });
         },
         align: 'center',
