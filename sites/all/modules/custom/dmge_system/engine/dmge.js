@@ -115,6 +115,19 @@
             <option selected="selected" value="source-over">Normal</option>
             <option value="multiply">Multiply</option>
             <option value="screen">Screen</option>
+            <option value="overlay">Overlay</option>
+            <option value="darken">Darken</option>
+            <option value="lighten">Lighten</option>
+            <option value="color-dodge">Color Dodge</option>
+            <option value="color-burn">Color Burn</option>
+            <option value="hard-light">Hard Light</option>
+            <option value="soft-light">Soft Light</option>
+            <option value="difference">Difference</option>
+            <option value="hue">Hue</option>
+            <option value="exclusion">Exclusion</option>
+            <option value="saturation">Saturation</option>
+            <option value="color">Colour</option>
+            <option value="luminosity">Luminosity</option>
           </options>
         </select>
       </div>
