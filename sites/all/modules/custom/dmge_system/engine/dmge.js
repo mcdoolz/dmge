@@ -1142,24 +1142,22 @@
       type: 'get',
       dataType: 'json',
       success: function(response) {
-        if (response[0]) {
-          if (response[0].url) {
-            let _url = response[0].url;
-            let _id = make_file_id(_url);
-            do_video(_id, _url, 'mp4');
-            $('#files').jsGrid('insertItem', {'id': _id, 'Filename': response['title'], 'Blob': _url, 'Type': 'YouTube', 'Thumbnail': response['thumbnail'] });
-            $('#file_status').html('<div id="file_remote_load_progress"><i class="fas fa-check"></i> Loaded  ' + response['title'] + '</div>');
-            return true;
-          }
+        if (response[0] && response[0].url) {
+          let _url = response[0].url;
+          let _id = make_file_id(_url);
+          do_video(_id, _url, 'mp4');
+          $('#files').jsGrid('insertItem', {'id': _id, 'Filename': response['title'], 'Blob': _url, 'Type': 'YouTube', 'Thumbnail': response['thumbnail'] });
+          $('#file_status').html('<div id="file_remote_load_progress"><i class="fas fa-check"></i> Loaded  ' + response['title'] + '</div>');
+          return true;
         }
-        console.error(response);
+        console.log(response);
         $('#file_status').html('<div id="file_remote_load_progress"><i class="fas fa-exclamation-triangle"></i> YouTube has failed us.</div>');
       },
       beforeSend: function() {
         $('#file_status').html('<div id="file_remote_load_progress"><i class="fas fa-cog fa-spin"></i> Reaching out to YouTube for  ' + code + '</div>');
       },
-      error: function(data) {
-        console.error(data);
+      error: function(response) {
+        console.error(response);
         $('#file_status').html('<div id="file_remote_load_progress"><i class="fas fa-exclamation-triangle"></i> Something has tragically failed.</div>');
       },
       complete: function() {
