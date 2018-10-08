@@ -1724,12 +1724,12 @@
       { name: 'Add',
         itemTemplate: function(val, item) {
           return $('<button>').html('<i class="fa fa-puzzle-piece" aria-hidden="true"></i> Add').attr({'class': 'file_add_to_canvas'}).css({ 'display': 'block' }).on('click', function(e) {
-            let obj;
+            let obj, clone;
             if (obj = getObjectFromCanvasById(item.id, map_canvas)) {
-              let clone = fabric.util.object.clone(obj);
+              clone = fabric.util.object.clone(obj);
               clone.id = make_file_id(item.id);
               clone.from_id = obj.id;
-              // Keep the original if one exists.
+              // Keep the original from_id if one exists.
               if (obj.from_id) {
                 clone.from_id = obj.from_id;
               }
