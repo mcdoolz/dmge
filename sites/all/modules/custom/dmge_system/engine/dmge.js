@@ -287,6 +287,9 @@
     }
   });
 
+  /**
+  * Get a row from provided jsgrid data.
+   */
   function get_row(id = null, d = false) {
     if (!d) {
       d = $('#files').jsGrid('option', 'data');
