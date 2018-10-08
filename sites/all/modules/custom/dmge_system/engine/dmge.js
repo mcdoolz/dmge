@@ -1963,14 +1963,18 @@
   });
 
   function clean_videos() {
-    let videos = $('video').toArray();
-    if (videos) {
-      videos.forEach(function(video) {
-        if (!getObjectFromCanvasById(video.id, map_canvas)) {
-          $('#' + video.id).remove();
+    let videos = $('video').toArray(),
+    data = $('#files').jsGrid('option', 'data'),
+    ids;
+
+    data.forEach(function(row) {
+      console.log(row);
+      if (!getObjectFromCanvasById(row.id, map_canvas)) {
+        if (!getObjectFromCanvasByFromId(row.id, map_canvas)) {
+          $('#' + row.id).remove();
         }
-      });
-    }
+      }
+    });
   }
 
   /**
