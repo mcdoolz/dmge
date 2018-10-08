@@ -1740,7 +1740,7 @@
             obj = getObjectFromCanvasById(id, map_canvas);
             if (obj) {
               removeObjectFromCanvas(id, map_canvas);
-              while (clone = getObjectFromCanvasByFromId(id, map_canvas)) {
+              while (getObjectFromCanvasByFromId(obj.from_id, map_canvas)) {
                 removeObjectFromCanvas(obj.from_id, map_canvas);
               }
             }
