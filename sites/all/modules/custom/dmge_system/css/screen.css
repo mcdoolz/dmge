@@ -382,7 +382,7 @@ output {
 
 /* line 243, ../sass/screen.sass */
 .dialog {
-  z-index: 1080 !important;
+  z-index: 1080;
 }
 
 /* line 246, ../sass/screen.sass */
