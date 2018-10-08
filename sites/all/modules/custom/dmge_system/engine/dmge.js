@@ -253,19 +253,22 @@
   map_canvas.on('object:added', function(e) {
     // check map size vs object size and adjust canvas to contain.
     check_object_vs_map(e);
-    let id, from_id, row;
+    let id, from_id, row, new_row;
+
     if (e.target && e.target.id) {
       id = e.target.id;
       if (e.target.from_id) {
         from_id = e.target.from_id;
       }
     }
+
     if (id) {
       row = get_row(id);
-      if (from_id) {
+      if (!row && from_id) {
         row = get_row(from_id, $('#layering').jsGrid('option', 'data'));
       }
     }
+
     if (row) {
       $('#layering').jsGrid('insertItem', {
         'id': id,
@@ -1784,12 +1787,7 @@
     confirmDeleting: false,
     // deleteConfirm: 'Remove?',
     onItemDeleted: function(e) {
-      let id = -1;
-      id = e.row[0].id;
-      if (id) {
-        removeObjectFromCanvas(id, map_canvas);
-        // id = e.row[0];
-      }
+      // Nothing.
     },
     // rowClick: function(e) {
     //   let row = this.rowByItem(e.item),
@@ -1863,7 +1861,12 @@
       { name: 'Delete',
         itemTemplate: function(val, item) {
           return $('<button>').html('<i class="fa fa-trash" aria-hidden="true"></i> Delete').attr({'class': 'file_delete_from_canvas'}).css({ 'display': 'block' }).on('click', function(e) {
-            $('#layering').jsGrid('deleteItem', $(item));
+            let id = -1;
+            id = item.id;
+            if (id) {
+              removeObjectFromCanvas(id, map_canvas);
+            }
+            $('#layering').jsGrid('deleteItem', item);
           });
         },
         align: 'center',
