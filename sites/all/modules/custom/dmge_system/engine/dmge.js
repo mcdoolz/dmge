@@ -1766,7 +1766,6 @@
               }
             }
             $('#files').jsGrid('deleteItem', $(item));
-            $('#' + item.id).remove();
           });
         },
         align: 'center',
