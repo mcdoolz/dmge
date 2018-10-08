@@ -1677,6 +1677,7 @@
       let item = e.item;
       let _id = $('#' + item.id);
       let tag = document.getElementById(item.id);
+      // 'Types' of files we can make a thumbnail from.
       const types = new Array('YouTube', 'Remote', 'GIF');
       if (_id.is('video.map_video')) {
         $(_id).on('play', function(e) {
@@ -1724,29 +1725,7 @@
       { name: 'Add',
         itemTemplate: function(val, item) {
           return $('<button>').html('<i class="fa fa-puzzle-piece" aria-hidden="true"></i> Add').attr({'class': 'file_add_to_canvas'}).css({ 'display': 'block' }).on('click', function(e) {
-            let obj, clone;
-            if (obj = getObjectFromCanvasById(item.id, map_canvas)) {
-              clone = fabric.util.object.clone(obj);
-              clone.id = make_file_id(item.id);
-              clone.from_id = obj.id;
-              // Keep the original from_id if one exists.
-              if (obj.from_id) {
-                clone.from_id = obj.from_id;
-              }
-              if (!$.isEmptyObject(clone)) {
-                map_canvas.add(clone);
-              }
-            }
-            else {
-              let data;
-              if (item.url) {
-                data = item.url
-              }
-              if (item.Blob) {
-                data = item.Blob;
-              }
-              loadFile(data, getExtension(item.Filename), item.id);
-            }
+            add_clone(val, item);
           });
         },
         align: 'center',
@@ -1773,6 +1752,32 @@
       }
     ]
   });
+
+  function add_clone(val, item) {
+    let obj, clone;
+    if (obj = getObjectFromCanvasById(item.id, map_canvas)) {
+      clone = fabric.util.object.clone(obj);
+      clone.id = make_file_id(item.id);
+      clone.from_id = obj.id;
+      // Keep the original from_id if one exists.
+      if (obj.from_id) {
+        clone.from_id = obj.from_id;
+      }
+      if (!$.isEmptyObject(clone)) {
+        map_canvas.add(clone);
+      }
+    }
+    else {
+      let data;
+      if (item.url) {
+        data = item.url
+      }
+      if (item.Blob) {
+        data = item.Blob;
+      }
+      loadFile(data, getExtension(item.Filename), item.id);
+    }
+  }
 
   /**
    * Layering grid.
