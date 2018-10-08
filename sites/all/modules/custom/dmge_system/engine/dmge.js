@@ -1968,7 +1968,6 @@
     ids;
 
     data.forEach(function(row) {
-      console.log(row);
       if (!getObjectFromCanvasById(row.id, map_canvas)) {
         if (!getObjectFromCanvasByFromId(row.id, map_canvas)) {
           $('#' + row.id).remove();
