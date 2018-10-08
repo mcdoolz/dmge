@@ -235,11 +235,15 @@
       let obj = -1
       if (e.target) {
         obj = e.target;
+        if (!obj && e.selected) {
+          obj = e.selected[0];
+        }
       }
-      if (!obj) {
-        obj = e.selected[0];
+      if (obj) {
+        open_layer_options(obj);
+        return;
       }
-      open_layer_options(obj);
+      console.log('No object found.');
     }
   }
 
