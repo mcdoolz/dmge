@@ -102,22 +102,23 @@
     blending_mode_content ='', remove_color_content = '', opacity_content = '';
 
     opacity = obj.opacity ? obj.opacity : 1;
+    blending_mode = $(obj.globalCompositeOperation) ? $(obj.globalCompositeOperation) : 'source-over';
 
-    // blending_mode = $(obj.id) ? $(obj.id).css('mix-blend-mode') : 'none';
     // color = obj.filters[2].color ? obj.filters[2].color : null;
     // let color = obj.filters[2].color;
 
-    // blending_mode_content = `
-    //   <div id="element_blending_mode_wrapper">
-    //     <label for="element_blending_modes">Blending Mode</label>
-    //     <select id="element_blending_modes">
-    //       <options>
-    //         <option selected="selected" value="screen">Screen</option>
-    //         <option value="multiply">Multiply</option>
-    //       </options>
-    //     </select>
-    //   </div>
-    // `;
+    blending_mode_content = `
+      <div id="element_blending_mode_wrapper">
+        <label for="element_blending_modes">Blending Mode</label>
+        <select id="element_blending_modes">
+          <options>
+            <option selected="selected" value="source-over">Normal</option>
+            <option value="multiply">Multiply</option>
+            <option value="screen">Screen</option>
+          </options>
+        </select>
+      </div>
+    `;
     // remove_color_content = `
     //   <div id="element_remove_color_wrapper">
     //     <label for="element_remove_color">Remove Colour</label>
@@ -144,6 +145,13 @@
         obj.set({
           opacity: this.value
         });
+      }
+    }).change();
+
+    $('#element_blending_modes').on('change, input', function($this) {
+      let mode = $(this).find(":selected").attr('value');
+      if (obj) {
+        obj.set({'globalCompositeOperation': mode});
       }
     }).change();
 
