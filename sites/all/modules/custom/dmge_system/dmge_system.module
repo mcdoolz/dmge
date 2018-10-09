@@ -30,6 +30,10 @@ function dmge_system_get_patreon_roles() {
 function dmge_system_clear_patreon_roles() {
   $users = array_keys(entity_load('user'));
   $patreon_roles = dmge_system_get_patreon_roles();
+  if (empty($patreon_roles)) {
+    watchdog('DMGE Patreon', 'No user roles to assign.');
+    return;
+  }
   foreach ($patreon_roles as $key => $value) {
     $role = user_role_load($value['role']);
     user_multiple_role_edit($users, 'remove_role', $role->rid);
