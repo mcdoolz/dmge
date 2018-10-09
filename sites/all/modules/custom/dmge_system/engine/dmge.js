@@ -265,8 +265,11 @@
     if (id) {
       row = get_row(id);
       if (!row && from_id) {
-        row = get_row(from_id, $('#layering').jsGrid('option', 'data'));
+        row = get_row(from_id);
       }
+    }
+    else {
+      console.log(id + " not found.");
     }
 
     if (row) {
@@ -1827,26 +1830,7 @@
           return $('<button>').html('<i class="fa fa-puzzle-piece" aria-hidden="true"></i> Add').attr({'class': 'file_add_to_canvas'}).css({ 'display': 'block' }).on('click', function(e) {
             let obj;
             if (obj = getObjectFromCanvasById(item.id, map_canvas)) {
-              let clone = fabric.util.object.clone(obj);
-              clone.id = make_file_id(item.id);
-              clone.from_id = item.id;
-              // Keep the original if one exists.
-              if (obj.from_id) {
-                clone.from_id = obj.from_id;
-              }
-              if (!$.isEmptyObject(clone)) {
-                map_canvas.add(clone);
-              }
-            }
-            else {
-              let data;
-              if (item.url) {
-                data = item.url
-              }
-              if (item.Blob) {
-                data = item.Blob;
-              }
-              loadFile(data, getExtension(item.Filename), item.id);
+              add_clone(val, item);
             }
           });
         },
@@ -1856,8 +1840,7 @@
       { name: 'Options',
         itemTemplate: function(val, item) {
           return $('<button>').html('<i class="fas fa-wrench"></i> Options').attr({'class': 'layer_options'}).css({ 'display': 'block' }).on('click', function(e) {
-            let id = item.id;
-            let obj = getObjectFromCanvasById(id, map_canvas);
+            let obj = getObjectFromCanvasById(item.id, map_canvas);
             map_canvas.setActiveObject(obj);
             open_layer_options(obj);
           });
@@ -1868,10 +1851,8 @@
       { name: 'Delete',
         itemTemplate: function(val, item) {
           return $('<button>').html('<i class="fa fa-trash" aria-hidden="true"></i> Delete').attr({'class': 'file_delete_from_canvas'}).css({ 'display': 'block' }).on('click', function(e) {
-            let id = -1;
-            id = item.id;
-            if (id) {
-              removeObjectFromCanvas(id, map_canvas);
+            if (item.id) {
+              removeObjectFromCanvas(item.id, map_canvas);
             }
             $('#layering').jsGrid('deleteItem', item);
           });
@@ -1969,16 +1950,17 @@
 
   function clean_videos() {
     let videos = $('video').toArray(),
-    data = $('#files').jsGrid('option', 'data'),
-    ids;
+    data = $('#files').jsGrid('option', 'data');
 
-    data.forEach(function(row) {
-      if (!getObjectFromCanvasById(row.id, map_canvas)) {
-        if (!getObjectFromCanvasByFromId(row.id, map_canvas)) {
-          $('#' + row.id).remove();
+    videos.forEach(function(video) {
+      if (!getObjectFromCanvasById(video.id, map_canvas)) {
+        if (getObjectFromCanvasByFromId(video.id, map_canvas)) {
+          return;
         }
+        $('#' + video.id).remove();
       }
     });
+
   }
 
   /**
