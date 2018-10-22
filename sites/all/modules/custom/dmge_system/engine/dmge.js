@@ -1394,6 +1394,9 @@
    */
   function set_grid(_size) {
     grid_canvas.clear();
+    if (player_grid) {
+      player_grid.clear();
+    }
     var _type = $('input[name=map_grid_type]:checked').val();
     if (_type == 'None') {
       return;
