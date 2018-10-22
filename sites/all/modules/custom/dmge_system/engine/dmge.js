@@ -1548,9 +1548,9 @@
   });
 
   // File loaders.
-  $('#file').change(function(){
+  $('#file').change(function() {
     loadFiles($(this));
-    this.value = '';
+    this.value = null;
   })
 
   if (!Array.isArray) {
@@ -1690,6 +1690,7 @@
           $('#files').jsGrid("updateItem", item, {'Thumbnail': item.Thumbnail});
           window[item.id] = new fabric.Image(tag, {
             id: item.id,
+            from_id: item.id,
             originX: 'left',
             originY: 'top',
             height: tag.videoHeight,
@@ -1698,13 +1699,15 @@
             top: 0
           });
           map_canvas.add(window[item.id]);
+          $(_id).off('play');
         });
       }
     },
 
     fields: [
-      { name: 'id', type: 'number', visible: false },
       // { name: 'Bulk Op', type: 'checkbox' },
+      { name: 'id', type: 'number', visible: false },
+      { name: 'from_id', type: 'number', visible: false },
       { name: 'Filename', type: 'text', width: '50%' },
       { name: 'Blob', type: 'text', width: '25%', visible: false },
       { name: 'Type', type: 'select', items: ['Static', 'Animated', 'YouTube', 'Remote', 'GIF'] },
