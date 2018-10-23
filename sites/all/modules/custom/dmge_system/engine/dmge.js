@@ -1395,7 +1395,7 @@
   function set_grid(_size) {
     grid_canvas.clear();
     if (player_grid) {
-      player_grid.clear();
+      player_grid.getContext('2d').clearRect(0, 0, canvas.width, canvas.height);
     }
     var _type = $('input[name=map_grid_type]:checked').val();
     if (_type == 'None') {
