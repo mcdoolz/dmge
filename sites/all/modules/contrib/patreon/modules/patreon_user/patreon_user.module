@@ -58,7 +58,7 @@ function patreon_user_form_user_admin_settings_alter(&$form, &$form_state) {
         PATREON_USER_ALL_USERS => t('All users from Patreon'),
       ),
     ),
-    'patreon_user_registration_method' => array(
+    'patreon_user_login_method' => array(
       '#type' => 'radios',
       '#title' => t('Patreon user login method'),
       '#options' => array(
@@ -102,7 +102,7 @@ function patreon_user_block_view($delta = '') {
       if (user_is_anonymous()) {
         if ($settings = (variable_get('patreon_user_registration', 0))) {
           $client_id = variable_get('patreon_client_id', NULL);
-          $method = variable_get('patreon_user_registration_method', PATREON_USER_COPY_ACCOUNT);
+          $method = variable_get('patreon_user_login_method', PATREON_USER_COPY_ACCOUNT);
 
           if ($url = patreon_authorise_account($client_id, patreon_user_get_callback_url(), FALSE)) {
             if ($method == PATREON_USER_COPY_ACCOUNT) {
@@ -150,6 +150,8 @@ function patreon_user_patreon_allowed_callbacks_alter(&$allowed) {
 
 /**
  * Creates the field_user_patreon_id field on the user bundle.
+ *
+ * @throws \FieldException
  */
 function patreon_user_create_user_fields() {
   if (!field_info_field('field_user_patreon_id')) {
@@ -177,10 +179,10 @@ function patreon_user_create_user_fields() {
     );
     field_create_instance($instance);
   }
-  if (!field_info_field('field_user_patreon_token')) {
+  if (!field_info_field('field_user_patreon_access_token')) {
     // Create the field base.
     $field = array(
-      'field_name' => 'field_user_patreon_token',
+      'field_name' => 'field_user_patreon_access_token',
       'type' => 'text',
       'locked' => TRUE,
     );
@@ -188,9 +190,34 @@ function patreon_user_create_user_fields() {
 
     // Create the field instance on the bundle.
     $instance = array(
-      'field_name' => 'field_user_patreon_token',
+      'field_name' => 'field_user_patreon_access_token',
       'entity_type' => 'user',
       'label' => 'Patreon Token',
+      'bundle' => 'user',
+      'required' => FALSE,
+      'settings' => array(
+        'user_register_form' => 0,
+      ),
+      'widget' => array(
+        'type' => 'textfield',
+      ),
+    );
+    field_create_instance($instance);
+  }
+  if (!field_info_field('field_user_patreon_refresh_token')) {
+    // Create the field base.
+    $field = array(
+      'field_name' => 'field_user_patreon_refresh_token',
+      'type' => 'text',
+      'locked' => TRUE,
+    );
+    field_create_field($field);
+
+    // Create the field instance on the bundle.
+    $instance = array(
+      'field_name' => 'field_user_patreon_refresh_token',
+      'entity_type' => 'user',
+      'label' => 'Patreon Refresh Token',
       'bundle' => 'user',
       'required' => FALSE,
       'settings' => array(
@@ -208,7 +235,7 @@ function patreon_user_create_user_fields() {
  * Implements hook_field_access().
  */
 function patreon_user_field_access($op, $field, $entity_type, $entity, $account) {
-  if ($field['field_name'] == 'field_user_patreon_token') {
+  if ($field['field_name'] == 'field_user_patreon_access_token' || $field['field_name'] == 'field_user_patreon_refresh_token') {
     return FALSE;
   }
   if ($field['field_name'] == 'field_user_patreon_id') {
@@ -225,32 +252,43 @@ function patreon_user_field_access($op, $field, $entity_type, $entity, $account)
  * Creates the Patreon User roles and stores the role id.
  *
  * @param array $roles
- *   The role names that should be created. Defaults to core roles.
+ *   Any additional role names that should be created.
  */
-function patreon_user_create_role($roles = array('patreon_user', 'deleted_patreon_user')) {
-  foreach ($roles as $role_name) {
-    if (!user_role_load_by_name($role_name)) {
+function patreon_user_create_role($roles = array()) {
+  $bridge = patreon_get_bridge();
+  $created = array();
+
+  if ($campaign = patreon_fetch_campaign()) {
+    $roles += $bridge->getPatreonRoleNames($campaign);
+  }
+  foreach ($roles as $role_name => $id) {
+    $name = filter_xss($role_name);
+    if (!user_role_load_by_name($name)) {
       $role = new stdClass();
-      $role->name = $role_name;
+      $role->name = $name;
       user_role_save($role);
 
       if ($role && isset($role->rid)) {
-        variable_set('patreon_user_' . $role_name . '_rid', $role->rid);
+        $created[$name] = $role->rid;
       }
       else {
         watchdog('patreon_user', '@role role could not be created.', array(
-          '@role' => $role_name,
+          '@role' => $name,
         ), WATCHDOG_WARNING);
       }
     }
+  }
+
+  if ($created) {
+    variable_set('patreon_user_roles', $created);
   }
 }
 
 /**
  * Helper to check whether current Patreon user is allowed to log in.
  *
- * @param array $patreon_account
- *   Results array from patreon_fetch_user().
+ * @param \Art4\JsonApiClient\Document $patreon_account
+ *   Results from patreon_fetch_user().
  *
  * @return bool
  *   TRUE if user meets current Patreon settings restrictions on log in.
@@ -258,20 +296,24 @@ function patreon_user_create_role($roles = array('patreon_user', 'deleted_patreo
 function patreon_user_can_login($patreon_account) {
   $return = FALSE;
 
-  if ($patreon_id = patreon_get_value_by_key($patreon_account, 'id')) {
-    if ($settings = variable_get('patreon_user_registration', PATREON_USER_NO_LOGIN)) {
-      if ($settings != PATREON_USER_NO_LOGIN) {
-        if ($settings == PATREON_USER_ONLY_PATRONS) {
-          if (patreon_is_patron($patreon_account)) {
+  if ($bridge = patreon_get_bridge()) {
+    if ($patreon_id = $bridge->getValueByKey($patreon_account, 'data.id')) {
+      if ($settings = variable_get('patreon_user_registration', PATREON_USER_NO_LOGIN)) {
+        if ($settings != PATREON_USER_NO_LOGIN) {
+          if ($settings == PATREON_USER_ONLY_PATRONS) {
+            if (patreon_is_patron($patreon_account)) {
+              $return = TRUE;
+            }
+          }
+          else {
             $return = TRUE;
           }
-        }
-        else {
-          $return = TRUE;
         }
       }
     }
   }
+
+
 
   return $return;
 }
@@ -279,8 +321,8 @@ function patreon_user_can_login($patreon_account) {
 /**
  * Helper to fetch an existing user or create a new one from Patreon account.
  *
- * @param array $patreon_account
- *   Results array from patreon_fetch_user().
+ * @param \Art4\JsonApiClient\Document $patreon_account
+ *   Results from patreon_fetch_user().
  *
  * @return bool|object
  *   A Drupal user object, or FALSE on error.
@@ -288,12 +330,24 @@ function patreon_user_can_login($patreon_account) {
 function patreon_user_get_user($patreon_account) {
   $return = FALSE;
 
-  if ($patreon_id = patreon_get_value_by_key($patreon_account, 'id')) {
-    if ($account = patreon_user_get_user_from_id($patreon_id)) {
-      $return = $account;
-    }
-    else {
-      $return = patreon_user_create_user_from_account($patreon_account);
+  if ($bridge = patreon_get_bridge()) {
+    if ($patreon_id = $bridge->getValueByKey($patreon_account, 'data.id')) {
+      if ($account = patreon_user_get_user_from_id($patreon_id)) {
+        $return = $account;
+      }
+      else {
+        try {
+          $return = patreon_user_create_user_from_account($patreon_account);
+        }
+        catch (\Exception $e) {
+          $message = t('We have been unable to create a new user account. The error :error was returned.', array(
+            ':error' => $e->getMessage(),
+          ));
+
+          drupal_set_message('We have been unable to log you in. Please contact an administrator.');
+          watchdog('patreon', $message, array(), WATCHDOG_ERROR);
+        }
+      }
     }
   }
 
@@ -341,42 +395,42 @@ function patreon_user_get_user_from_id($patreon_id) {
 /**
  * Creates a Drupal user account from Patreon account data.
  *
- * @param array $patreon_account
- *   Results array from patreon_fetch_user().
+ * @param \Art4\JsonApiClient\Document $patreon_account
+ *   Results from patreon_fetch_user().
  *
  * @return bool|object
  *   A Drupal user object, or FALSE on error.
+ *
+ * @throws \Exception
  */
 function patreon_user_create_user_from_account($patreon_account) {
   $return = FALSE;
 
-  if ($patreon_id = patreon_get_value_by_key($patreon_account, 'id')) {
-    $fields = array(
-      'pass' => user_password(8),
-      'status' => 1,
-      'access' => REQUEST_TIME,
-    );
+  if ($bridge = patreon_get_bridge()) {
+    if ($patreon_id = $bridge->getValueByKey($patreon_account, 'data.id')) {
+      $fields = [
+        'pass' => user_password(8),
+        'status' => 1,
+        'access' => REQUEST_TIME,
+      ];
 
-    if ($fields['mail'] = filter_xss(patreon_get_value_by_key($patreon_account, 'email'))) {
-      if (!$existing_mail = user_load_by_mail($fields['mail'])) {
-        if ($fields['name'] = filter_xss(patreon_get_value_by_key($patreon_account, 'full_name'))) {
-          if ($existing_name = user_load_by_name($fields['name'])) {
-            $fields['name'] .= '_' . $patreon_id;
-          }
+      if ($fields['mail'] = filter_xss($bridge->getValueByKey($patreon_account, 'data.attributes.email'))) {
+        if (!$existing_mail = user_load_by_mail($fields['mail'])) {
+          if ($fields['name'] = filter_xss($bridge->getValueByKey($patreon_account, 'data.attributes.full_name'))) {
+            $fields['name'] = $bridge->getUniqueUserName($fields['name'], $patreon_id);
 
-          // Allow other modules to add field data.
-          drupal_alter('patreon_user_create_user', $fields, $patreon_account);
+            // Allow other modules to add field data.
+            drupal_alter('patreon_user_create_user', $fields, $patreon_account);
 
-          $return = user_save(NULL, $fields);
+            $return = user_save(NULL, $fields);
 
-          if ($return) {
-            $wrapper = entity_metadata_wrapper('user', $return);
+            if ($return) {
+              $wrapper = entity_metadata_wrapper('user', $return);
 
-            if ($wrapper) {
-              $wrapper->field_user_patreon_id = filter_xss($patreon_id);
-              $wrapper->save();
-
-              patreon_user_assign_roles($return, $patreon_account);
+              if ($wrapper) {
+                $wrapper->field_user_patreon_id = filter_xss($patreon_id);
+                $wrapper->save();
+              }
             }
           }
         }
@@ -392,26 +446,59 @@ function patreon_user_create_user_from_account($patreon_account) {
  *
  * @param object $account
  *   A Drupal user account to update.
- * @param array|null $patreon_account
+ * @param \Art4\JsonApiClient\Document|null $patreon_account
  *   Results array from patreon_fetch_user().
+ *
+ * @throws \Exception
  */
 function patreon_user_assign_roles(&$account, $patreon_account = NULL) {
-  $deleted = patreon_get_value_by_key($patreon_account, 'is_deleted');
-  $nuked = patreon_get_value_by_key($patreon_account, 'is_nuked');
-  $suspended = patreon_get_value_by_key($patreon_account, 'is_suspended');
-  $blocked = user_is_blocked($account->name);
-  $patreon_user_rid = variable_get('patreon_user_patreon_user_rid', 0);
-  $deleted_patreon_user_rid = variable_get('patreon_user_deleted_patreon_user_rid', 0);
+  if ($bridge = patreon_get_bridge()) {
+    $patreon_user_roles = variable_get('patreon_user_roles', array());
 
-  if ($deleted || $nuked || $suspended || $blocked) {
-    $role = user_role_load($deleted_patreon_user_rid);
-    unset($account->roles[$patreon_user_rid]);
-  }
-  else {
-    $role = user_role_load($patreon_user_rid);
-    unset($account->roles[$deleted_patreon_user_rid]);
-  }
+    if ($pledges = $bridge->getPatronPledges($patreon_account)) {
+      foreach ($pledges as $pledge) {
+        foreach ($this->getRelatedRewards($pledge, $patreon_account) as $reward) {
+          if ($attributes = $this->getValueByKey($reward, 'attributes')) {
+            if ($title = $this->getValueByKey($attributes, 'title')) {
+              $role_name = $title . ' Patron';
 
-  $account->roles = $account->roles + array($role->rid => $role->name);
-  user_save($account);
+              if (array_key_exists($role_name, $patreon_user_roles)) {
+                $account->roles[$patreon_user_roles[$role_name]] = $role_name;
+              }
+
+              unset($patreon_user_roles[$role_name]);
+            }
+          }
+        }
+      }
+    }
+    else {
+
+      // If there are no pledges, we need to make sure the user is only
+      // assigned the core roles.
+      $patreon_user_roles = array_intersect_key($patreon_user_roles, array(
+        'Patreon User' => 0,
+        'Deleted Patreon User' => 0,
+      ));
+    }
+
+    // Because we unset the roles that were matched above, anything left in the
+    // array must be a role this user shouldn't have, so let's unset it.
+    foreach ($patreon_user_roles as $role_name => $rid) {
+      if (array_key_exists($rid, $account->roles)) {
+        unset($account->roles[$rid]);
+      }
+    }
+
+    // Because we deleted all the remaining roles above, our special active or
+    // deleted roles will need to be reapplied.
+    if ($bridge->isDeletedUser($patreon_account, $account->name)) {
+      $account->roles[$patreon_user_roles['Deleted Patreon User']] = 'Deleted Patreon User';
+    }
+    else {
+      $account->roles[$patreon_user_roles['Patreon User']] = 'Patreon User';
+    }
+
+    user_save($account);
+  }
 }

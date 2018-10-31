@@ -9,7 +9,18 @@
  * Implements hook_install().
  */
 function patreon_user_install() {
-  patreon_user_create_user_fields();
+  try {
+    patreon_user_create_user_fields();
+  }
+  catch (\Exception $e) {
+    $message = t('The site has reported an error trying to create the fields required by the Patreon User module: :error.', array(
+      ':error' => $e->getMessage(),
+    ));
+
+    drupal_set_message($message);
+    watchdog('patreon', $message, array(), WATCHDOG_ERROR);
+  }
+
   patreon_user_create_role();
   drupal_set_message(t('<p>You must now update your Patreon application settings at <a href="@oauth">the Patreon website</a> to add @endpoint as a valid endpoint. If you do not, users will not be able to log in via Patreon.</p>', array(
     '@oauth' => PATREON_REGISTER_OAUTH_URL,
@@ -24,14 +35,17 @@ function patreon_user_uninstall() {
   if (field_info_field('field_user_patreon_id')) {
     field_delete_field('field_user_patreon_id');
   }
-  if (field_info_field('field_user_patreon_token')) {
-    field_delete_field('field_user_patreon_token');
+  if (field_info_field('field_user_patreon_access_token')) {
+    field_delete_field('field_user_patreon_access_token');
   }
-  if (user_role_load_by_name('patreon_user')) {
-    user_role_delete('patreon_user');
+  if (field_info_field('field_user_patreon_refresh_token')) {
+    field_delete_field('field_user_patreon_refresh_token');
   }
-  if (user_role_load_by_name('deleted_patreon_user')) {
-    user_role_delete('deleted_patreon_user');
+
+  foreach (variable_get('patreon_user_roles', array()) as $name => $rid) {
+    if ($role = user_role_load($rid)) {
+      user_role_delete($role);
+    }
   }
 
   // Delete set variables.
