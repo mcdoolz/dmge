@@ -197,6 +197,7 @@ function dmge_system_init() {
 function dmge_system_main() {
   global $user;
   if (!user_access('access dmge')) {
+    drupal_set_message(t('You have to log in.'));
     return drupal_goto('user');
   }
   $path = drupal_get_path('module', 'dmge_system');
@@ -344,7 +345,7 @@ function _dmge_is_patreon_link($url) {
 }
 
 /**
- * Helper rewrites url for provider.
+ * Helper rewrites url for patreon provider.
  */
 function _dmge_rewrite_url($url) {
   if (_dmge_is_patreon_link($url)) {
@@ -528,6 +529,7 @@ function _dmge_system_get_youtube_url($id = '') {
 /**
  * Invokes hook_form_FORMID_alter().
  */
+
 function dmge_system_form_patreon_admin_form_alter(&$form, &$form_state) {
   if (!empty($form_state['values'])) {
     $roles = $form_state['values']['dmge_system_patreon_roles'];
