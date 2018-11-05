@@ -173,18 +173,33 @@
       }
     }).change();
 
-    $('#element_blending_modes').on('change, input', function($this) {
+    $('#element_blending_modes').on('change, input', function() {
       let mode = $(this).find(":selected").attr('value');
       if (obj) {
         obj.set({'globalCompositeOperation': mode});
       }
     }).change();
 
-    $('#element_remove_color').on('click', function () {
-      // applyFilter(2, this.checked && new f.RemoveColor({
-      //   distance: $('#element_remove_color_distance').value,
-      //   color: $('#element_remove_color_color').value
-      // }));
+    $('#element_remove_color').on('click', function() {
+      if (this.value) {
+        applyFilter(obj, FILTER_REMOVE_COLOR, new f.RemoveColor({
+          distance: $('#element_remove_color_distance').val(),
+          color: $('#element_remove_color_color').val()
+        }));
+      }
+      else {
+        if (getFilter(obj, FILTER_REMOVE_COLOR)) {
+          obj.filters.splice([FILTER_REMOVE_COLOR]);
+          obj.applyFilters();
+        }
+      }
+    });
+    $('#element_remove_color_distance').on('change, input',function() {
+      if (obj) {
+        if (getFilter(obj, FILTER_REMOVE_COLOR)) {
+          applyFilterValue(obj, FILTER_REMOVE_COLOR, 'distance', this.value);
+        }
+      }
     });
   }
 
@@ -334,7 +349,7 @@
   /**
   * Get a row from provided jsgrid data.
    */
-  function get_row(id = null, d = false) {
+  function get_row(id, d = false) {
     if (!d) {
       d = $('#files').jsGrid('option', 'data');
     }
@@ -1219,8 +1234,8 @@
   /**
    * Returns reference to added canvas entity.
    */
-  function do_image(_url) {
-    let _id = make_file_id(_url);
+  function do_image(_id, _url) {
+    // let _id = make_file_id(_url);
     window[_id] = fabric.Image.fromURL(_url, function(img) {
       img.set({
         id: _id
@@ -1646,7 +1661,7 @@
       case 'jpeg':
       case 'bmp':
       case 'png':
-        do_image(_url, ext);
+        do_image(_id, _url, ext);
         break;
       case 'gif':
         file.type = 'Animated';
