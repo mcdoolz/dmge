@@ -1,9 +1,15 @@
 (function ($, Drupal, window, document, undefined) {
+
   window.moveTo(0, 0);
   window.resizeTo(screen.availWidth, screen.availHeight);
 
   const todays_date = new Date();
   const f = fabric.Image.filters;
+
+  fabric.filterBackend = fabric.initFilterBackend();
+
+  // Our filter constants.  These will be important later on.
+  const FILTER_REMOVE_COLOR = 2;
 
   // We set these now for assignment later.
   var player_view, player_map, player_fow, player_grid, player_paint, map_scroll_synch,
@@ -82,7 +88,8 @@
   }
 
   /**
-   * Helper checks event passed in.
+   * Helper checks object being imported.
+   * If map size is smaller than item, map is adjusted.
    */
   function check_object_vs_map(e) {
     let _width = (screensize.width < e.target.width);
@@ -96,16 +103,18 @@
     }
   }
 
+  /**
+   * Helper generates html for the options window.
+   */
   function object_options(obj) {
     let html;
     let blending_mode, color, remove_color, distance, opacity,
     blending_mode_content ='', remove_color_content = '', opacity_content = '';
 
     opacity = obj.opacity ? obj.opacity : 1;
-    blending_mode = $(obj.globalCompositeOperation) ? $(obj.globalCompositeOperation) : 'source-over';
 
-    // color = obj.filters[2].color ? obj.filters[2].color : null;
-    // let color = obj.filters[2].color;
+    remove_color = obj.filters[FILTER_REMOVE_COLOR] ? obj.filters[FILTER_REMOVE_COLOR] : null;
+    remove_color_color = obj.filters[FILTER_REMOVE_COLOR] ? obj.filters[FILTER_REMOVE_COLOR].color : '';
 
     blending_mode_content = `
       <div id="element_blending_mode_wrapper">
@@ -152,8 +161,11 @@
     return html;
   }
 
+  /**
+   * Helper generates events for the options menu opened.
+   */
   function object_options_events(obj) {
-    $('#element_opacity').on('change, input', function($this) {
+    $('#element_opacity').on('change, input', function() {
       if (obj) {
         obj.set({
           opacity: this.value
@@ -177,26 +189,55 @@
   }
 
   /**
-   * Lifted directly from http://fabricjs.com/image-filters
+   * Gets the filter asked for by index.
+   * Index should be a constant.
    */
+  function getFilter(obj = NULL, index) {
+    if (!obj) {
+      obj = map_canvas.getActiveObject();
+    }
+    if (obj) {
+      if (obj.filters[index]) {
+        return obj.filters[index];
+      }
+    }
+    return false;
+  }
+
+  function applyFilter(obj = NULL, index, filter) {
+    if (!obj) {
+      obj = map_canvas.getActiveObject();
+    }
+    obj.filters[index] = filter;
+    var timeStart = +new Date();
+    obj.applyFilters();
+    var timeEnd = +new Date();
+    var dimString = map_canvas.getActiveObject().width + ' x ' +
+      map_canvas.getActiveObject().height;
+    console.log(dimString + 'px ' +
+      parseFloat(timeEnd-timeStart) + 'ms');
+  }
+
   function applyFilterValue(index, prop, value) {
-    var obj = canvas.getActiveObject();
+    var obj = map_canvas.getActiveObject();
     if (obj.filters[index]) {
       obj.filters[index][prop] = value;
       var timeStart = +new Date();
       obj.applyFilters();
       var timeEnd = +new Date();
-      var dimString = canvas.getActiveObject().width + ' x ' +
-        canvas.getActiveObject().height;
-      $('bench').innerHTML = dimString + 'px ' +
-        parseFloat(timeEnd-timeStart) + 'ms';
-      canvas.renderAll();
+      var dimString = map_canvas.getActiveObject().width + ' x ' +
+        map_canvas.getActiveObject().height;
+      console.log(dimString + 'px ' +
+        parseFloat(timeEnd-timeStart) + 'ms');
     }
   }
 
   function open_layer_options(obj) {
     $('#questions').html(object_options(obj));
     object_options_events(obj);
+    let blending_mode = obj.globalCompositeOperation ? obj.globalCompositeOperation : 'source-over';
+    document.getElementById('element_blending_modes').value = blending_mode;
+
     $('#questions').dialog({
       resizable: false,
       height: "auto",
