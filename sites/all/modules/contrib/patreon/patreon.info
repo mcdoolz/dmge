@@ -2,11 +2,10 @@ name = Patreon
 description = Connects Drupal to the Patreon API
 core = 7.x
 package = Patreon
-dependencies[] = libraries
 
 configure = admin/config/services/patreon
-; Information added by Drupal.org packaging script on 2018-05-08
-version = "7.x-1.2+1-dev"
+; Information added by Drupal.org packaging script on 2018-10-25
+version = "7.x-2.x-dev"
 core = "7.x"
 project = "patreon"
-datestamp = "1525795987"
+datestamp = "1540446484"

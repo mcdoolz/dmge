@@ -4,5 +4,4 @@ package = DMGE
 core = 7.x
 configure = admin/config/administration/dmge
 dependencies[] = system (>7.10)
-dependencies[] = patreon
 dependencies[] = libraries

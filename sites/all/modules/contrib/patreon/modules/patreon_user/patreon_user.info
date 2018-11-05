@@ -2,13 +2,13 @@ name = Patreon User
 description = Links Drupal user with their Patreon accounts.
 core = 7.x
 package = Patreon
-dependencies[] = entity
-dependencies[] = patreon
+dependencies[] = entity:entity
+dependencies[] = patreon:patreon
 
 configure = admin/config/people/accounts
 
-; Information added by Drupal.org packaging script on 2018-05-08
-version = "7.x-1.2+1-dev"
+; Information added by Drupal.org packaging script on 2018-10-25
+version = "7.x-2.x-dev"
 core = "7.x"
 project = "patreon"
-datestamp = "1525795987"
+datestamp = "1540446484"

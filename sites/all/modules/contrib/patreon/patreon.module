@@ -4,41 +4,38 @@
  * Drupal integration with Patreon.
  */
 
+if (file_exists(DRUPAL_ROOT . '/sites/all/libraries/patreon/src/patreon.php')) {
+  include_once DRUPAL_ROOT . '/sites/all/libraries/patreon/src/patreon.php';
+}
+
 define('PATREON_URL', 'https://www.patreon.com');
-define('PATREON_DOWNLOAD_URL', 'https://github.com/Patreon/patreon-php/archive/0.1.0.zip');
+define('PATREON_DOWNLOAD_URL', 'https://github.com/Patreon/patreon-php/archive/0.3.1.tar.gz');
 define('PATREON_LIBRARY', 'patreon');
 define('PATREON_OAUTH_CALLBACK_URL', 'patreon/oauth');
 define('PATREON_REGISTER_OAUTH_URL', 'https://www.patreon.com/platform/documentation/clients');
+
+use Drupal\patreon\PatreonBridge;
+use Drupal\patreon\PatreonMissingTokenException;
+use Drupal\patreon\PatreonGeneralException;
+use Drupal\patreon\PatreonUnauthorizedException;
+use Patreon\API;
+use Patreon\OAuth;
+
+include_once drupal_get_path('module', 'patreon') . '/src/Drupal/patreon/PatreonGeneralException.php';
+include_once drupal_get_path('module', 'patreon') . '/src/Drupal/patreon/PatreonMissingTokenException.php';
+include_once drupal_get_path('module', 'patreon') . '/src/Drupal/patreon/PatreonUnauthorizedException.php';
 
 /**
  * Implements hook_help().
  */
 function patreon_help($path, $arg) {
   switch ($path) {
-    case 'admin/help#pateon':
+    case 'admin/help#patreon':
       return t('<p>Patreon is a module to connect to the <a href="@patreon_url">Patreon</a> service using <a href="@patreon_download_url">their API</a>.</p>', array(
         '@patreon_url' => PATREON_URL,
         '@patreon_download_url' => PATREON_DOWNLOAD_URL,
       ));
   }
-}
-
-/**
- * Implements hook_libraries_info().
- */
-function patreon_libraries_info() {
-  $libraries[PATREON_LIBRARY] = array(
-    'name' => 'Patreon',
-    'vendor url' => PATREON_URL,
-    'download url' => PATREON_DOWNLOAD_URL,
-    'version' => '0.1.0',
-    'files' => array(
-      'php' => array(
-        'src/patreon.php',
-      ),
-    ),
-  );
-  return $libraries;
 }
 
 /**
@@ -77,6 +74,79 @@ function patreon_permission() {
       'title' => t('Administer Patreon configuration'),
     ),
   );
+}
+
+/**
+ * Helper to load the Patreon API Oauth object.
+ *
+ * @return null|\Patreon\OAuth
+ *   A valid Oauth object, or NULL on failure.
+ *
+ * @throws \Drupal\patreon\PatreonGeneralException
+ * @throws \Drupal\patreon\PatreonMissingTokenException
+ */
+function patreon_get_oauth() {
+  $return = NULL;
+  $key = variable_get('patreon_client_id', '');
+  $secret = variable_get('patreon_client_secret', '');
+
+  if ($key && $secret) {
+    $return = new OAuth($key, $secret);
+  }
+  else {
+    throw new PatreonMissingTokenException('Client ID or Client Secret not set.');
+  }
+
+  return $return;
+}
+
+/**
+ * Helper to load the Patreon Bridge object.
+ *
+ * @return \Drupal\patreon\PatreonBridge|null
+ *   A valid PatreonBridge object or NULL on failure.
+ */
+function patreon_get_bridge() {
+  $oauth = NULL;
+  $return = NULL;
+
+  try {
+    $oauth = patreon_get_oauth();
+  }
+  catch (PatreonMissingTokenException $e) {
+    $message = t('The site has failed to load the Patreon client with the error :error. Please ensure you have a valid API Key and Secret entered at <a href="/admin/config/services/patreon">/admin/config/services/patreon</a>.', array(
+      ':error' => $e->getMessage(),
+    ));
+
+    drupal_set_message($message);
+    watchdog('patreon', $message, array(), WATCHDOG_ERROR);
+  }
+  catch (PatreonGeneralException $e) {
+    $message = t('The site has failed to load the Patreon client with the error :error.', array(
+      ':error' => $e->getMessage(),
+    ));
+
+    drupal_set_message($message);
+    watchdog('patreon', $message, array(), WATCHDOG_ERROR);
+  }
+
+  if ($oauth) {
+    include_once drupal_get_path('module', 'patreon') . '/src/Drupal/patreon/PatreonBridge.php';
+
+    try {
+      $return = new PatreonBridge($oauth, PATREON_URL);
+    }
+    catch (Exception $e) {
+      $message = t('The site has failed to load the Patreon client with the error :error.', array(
+        ':error' => $e->getMessage(),
+      ));
+
+      drupal_set_message($message);
+      watchdog('patreon', $message, array(), WATCHDOG_ERROR);
+    }
+  }
+
+  return $return;
 }
 
 /**
@@ -132,13 +202,15 @@ function patreon_authorise_account($client_id, $redirect_url = NULL, $redirect =
   }
 
   if ($valid) {
-    $url = PATREON_URL . '/oauth2/authorize?response_type=code&client_id=' . $client_id . '&redirect_uri=' . $redirect_url;
+    if ($bridge = patreon_get_bridge()) {
+      $url = $bridge->getAuthoriseUrl($client_id, $redirect_url);
 
-    if ($redirect) {
-      drupal_goto($url);
-    }
-    else {
-      return $url;
+      if ($redirect) {
+        drupal_goto($url);
+      }
+      else {
+        return $url;
+      }
     }
   }
   else {
@@ -146,6 +218,42 @@ function patreon_authorise_account($client_id, $redirect_url = NULL, $redirect =
   }
 
   return FALSE;
+}
+
+/**
+ * Helper to return tokens from the API.
+ *
+ * @param string $code
+ *   An oauth code returned by the Patreon API.
+ * @param string $url
+ *   The callback URL to use. If not valid, will be rejected.
+ *
+ * @return null|array
+ *   An access tokens, or NULL in event of error.
+ *
+ * @see patreon_get_allowed_callback_urls()
+ *
+ * @throws \Drupal\patreon\PatreonGeneralException
+ * @throws \Drupal\patreon\PatreonUnauthorizedException
+ */
+function patreon_get_tokens($code, $url = NULL) {
+  $tokens = NULL;
+  $url = (is_null($url) || !in_array($url, patreon_get_allowed_callback_urls())) ? patreon_get_callback_url() : $url;
+
+  if ($bridge = patreon_get_bridge()) {
+
+    try {
+      $tokens = $bridge->tokensFromCode($code, $url);
+    }
+    catch (PatreonUnauthorizedException $e) {
+      throw new PatreonUnauthorizedException($e->getMessage());
+    }
+    catch (\Exception $e) {
+      throw new PatreonGeneralException($e->getMessage());
+    }
+  }
+
+  return $tokens;
 }
 
 /**
@@ -159,21 +267,27 @@ function patreon_authorise_account($client_id, $redirect_url = NULL, $redirect =
  * @return null|string
  *   A valid access token, or NULL in event of error.
  *
- * @see patreon_get_allowed_callback_urls()
+ * @throws \Drupal\patreon\PatreonGeneralException
+ * @throws \Drupal\patreon\PatreonUnauthorizedException
+ *
+ * @depreciated
  */
 function patreon_get_token($code, $url = NULL) {
-  $return = NULL;
-  $url = (is_null($url) || !in_array($url, patreon_get_allowed_callback_urls())) ? patreon_get_callback_url() : $url;
-  $key = variable_get('patreon_client_id', '');
-  $secret = variable_get('patreon_client_secret', '');
-  $library = libraries_load(PATREON_LIBRARY);
+  watchdog('patreon', 'Depreciated function patreon_get_token used. Please update your code to use patreon_get_tokens', array(), WATCHDOG_WARNING);
+  $tokens = $return = NULL;
 
-  if ($library['loaded'] && $key && $secret) {
-    $oauth_client = new Patreon\OAuth($key, $secret);
-    $tokens = $oauth_client->get_tokens($code, $url);
-    if (isset($tokens['access_token']) && $access_token = $tokens['access_token']) {
-      $return = check_plain($access_token);
-    }
+  try {
+    $tokens = patreon_get_tokens($code, $url);
+  }
+  catch (PatreonUnauthorizedException $e) {
+    throw new PatreonUnauthorizedException($e->getMessage());
+  }
+  catch (\Exception $e) {
+    throw new PatreonGeneralException($e->getMessage());
+  }
+
+  if ($tokens && isset($tokens['access_token'])) {
+    $return = $tokens['access_token'];
   }
 
   return $return;
@@ -187,44 +301,98 @@ function patreon_get_token($code, $url = NULL) {
  *
  * @return bool
  *   Whether the response triggered an error or not.
+ *
+ * @depreciated
  */
 function patreon_check_response($response) {
-  $return = TRUE;
-  $message = NULL;
+  watchdog('patreon', 'Depreciated function patreon_check_response() used. Please remove this from your code.');
 
-  if (isset($response['errors']) && !empty($response['errors'])) {
-    $return = FALSE;
-    $message = t('There was a problem contacting Patreon. Please contact an administrator.');
-    global $user;
+  return TRUE;
+}
 
-    if ($response['errors'][0]['code_name'] == 'Unauthorized') {
-      $authorize = '';
-      watchdog('patreon', 'User :name (:uid) unauthorized on Patreon', array(':name' => $user->name, ':uid' => $user->uid), WATCHDOG_ERROR);
+/**
+ * @param Drupal\patreon\PatreonBridge $bridge
+ *   A PatreonBridge object with the access and refresh tokens set.
+ * @param string $function
+ *   The API function to call.
+ * @param string $callback
+ *   A valid Oaith callback URL in case a refresh of access tokens is attempted.
+ * @param array $parameters
+ *   An array of parameters for the fetch_page_of_pledges function.
+ *
+ * @return null|\Art4\JsonApiClient\Document
+ *   The API return, or NULL on error.
+ */
+function patreon_api_fetch(Drupal\patreon\PatreonBridge $bridge, $function, $callback, $parameters = array()) {
+  $return = NULL;
 
-      if (user_access('administer patreon')) {
-        $authorize = patreon_get_callback_url();
+  try {
+    $client = new API($bridge->getToken());
+    $return = $bridge->apiFetch($client, $function, $parameters);
+  }
+  catch (PatreonMissingTokenException $e) {
+    $message = t('The site has failed to load the Patreon client with the error :error. Please ensure you have a valid API Key and Secret entered at <a href="/admin/config/services/patreon">/admin/config/services/patreon</a>.', array(
+      ':error' => $e->getMessage(),
+    ));
+
+    drupal_set_message($message);
+    watchdog('patreon', $message, array(), WATCHDOG_ERROR);
+  }
+  catch (PatreonUnauthorizedException $e) {
+    if (!$bridge->refreshTried) {
+      try {
+        $refresh_token = $bridge->getRefreshToken();
+        $bridge->refreshTried = TRUE;
+        $new_tokens = $bridge->getRefreshedTokens($refresh_token, $callback);
+
+        if ($new_tokens) {
+          foreach (['access', 'refresh'] as $token_name) {
+            if (array_key_exists($token_name . '_token', $new_tokens)) {
+              variable_set('patreon_' . $token_name . '_token', $new_tokens[$token_name . '_token']);
+              if ($token_name == 'access') {
+                $bridge->setToken($new_tokens[$token_name . '_token']);
+              }
+              else {
+                $bridge->setRefreshToken($new_tokens[$token_name . '_token']);
+              }
+            }
+          }
+          // Retry the function callback.
+          $return = patreon_api_fetch($bridge, $function, $callback, $parameters);
+        }
       }
-      elseif (function_exists('patreon_user_get_callback_url')) {
-        $authorize = patreon_user_get_callback_url();
-      };
-
-      if ($authorize) {
-        $message = t('Your account on Patreon has not been authorized or its authorization has expired. Please visit !url to complete authorisation.', array(
-          '!url' => l($authorize, $authorize),
+      catch (PatreonUnauthorizedException $error) {
+        $message = t('The site has failed to load the Patreon client with the error :error. Your API token has expired or not been set. Please ensure you have a valid API Key and Secret entered at <a href="/admin/config/services/patreon">/admin/config/services/patreon</a>.', array(
+          ':error' => $e->getMessage(),
         ));
+
+        drupal_set_message($message);
+        watchdog('patreon', $message, array(), WATCHDOG_ERROR);
+      }
+      catch (\Exception $error) {
+        $message = t('The site has failed to load the Patreon client with the error :error.', array(
+          ':error' => $e->getMessage(),
+        ));
+
+        drupal_set_message($message);
+        watchdog('patreon', $message, array(), WATCHDOG_ERROR);
       }
     }
     else {
-      watchdog('patreon', 'Error :error contacting Patreon for user :name (:uid).', array(
-        ':error' => $response['errors'][0]['detail'],
-        ':user' => $user->name,
-        ':uid' => $user->uid,
-      ), WATCHDOG_ERROR);
-    }
-  }
+      $message = t('The site has failed to load the Patreon client. Your API token has expired or not been set. Please ensure you have a valid API Key and Secret entered at <a href="/admin/config/services/patreon">/admin/config/services/patreon</a>.');
 
-  if ($message) {
-    drupal_set_message($message, 'error');
+      drupal_set_message($message);
+      watchdog('patreon', $message, array(), WATCHDOG_ERROR);
+    }
+
+  }
+  catch (PatreonGeneralException $e) {
+    $message = t('The site has failed to load the Patreon client with the error :error.', array(
+      ':error' => $e->getMessage(),
+    ));
+
+    drupal_set_message($message);
+    watchdog('patreon', $message, array(), WATCHDOG_ERROR);
   }
 
   return $return;
@@ -235,26 +403,32 @@ function patreon_check_response($response) {
  *
  * @param null|string $token
  *   A valid API access token for a single user.
+ * @param null|string $refresh_token
+ *   A valid API refresh token for a single user.
+ * @param string $callback
+ *   A valid callback URL for Oauth in case the code needs to attempt a refresh.
  *
- * @return null|array
+ * @return null|\Art4\JsonApiClient\Document
  *   An array of data from the Patreon API, or NULL on error.
  */
-function patreon_fetch_user($token = NULL) {
+function patreon_fetch_user($token = NULL, $refresh_token = NULL, $callback = NULL) {
   $return = NULL;
 
-  if (!$token) {
+  if (!isset($token)) {
     $token = variable_get('patreon_access_token', NULL);
   }
+  if (!isset($refresh_token)) {
+    $refresh_token = variable_get('patreon_refresh_token', NULL);
+  }
+  if (!isset($callback)) {
+    $callback = patreon_get_callback_url();
+  }
 
-  $library = libraries_load(PATREON_LIBRARY);
+  if ($bridge = patreon_get_bridge()) {
+    $bridge->setToken($token);
+    $bridge->setRefreshToken($refresh_token);
 
-  if ($library['loaded'] && $token) {
-    $api_client = new Patreon\API($token);
-    $response = $api_client->fetch_user();
-
-    if (patreon_check_response($response)) {
-      $return = $response['data'];
-    }
+    $return = patreon_api_fetch($bridge, 'fetch_user', $callback);
   }
 
   return $return;
@@ -265,26 +439,32 @@ function patreon_fetch_user($token = NULL) {
  *
  * @param null|string $token
  *   A valid API access token for a single user.
+ * @param null|string $refresh_token
+ *   A valid API refresh token for a single user.
+ * @param string $callback
+ *   A valid callback URL for Oauth in case the code needs to attempt a refresh.
  *
- * @return null|array
+ * @return null|\Art4\JsonApiClient\Document
  *   An array of data from the Patreon API, or NULL on error.
  */
-function patreon_fetch_campaign($token = NULL) {
+function patreon_fetch_campaign($token = NULL, $refresh_token = NULL, $callback = NULL) {
   $return = NULL;
 
-  if (!$token) {
+  if (!isset($token)) {
     $token = variable_get('patreon_access_token', NULL);
   }
+  if (!isset($refresh_token)) {
+    $refresh_token = variable_get('patreon_refresh_token', NULL);
+  }
+  if (!isset($callback)) {
+    $callback = patreon_get_callback_url();
+  }
 
-  $library = libraries_load(PATREON_LIBRARY);
+  if ($bridge = patreon_get_bridge()) {
+    $bridge->setToken($token);
+    $bridge->setRefreshToken($refresh_token);
 
-  if ($library['loaded'] && $token) {
-    $api_client = new Patreon\API($token);
-    $response = $api_client->fetch_campaign();
-
-    if (patreon_check_response($response)) {
-      $return = $response['data'];
-    }
+    $return = patreon_api_fetch($bridge, 'fetch_campaign', $callback);
   }
 
   return $return;
@@ -296,28 +476,15 @@ function patreon_fetch_campaign($token = NULL) {
  * @param null|string $token
  *   A valid API access token for a single user.
  *
- * @return null|array
- *   An array of data from the Patreon API, or NULL on error.
+ * @return null
+ *   Returns null.
+ *
+ * @depreciated
  */
 function patreon_fetch_campaign_and_patrons($token = NULL) {
-  $return = NULL;
+  watchdog('patreon', 'Depreciated function patreon_fetch_campaign_and_patrons() used. Pleasure update your code.');
 
-  if (!$token) {
-    $token = variable_get('patreon_access_token', NULL);
-  }
-
-  $library = libraries_load(PATREON_LIBRARY);
-
-  if ($library['loaded'] && $token) {
-    $api_client = new Patreon\API($token);
-    $response = $api_client->fetch_campaign_and_patrons();
-
-    if (patreon_check_response($response)) {
-      $return = $response['data'];
-    }
-  }
-
-  return $return;
+  return NULL;
 }
 
 /**
@@ -331,26 +498,36 @@ function patreon_fetch_campaign_and_patrons($token = NULL) {
  *   A cursor chracter.
  * @param null|string $token
  *   A valid Patreon API token for a user.
+ * @param null|string $refresh_token
+ *   A valid API refresh token for a single user. *
+ * @param string $callback
+ *   A valid callback URL for Oauth in case the code needs to attempt a refresh.
  *
- * @return null|array
- *   An array of data from the Patreon API or NULL on error.
+ * @return null|\Art4\JsonApiClient\Document
+ *   An array of data from the Patreon API, or NULL on error.
  */
-function patreon_fetch_page_of_pledges($campaign_id, $page_size, $cursor = NULL, $token = NULL) {
+function patreon_fetch_page_of_pledges($campaign_id, $page_size, $cursor = NULL, $token = NULL, $refresh_token = NULL, $callback = NULL) {
   $return = NULL;
 
-  if (!$token) {
+  if (!isset($token)) {
     $token = variable_get('patreon_access_token', NULL);
   }
+  if (!isset($refresh_token)) {
+    $refresh_token = variable_get('patreon_refresh_token', NULL);
+  }
+  if (!isset($callback)) {
+    $callback = patreon_get_callback_url();
+  }
 
-  $library = libraries_load(PATREON_LIBRARY);
+  if ($bridge = patreon_get_bridge()) {
+    $bridge->setToken($token);
+    $bridge->setRefreshToken($refresh_token);
 
-  if ($library['loaded'] && $token) {
-    $api_client = new Patreon\API($token);
-    $response = $api_client->fetch_page_of_pledges($campaign_id, $page_size, $cursor);
-
-    if (patreon_check_response($response)) {
-      $return = $response['data'];
-    }
+    $return = patreon_api_fetch($bridge, 'fetch_page_of_pledges', $callback, array(
+      $campaign_id,
+      $page_size,
+      $cursor,
+    ));
   }
 
   return $return;
@@ -359,32 +536,19 @@ function patreon_fetch_page_of_pledges($campaign_id, $page_size, $cursor = NULL,
 /**
  * Helper to check if a Patreon user is a patron of the client.
  *
- * @param array $patreon_account
- *   Results array from patreon_fetch_user().
+ * @param \Art4\JsonApiClient\Document $patreon_account
+ *   Results from patreon_fetch_user().
  *
  * @return bool
- *   TRUE is user's pledges match creator id. defaults to FALSE.
+ *   TRUE is user's pledges match creator id. Defaults to FALSE.
  */
 function patreon_is_patron($patreon_account) {
   $return = FALSE;
 
   if ($creator_id = variable_get('patreon_creator_id', NULL)) {
-    if (array_key_exists('relationships', $patreon_account)) {
-      if (array_key_exists('pledges', $patreon_account['relationships'])) {
-        if (array_key_exists('data', $patreon_account['relationships']['pledges'])) {
-          $key = 0;
-          while (array_key_exists($key, $patreon_account['relationships']['pledges']['data']) && $return == FALSE) {
-            $pledge = $patreon_account['relationships']['pledges']['data'][$key];
-            if (isset($pledge['relationships']['creator']['data']['id'])) {
-              if ($pledge['relationships']['creator']['data']['id'] == $creator_id) {
-                $return = TRUE;
-              }
-            }
-
-            $key++;
-          }
-        }
-      }
+    if ($bridge = patreon_get_bridge()) {
+      $bridge->setToken($token = variable_get('patreon_access_token', NULL));
+      $return = $bridge->isPatron($patreon_account, $creator_id);
     }
   }
 
@@ -401,8 +565,11 @@ function patreon_is_patron($patreon_account) {
  *
  * @return mixed
  *   The value of the key in the array. FALSE if not found.
+ *
+ * @deprecated
  */
 function patreon_get_value_by_key(array $haystack, $needle) {
+  watchdog('patreon', 'Depreciated function patreon_get_value_by_key() used. Please update your code.', array(), WATCHDOG_ALERT);
   $found = FALSE;
   $iterator = new RecursiveArrayIterator($haystack);
   $return = patreon_iterator_search($iterator, $needle, $found);
@@ -421,8 +588,11 @@ function patreon_get_value_by_key(array $haystack, $needle) {
  *
  * @return mixed
  *   The value of the key in the array. NULL if not found.
+ *
+ * @depreciated
  */
 function patreon_iterator_search(RecursiveArrayIterator $iterator, $needle, &$found) {
+  watchdog('patreon', 'Depreciated function patreon_iterator_search() used. Please update your code.', array(), WATCHDOG_ALERT);
   $return = NULL;
   while ($iterator->valid() && !$found) {
     if ($iterator->key() == $needle) {
