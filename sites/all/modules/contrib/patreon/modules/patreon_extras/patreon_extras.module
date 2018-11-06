@@ -38,12 +38,8 @@ function patreon_extras_block_view($delta = '') {
   switch ($delta) {
     case 'patreon_extras_become':
       if ($account = patreon_fetch_user()) {
-        if ($bridge = patreon_get_bridge()) {
-          if ($id = $bridge->getValueByKey($account, 'data.id')) {
-            $block['subject'] = NULL;
-            $block['content'] = '<a href="https://www.patreon.com/bePatron?u=' . $id . '" data-patreon-widget-type="become-patron-button">Become a patron</a><script async src="https://c6.patreon.com/becomePatronButton.bundle.js"></script>';
-          }
-        }
+        $block['subject'] = NULL;
+        $block['content'] = '<a href="https://www.patreon.com/bePatron?u=' . $account['id'] . '" data-patreon-widget-type="become-patron-button">Become a patron</a><script async src="https://c6.patreon.com/becomePatronButton.bundle.js"></script>';
       }
 
       break;
@@ -69,38 +65,51 @@ function patreon_extras_cron() {
  * Helper to collect data about pledges from Patreon.
  */
 function patreon_extras_update_pledge_data() {
-  $count = 0;
-  $amount = 0;
-  $all_data = array();
-
-  if ($campaign = patreon_fetch_campaign()) {
-    if ($bridge = patreon_get_bridge()) {
+  if ($campaign = patreon_fetch_campaign_and_patrons()) {
+    if (isset($campaign[0]['id']) && $id = $campaign[0]['id']) {
       $cursor = NULL;
-      $key = 0;
+      $count = 0;
+      $amount = 0;
+      $all_data = array();
+      while (TRUE) {
+        $pledges_response = patreon_fetch_page_of_pledges($id, 25, $cursor);
 
-      while ($id = $bridge->getValueByKey($campaign, 'data.' . $key . '.id')) {
-        while (TRUE) {
-          $pledges_response = patreon_fetch_page_of_pledges($id, 10, $cursor);
+        // Get all the users in an easy-to-lookup way.
+        $user_data = array();
 
-          if ($pledges_response) {
-            if ($data = $bridge->getPledgeData($pledges_response, $id)) {
-              $all_data += $data['all_data'];
-              $count += $data['count'];
-              $amount += $data['amount'];
+        if ($pledges_response) {
+          foreach ($pledges_response['included'] as $included_data) {
+            if ($included_data['type'] == 'user') {
+              $user_data[$included_data['id']] = $included_data;
             }
           }
-
-          // Get the link to the next page of pledges.
-          if ($next_link = $bridge->getValueByKey($pledges_response, 'links.next')) {
-            $next_query_params = explode("?", $next_link)[1];
-            parse_str($next_query_params, $parsed_next_query_params);
-            $cursor = $parsed_next_query_params['page']['cursor'];
-          }
-          else {
-            break;
+          // Loop over the pledges to get e.g. their amount and user name.
+          foreach ($pledges_response['data'] as $pledge_data) {
+            $pledge_amount = $pledge_data['attributes']['amount_cents'];
+            $patron_id = $pledge_data['relationships']['patron']['data']['id'];
+            $patron_full_name = $user_data[$patron_id]['attributes']['full_name'];
+            $count++;
+            $amount += $pledge_amount;
+            $all_data[$patron_id] = array(
+              'name' => $patron_full_name,
+              'amount' => $pledge_amount,
+              'campaign' => $id,
+            );
           }
         }
-        $key++;
+
+        // Get the link to the next page of pledges.
+        $next_link = ($pledges_response && isset($pledges_response['links']['next'])) ? $pledges_response['links']['next'] : NULL;
+        if (!$next_link) {
+
+          // If there's no next page, we're done!
+          break;
+        }
+
+        // Otherwise, parse out the cursor param.
+        $next_query_params = explode("?", $next_link)[1];
+        parse_str($next_query_params, $parsed_next_query_params);
+        $cursor = $parsed_next_query_params['page']['cursor'];
       }
 
       variable_set('patreon_extras_all_pledge_data', $all_data);

@@ -4,8 +4,6 @@
  * Page callbacks for Patreon module.
  */
 
-use Drupal\patreon\PatreonUnauthorizedException;
-
 /**
  * Implements hook_form().
  */
@@ -41,7 +39,17 @@ function patreon_admin_form($form, &$form_state) {
 }
 
 /**
- * Form submit handler for adding a Patreon account.
+ * Form validation for adding a Patreon account.
+ */
+function patreon_admin_form_validate($form, &$form_state) {
+  $library = libraries_load(PATREON_LIBRARY);
+  if (!$library['loaded']) {
+    form_set_error('', t('You must install the Patreon library before configuring Oauth'));
+  }
+}
+
+/**
+ * Form submit handler for adding a Patrone account.
  */
 function patreon_admin_form_submit($form, &$form_state) {
   $client_id = $form_state['values']['patreon_client_id'];
@@ -53,55 +61,19 @@ function patreon_admin_form_submit($form, &$form_state) {
  */
 function patreon_oauth_callback() {
   if (user_is_logged_in() && $code = $_GET['code']) {
-    $tokens = NULL;
+    if ($token = patreon_get_token($code)) {
+      variable_set('patreon_access_token', $token);
 
-    if ($bridge = patreon_get_bridge()) {
-      try {
-        $tokens = patreon_get_tokens($code);
+      if ($user = patreon_fetch_user($token)) {
+        $id = patreon_get_value_by_key($user, 'id');
+        variable_set('patreon_creator_id', $id);
       }
-      catch (PatreonUnauthorizedException $e) {
-        $message = t('The site has failed to load the Patreon client with the error :error. Please ensure you have a valid API Key and Secret entered at <a href="/admin/config/services/patreon">/admin/config/services/patreon</a>.', array(
-          ':error' => $e->getMessage(),
-        ));
-
-        drupal_set_message($message);
-        watchdog('patreon', $message, array(), WATCHDOG_ERROR);
+      else {
+        drupal_set_message(t('There was an error fetching data from the Patreon API. Please try again.'), 'error');
       }
-      catch (\Exception $e) {
-        $message = t('The site has failed to load the Patreon client with the error :error.', array(
-          ':error' => $e->getMessage(),
-        ));
-
-        drupal_set_message($message);
-        watchdog('patreon', $message, array(), WATCHDOG_ERROR);
-      }
-
-      if ($tokens) {
-        foreach (array('access', 'refresh') as $token_name) {
-          $name = $token_name . '_token';
-          if (array_key_exists($name, $tokens)) {
-            variable_set('patreon_' . $token_name . '_token', $tokens[$name]);
-
-            if ($token_name == 'access') {
-              try {
-                $user = patreon_fetch_user($tokens[$name]);
-
-                if ($id = $bridge->getValueByKey($user, 'data.id')) {
-                  variable_set('patreon_creator_id', $id);
-                }
-              }
-              catch (\Exception $e) {
-                $message = t('There was an error fetching data from the Patreon API: :error.', array(
-                  ':error' => $e->getMessage(),
-                ));
-
-                drupal_set_message($message);
-                watchdog('patreon', $message, array(), WATCHDOG_ERROR);
-              }
-            }
-          }
-        }
-      }
+    }
+    else {
+      drupal_set_message(t('The connection to Patreon failed. Please try again.'), 'error');
     }
     drupal_goto('admin/config/services/patreon');
   }

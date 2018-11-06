@@ -12,20 +12,21 @@ https://www.patreon.com/platform/documentation/clients. The module's endpoint
 (<your site>/patreon/oauth) must be registered as an allowed redirect
 destination in the client application.
 
-The Patreon API library has a dependency on composer, which means that this
-module must also be installed using composer. You can find instructions for
-managing a Drupal 7 site using composer at https://www.drupal.org/node/2718229.
+The module uses the Libraries module (https://www.drupal.org/project/libraries)
+to manage the use of the Patreon PHP library. If the module is enabled via
+drush, this will be automatically downloaded into your codebase. Otherwise, it
+will need manually extracting into the libraries/patreon folder.
 
 -- INSTALLATION --
 
-The Patreon API library has a dependency on composer, which means that this
-module must also be installed using composer. You can find instructions for
-managing a Drupal 7 site using composer at https://www.drupal.org/node/2718229.
+It is recommended that the module is installed via drush (drush en patreon) to
+ensure the correct downloading of the required library. But it can be installed
+as usual; see https://drupal.org/node/895232 for further information.
 
 -- CONFIGURATION --
 
 A valid client id and secret key must be added to the form at
-/admin/config/services/patreon, and access to the creator account when
+/dmin/config/services/patreon, and access to the creator account when
 prompted.
 
 -- CUSTOMIZATION --
@@ -36,12 +37,11 @@ the module provides three main functions to obtain data from Patreon:
 
 * patreon_fetch_user()
 * patreon_fetch_campaign()
-* patreon_fetch_page_of_pledges()
+* patreon_fetch_campaign_and_patrons()
 
-Each returns an \Art4\JsonApiClient\Document obtained from the Patreon API. Values can be
-pulled from the returned results using the bridge method get_value_by_key(). The
-patreon_get_value_by_key() function has been depreciated and will error if a return is
-sent to it.
+Each returns an array of data obtained from the Patreon API. Values can be
+pulled from the returned results using the patreon_get_value_by_key() helper
+function.
 
 The functions correspond to the documented functions provided by the patreon.php
 library, and each uses the default user access token stored in the variable
@@ -49,31 +49,7 @@ patreon_access_token when the creator authorises their account. Other access
 tokens can be passed to the function to obtain patron information.
 
 Custom modules can implement their own authorisation processes by using the
-patreon_authorise_account() and patreon_get_tokens() functions.
-
-A new PatreonBridge.php entity now exists to provide a bridge between Drupal and the API.
-The Drupal functions can be bypassed in favour of direct interaction with this object. A
-new instance can be instantiated using the patreon_get_bridge() function.
-
--- DEPRECIATION --
-The function patreon_fetch_campaign_and_patrons() has been depreciated at the
-API side and cannot be used. It will return no values if used.
-
-The function patreon_get_value_by_key() has been depreciated as the API return is no
-longer an array.
-
-The function patreon_get_token() has been depreciated in favour of patreon_get_tokens(),
-which will return all tokens provided by the API. If used, it will still return an
-access token, but will log a depreciation warning.
-
-The function patreon_check_response() has been depreciated in favour of proper error
-handling within the bridge method apiFetch(). This function will return TRUE and log
-a depreciation warning.
-
-The function patreon_iterator_search() has been depreciated as it is no longer required by
-the module. It will continue to return results, and log a depreciation warning.
-
-All depreciated functions will be removed in future versions of the module.
+patreon_authorise_account() and patreon_get_token() functions.
 
 -- TROUBLESHOOTING --
 

@@ -5,8 +5,6 @@
  * Requirements page for Patreon.
  */
 
-use Patreon\OAuth;
-
 /**
  * Implements hook_requirements().
  */
@@ -15,11 +13,21 @@ function patreon_requirements($phase) {
 
   // Report the version of Patreon.
   if ($phase == 'runtime') {
+    // Make sure Libraries is loaded before loading Patreon.
+    drupal_load('module', 'libraries');
+    $patreon = libraries_detect('patreon');
+
+    $requirements['patreon'] = array(
+      'title' => $patreon['name'],
+    );
+
+    $requirements['patreon']['severity'] = $patreon['installed'] ? REQUIREMENT_OK : REQUIREMENT_WARNING;
+    $requirements['patreon']['value'] = $patreon['installed'] ? $patreon['version'] : $patreon['error message'];
 
     // Verify that the Patreon keys are set.
     $requirements['patreon_keys'] = array('title' => t('Patreon Application keys'));
     $key = variable_get('patreon_client_id', '');
-    $secret = variable_get('patreon_client_secret', '');
+    $secret = variable_get('patreon_consumer_secret', '');
     if (empty($key) || empty($secret)) {
       $requirements['patreon_keys']['value'] = t('Missing');
       $requirements['patreon_keys']['description'] = t('In order to interact with Patreon, you need to create a client on <a href="@patreon_dev">the Patreon Oauth page</a> and set the generated Application keys at the <a href="@patreon_settings_page">admin settings page</a>.',
@@ -29,17 +37,7 @@ function patreon_requirements($phase) {
         ));
       $requirements['patreon_keys']['severity'] = REQUIREMENT_ERROR;
     }
-    elseif ($key && $secret) {
-      try {
-        $oauth = new OAuth($key, $secret);
-      }
-      catch (\Exception $e) {
-        $requirements['patreon_keys']['value'] = t('Cannot create API connection');
-        $requirements['patreon_keys']['description'] = t('The module cannot create a connection with the Patreon API. Have you run composer install? Please see the instruction at <a href="https://www.drupal.org/node/2718229" title="Instructions on using composer with Drupal">https://www.drupal.org/node/2718229</a> for more help.');
-      }
-    }
-
-    if (!isset($requirements['patreon_keys']['value'])) {
+    else {
       $requirements['patreon_keys']['value'] = t('Configured');
       $requirements['patreon_keys']['severity'] = REQUIREMENT_OK;
     }

@@ -37,15 +37,11 @@ from Patreon accounts. Subsequentially, these accounts can then be treated as
 any other Drupal user account, with permissions and access set as required. The
 module also creates two roles - patreon_user and deleted_patreon_user - that
 are automatically assigned depending on the user's current status on Patreon or
-the Drupal site. Additional roles are also created for each pledge level on the
-Patreon campaign. Additional fields are also created to store the user's Patreon
-id and tokens.
+the Drupal site. Additional fields are also created to store the user's Patreon
+id and access token.
 
 These can be used in custom code as required to provide additional
 functionality, or used in combination with other Drupal user modules.
-
-The module has been updated to throw various Exceptions in the event of failure.
-These must be correctly handled in any custom code.
 
 -- TROUBLESHOOTING --
 
