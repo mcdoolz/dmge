@@ -82,7 +82,8 @@
   }
 
   /**
-   * Helper checks event passed in.
+   * Helper checks object being imported.
+   * If map size is smaller than item, map is adjusted.
    */
   function check_object_vs_map(e) {
     let _width = (screensize.width < e.target.width);
