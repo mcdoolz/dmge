@@ -12,7 +12,7 @@ function patreon_user_oauth_callback() {
 
   if ($settings != PATREON_USER_NO_LOGIN) {
     if (user_is_anonymous() && $code = $_GET['code']) {
-      if ($token = patreon_get_token($code, patreon_user_get_callback_url())) {
+      if ($token = patreon_get_token($code, 'user')) {
         if ($patreon_account = patreon_fetch_user($token)) {
           if ($patreon_id = patreon_get_value_by_key($patreon_account, 'id')) {
             if (patreon_user_can_login($patreon_account)) {
