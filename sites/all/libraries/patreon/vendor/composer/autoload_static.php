@@ -4,8 +4,22 @@
 
 namespace Composer\Autoload;
 
-class ComposerStaticInit93b0ef6c8dd2eaeb72b587d8b640587f
+class ComposerStaticInitf993a7d1947f68cc95ce370803808dd6
 {
+    public static $prefixLengthsPsr4 = array (
+        'A' => 
+        array (
+            'Art4\\JsonApiClient\\' => 19,
+        ),
+    );
+
+    public static $prefixDirsPsr4 = array (
+        'Art4\\JsonApiClient\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/art4/json-api-client/src',
+        ),
+    );
+
     public static $prefixesPsr0 = array (
         'P' => 
         array (
@@ -19,7 +33,9 @@ class ComposerStaticInit93b0ef6c8dd2eaeb72b587d8b640587f
     public static function getInitializer(ClassLoader $loader)
     {
         return \Closure::bind(function () use ($loader) {
-            $loader->prefixesPsr0 = ComposerStaticInit93b0ef6c8dd2eaeb72b587d8b640587f::$prefixesPsr0;
+            $loader->prefixLengthsPsr4 = ComposerStaticInitf993a7d1947f68cc95ce370803808dd6::$prefixLengthsPsr4;
+            $loader->prefixDirsPsr4 = ComposerStaticInitf993a7d1947f68cc95ce370803808dd6::$prefixDirsPsr4;
+            $loader->prefixesPsr0 = ComposerStaticInitf993a7d1947f68cc95ce370803808dd6::$prefixesPsr0;
 
         }, null, ClassLoader::class);
     }

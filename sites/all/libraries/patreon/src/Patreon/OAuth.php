@@ -12,8 +12,8 @@ class OAuth {
 
   public function get_tokens($code, $redirect_uri) {
     return $this->__update_token(array(
-        "code" => $code,
         "grant_type" => "authorization_code",
+        "code" => $code,
         "client_id" => $this->client_id,
         "client_secret" => $this->client_secret,
         "redirect_uri" => $redirect_uri
@@ -35,6 +35,7 @@ class OAuth {
     curl_setopt($ch, CURLOPT_URL, $api_endpoint);
     curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
     curl_setopt($ch, CURLOPT_POST, 1);
+    curl_setopt($ch, CURLOPT_USERAGENT, "Patreon-PHP, version 0.3.1, platform ".php_uname('s').'-'.php_uname('r'));
     curl_setopt($ch, CURLOPT_POSTFIELDS, http_build_query($params));
     return json_decode(curl_exec($ch), true);
   }
