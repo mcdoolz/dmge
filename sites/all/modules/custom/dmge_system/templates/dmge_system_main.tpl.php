@@ -61,7 +61,7 @@ $age = $incept_date->diff($today)->days;
           <li><a href="#files_settings" title="Files"><i class="fas fa-file"></i></a></li>
           <li><a href="#layers" title="Layers"><i class="fas fa-layer-group"></i></a></li>
           <li><a href="#fow_settings" title="Fog of War"><i class="fas fa-eye"></i></a></li>
-          <li><a href="#grid_settings" title="Grid"><i class="fas fa-th"></i></a></li>
+          <li><a href="#grid_settings" title="Grids"><i class="fas fa-th"></i></a></li>
           <li><a href="#paint_box" title="Painters Box"><i class="fas fa-paint-brush"></i></a></li>
           <li><a href="#rulers" title="Rulers &amp; Templates"><i class="fas fa-pencil-ruler"></i></a></li>
         </ul>
@@ -238,6 +238,7 @@ $age = $incept_date->diff($today)->days;
           </div>
 
           <div class="map_grid_property">
+            <label for="map_grid_auto">Grid 1 inch auto calculator</label>
             <div id="map_grid_auto">
               <div class="grid_setting">
                 <label for="screen_x">Width Pixels</label>

@@ -152,7 +152,26 @@ li.attached-block
     color: white !important
     text-decoration: none
 
-.resource, .node-type-resource
+.resources
+  &.frontpage
+    .view-content
+      display: flex
+      flex-flow: row
+      flex-wrap: wrap
+    .resource
+      .resource-title
+        color: white
+        background: black
+        padding: $zen-gutter-width
+        clear: both
+        text-align: center
+      .resource-image
+        &, img
+          padding: 0
+          margin: 0 auto
+          display: block
+
+.library .resource, .node-type-resource
   .resource-title
     text-transform: uppercase
   .resource-image
