@@ -2017,6 +2017,12 @@ li.attached-block {
   text-transform: uppercase;
 }
 /* line 158, ../sass/_theme.sass */
+.resource .resource-image, .node-type-resource .resource-image {
+  float: none;
+  clear: both;
+  text-align: center;
+}
+/* line 162, ../sass/_theme.sass */
 .resource .map-author, .node-type-resource .map-author {
   font-size: 10px;
   display: block;
@@ -2025,7 +2031,7 @@ li.attached-block {
   position: relative;
   padding: 0 0 0 30px;
 }
-/* line 165, ../sass/_theme.sass */
+/* line 169, ../sass/_theme.sass */
 .resource .map-author:before, .node-type-resource .map-author:before {
   position: absolute;
   display: block;
@@ -2035,7 +2041,7 @@ li.attached-block {
   font-family: "FontAwesome";
   content: "\f007";
 }
-/* line 174, ../sass/_theme.sass */
+/* line 178, ../sass/_theme.sass */
 .resource .resource-type, .node-type-resource .resource-type {
   font-size: 10px;
   text-transform: uppercase;
@@ -2043,7 +2049,7 @@ li.attached-block {
   line-height: 20px;
   padding: 0 0 0 30px;
 }
-/* line 180, ../sass/_theme.sass */
+/* line 184, ../sass/_theme.sass */
 .resource .resource-type:before, .node-type-resource .resource-type:before {
   position: absolute;
   display: block;
@@ -2052,19 +2058,19 @@ li.attached-block {
   left: 0;
   font-family: "FontAwesome";
 }
-/* line 188, ../sass/_theme.sass */
+/* line 192, ../sass/_theme.sass */
 .resource .resource-type.animated:before, .node-type-resource .resource-type.animated:before {
   content: "\f03d";
 }
-/* line 191, ../sass/_theme.sass */
+/* line 195, ../sass/_theme.sass */
 .resource .resource-type.static:before, .node-type-resource .resource-type.static:before {
   content: "\f03e";
 }
-/* line 194, ../sass/_theme.sass */
+/* line 198, ../sass/_theme.sass */
 .resource .resource-link, .node-type-resource .resource-link {
   margin: 0 0 50px 0;
 }
-/* line 196, ../sass/_theme.sass */
+/* line 200, ../sass/_theme.sass */
 .resource .resource-link a, .node-type-resource .resource-link a {
   display: block;
   text-align: center;
@@ -2074,25 +2080,25 @@ li.attached-block {
   font-size: 20px;
   border: 1px solid black;
 }
-/* line 204, ../sass/_theme.sass */
+/* line 208, ../sass/_theme.sass */
 .resource .resource-link a:hover, .node-type-resource .resource-link a:hover {
   color: grey;
   border-color: grey;
 }
-/* line 207, ../sass/_theme.sass */
+/* line 211, ../sass/_theme.sass */
 .resource .resource-tags, .node-type-resource .resource-tags {
   position: relative;
   display: block;
   padding: 0 0 0 30px;
   text-transform: uppercase;
 }
-/* line 208, ../sass/_theme.sass */
+/* line 212, ../sass/_theme.sass */
 .resource .resource-tags ul, .resource .resource-tags ul li, .resource .resource-tags .item-list, .node-type-resource .resource-tags ul, .node-type-resource .resource-tags ul li, .node-type-resource .resource-tags .item-list {
   margin: 0;
   padding: 0;
   display: inline;
 }
-/* line 216, ../sass/_theme.sass */
+/* line 220, ../sass/_theme.sass */
 .resource .resource-tags:before, .node-type-resource .resource-tags:before {
   position: absolute;
   display: block;
@@ -2102,7 +2108,7 @@ li.attached-block {
   font-family: "FontAwesome";
   content: "\f02c";
 }
-/* line 224, ../sass/_theme.sass */
+/* line 228, ../sass/_theme.sass */
 .resource .resource-tags a, .node-type-resource .resource-tags a {
   display: inline-block;
   text-transform: uppercase;
@@ -2112,7 +2118,7 @@ li.attached-block {
   padding: 0;
   margin: 0;
 }
-/* line 232, ../sass/_theme.sass */
+/* line 236, ../sass/_theme.sass */
 .resource .resource-tags a:first-child, .node-type-resource .resource-tags a:first-child {
   margin: 0;
 }
@@ -2126,7 +2132,7 @@ li.attached-block {
 .node-resource:after {
   clear: both;
 }
-/* line 236, ../sass/_theme.sass */
+/* line 240, ../sass/_theme.sass */
 .node-resource .resource-type {
   float: left;
   width: 100%;
@@ -2134,7 +2140,7 @@ li.attached-block {
   margin-right: -100%;
   margin: 0 0 10px 0;
 }
-/* line 239, ../sass/_theme.sass */
+/* line 243, ../sass/_theme.sass */
 .node-resource .map-author {
   float: left;
   width: 43.75%;
@@ -2142,14 +2148,14 @@ li.attached-block {
   margin-right: -43.75%;
   clear: left;
 }
-/* line 242, ../sass/_theme.sass */
+/* line 246, ../sass/_theme.sass */
 .node-resource .resource-links {
   float: left;
   width: 31.25%;
   margin-left: 62.5%;
   margin-right: -93.75%;
 }
-/* line 244, ../sass/_theme.sass */
+/* line 248, ../sass/_theme.sass */
 .node-resource .resource-tags {
   float: left;
   width: 25%;
@@ -2157,7 +2163,7 @@ li.attached-block {
   margin-right: -56.25%;
   clear: right;
 }
-/* line 247, ../sass/_theme.sass */
+/* line 251, ../sass/_theme.sass */
 .node-resource .rate-widget {
   float: left;
   width: 18.75%;
@@ -2166,35 +2172,35 @@ li.attached-block {
   clear: left;
 }
 
-/* line 252, ../sass/_theme.sass */
+/* line 256, ../sass/_theme.sass */
 .artist .artist-image, .node-type-artist .artist-image {
   display: block;
   margin: 0 auto;
   text-align: center;
 }
-/* line 256, ../sass/_theme.sass */
+/* line 260, ../sass/_theme.sass */
 .artist .artist-copy, .node-type-artist .artist-copy {
   font-size: 16px;
   line-height: 24px;
   margin: 0 0 50px 0;
 }
-/* line 260, ../sass/_theme.sass */
+/* line 264, ../sass/_theme.sass */
 .artist .artist-links, .node-type-artist .artist-links {
   margin-bottom: 20px;
 }
-/* line 262, ../sass/_theme.sass */
+/* line 266, ../sass/_theme.sass */
 .artist .artist-links, .node-type-artist .artist-links {
   font-family: sans-serif;
   text-transform: uppercase;
   font-size: 10px;
 }
-/* line 266, ../sass/_theme.sass */
+/* line 270, ../sass/_theme.sass */
 .artist .artist-links ul, .node-type-artist .artist-links ul {
   margin: 0;
   padding: 0;
   list-style: none;
 }
-/* line 270, ../sass/_theme.sass */
+/* line 274, ../sass/_theme.sass */
 .artist .artist-links ul li, .node-type-artist .artist-links ul li {
   margin: 0;
   padding: 0;
@@ -2202,27 +2208,27 @@ li.attached-block {
   margin: 0 20px;
   display: inline-block;
 }
-/* line 276, ../sass/_theme.sass */
+/* line 280, ../sass/_theme.sass */
 .artist .artist-links ul li a, .node-type-artist .artist-links ul li a {
   display: block;
   border: 1px solid black;
   padding: 20px;
 }
-/* line 280, ../sass/_theme.sass */
+/* line 284, ../sass/_theme.sass */
 .artist .artist-links ul li:first-child, .node-type-artist .artist-links ul li:first-child {
   margin-left: 0;
 }
-/* line 282, ../sass/_theme.sass */
+/* line 286, ../sass/_theme.sass */
 .artist .artist-links ul li:last-child, .node-type-artist .artist-links ul li:last-child {
   margin-right: 0;
 }
-/* line 284, ../sass/_theme.sass */
+/* line 288, ../sass/_theme.sass */
 .artist .artist-tags, .node-type-artist .artist-tags {
   position: relative;
   padding: 0 0 0 20px;
   margin: 0;
 }
-/* line 288, ../sass/_theme.sass */
+/* line 292, ../sass/_theme.sass */
 .artist .artist-tags:before, .node-type-artist .artist-tags:before {
   position: absolute;
   display: block;
@@ -2232,7 +2238,7 @@ li.attached-block {
   font-family: "FontAwesome";
   content: "\f02c";
 }
-/* line 296, ../sass/_theme.sass */
+/* line 300, ../sass/_theme.sass */
 .artist .artist-tags a, .node-type-artist .artist-tags a {
   display: inline-block;
   text-transform: uppercase;
@@ -2241,12 +2247,12 @@ li.attached-block {
   line-height: 20px;
   padding: 0 20px;
 }
-/* line 303, ../sass/_theme.sass */
+/* line 307, ../sass/_theme.sass */
 .artist .artist-tags a:first-child, .node-type-artist .artist-tags a:first-child {
   margin: 0;
 }
 
-/* line 306, ../sass/_theme.sass */
+/* line 310, ../sass/_theme.sass */
 .node-artist .artist-links {
   clear: left;
   float: left;
@@ -2254,21 +2260,21 @@ li.attached-block {
   margin-left: 0%;
   margin-right: -18.75%;
 }
-/* line 309, ../sass/_theme.sass */
+/* line 313, ../sass/_theme.sass */
 .node-artist .artist-image {
   float: left;
   width: 25%;
   margin-left: 12.5%;
   margin-right: -37.5%;
 }
-/* line 311, ../sass/_theme.sass */
+/* line 315, ../sass/_theme.sass */
 .node-artist .artist-copy {
   float: left;
   width: 43.75%;
   margin-left: 50%;
   margin-right: -93.75%;
 }
-/* line 313, ../sass/_theme.sass */
+/* line 317, ../sass/_theme.sass */
 .node-artist .artist-rating {
   float: left;
   width: 37.5%;
@@ -2276,7 +2282,7 @@ li.attached-block {
   margin-right: -37.5%;
   clear: left;
 }
-/* line 316, ../sass/_theme.sass */
+/* line 320, ../sass/_theme.sass */
 .node-artist .artist-tags {
   float: left;
   width: 50%;
@@ -2284,11 +2290,11 @@ li.attached-block {
   margin-right: -100%;
   clear: left;
 }
-/* line 319, ../sass/_theme.sass */
+/* line 323, ../sass/_theme.sass */
 .node-artist #block-views-library-author-maps-block {
   clear: both;
 }
-/* line 321, ../sass/_theme.sass */
+/* line 325, ../sass/_theme.sass */
 .node-artist .rate-widget {
   float: left;
   width: 37.5%;
@@ -2297,16 +2303,16 @@ li.attached-block {
   clear: left;
 }
 
-/* line 326, ../sass/_theme.sass */
+/* line 330, ../sass/_theme.sass */
 #block-views-artists-artist-block .artist {
   clear: both;
 }
-/* line 328, ../sass/_theme.sass */
+/* line 332, ../sass/_theme.sass */
 #block-views-artists-artist-block .artist .artist-name {
   font-size: 30px;
   line-height: 30px;
 }
-/* line 331, ../sass/_theme.sass */
+/* line 335, ../sass/_theme.sass */
 #block-views-artists-artist-block .artist .rate-widget {
   float: right;
   width: 18.75%;
@@ -2314,19 +2320,19 @@ li.attached-block {
   margin-left: -18.75%;
 }
 
-/* line 339, ../sass/_theme.sass */
+/* line 343, ../sass/_theme.sass */
 .library .views-exposed-form label {
   font-weight: normal;
   text-transform: uppercase;
 }
-/* line 342, ../sass/_theme.sass */
+/* line 346, ../sass/_theme.sass */
 .library .views-exposed-form input[type=text] {
   font-size: 20px;
   line-height: 30px;
   padding: 20px;
   border: 1px solid black;
 }
-/* line 347, ../sass/_theme.sass */
+/* line 351, ../sass/_theme.sass */
 .library .views-exposed-form input[type='submit'], .library .views-exposed-form input[type='button'] {
   font-size: 20px;
   line-height: 30px;
@@ -2335,12 +2341,12 @@ li.attached-block {
   border: 1px solid black;
   padding: 20px;
 }
-/* line 354, ../sass/_theme.sass */
+/* line 358, ../sass/_theme.sass */
 .library .views-exposed-form input[type='submit']:hover, .library .views-exposed-form input[type='button']:hover {
   background: black;
   color: white;
 }
-/* line 358, ../sass/_theme.sass */
+/* line 362, ../sass/_theme.sass */
 .library .resource-group {
   position: relative;
   display: flex;
@@ -2352,33 +2358,33 @@ li.attached-block {
   margin: 20px 0;
   border: none;
 }
-/* line 368, ../sass/_theme.sass */
+/* line 372, ../sass/_theme.sass */
 .library .resource-group-title {
   width: 100%;
   text-transform: uppercase;
   border-bottom: 1px solid black;
   margin-bottom: 40px;
 }
-/* line 373, ../sass/_theme.sass */
+/* line 377, ../sass/_theme.sass */
 .library .resource {
   margin: 0 20px 20px 20px;
   padding: 20px;
 }
-/* line 377, ../sass/_theme.sass */
+/* line 381, ../sass/_theme.sass */
 .library .resource.views-row-odd, .library .resource.views-row-odd a {
   color: white;
   background: black;
 }
-/* line 381, ../sass/_theme.sass */
+/* line 385, ../sass/_theme.sass */
 .library .resource.views-row-odd a:hover {
   color: grey;
 }
-/* line 383, ../sass/_theme.sass */
+/* line 387, ../sass/_theme.sass */
 .library .rate-widget {
   font-size: 20px;
 }
 
-/* line 386, ../sass/_theme.sass */
+/* line 390, ../sass/_theme.sass */
 .rate-widget {
   position: relative;
   font-size: 60px;
@@ -2386,7 +2392,7 @@ li.attached-block {
   margin: 0 0 20px 0;
   padding: 0 0 0 50px;
 }
-/* line 392, ../sass/_theme.sass */
+/* line 396, ../sass/_theme.sass */
 .rate-widget:before {
   position: absolute;
   display: block;
@@ -2396,7 +2402,7 @@ li.attached-block {
   font-family: "FontAwesome";
   content: "\f005";
 }
-/* line 400, ../sass/_theme.sass */
+/* line 404, ../sass/_theme.sass */
 .rate-widget .rate-button {
   display: block;
   clear: right;
@@ -2410,7 +2416,7 @@ li.attached-block {
   width: 100px;
   position: relative;
 }
-/* line 412, ../sass/_theme.sass */
+/* line 416, ../sass/_theme.sass */
 .rate-widget .rate-button:before {
   position: absolute;
   display: block;
@@ -2419,32 +2425,32 @@ li.attached-block {
   left: 10px;
   font-family: "Font Awesome 5 Free";
 }
-/* line 421, ../sass/_theme.sass */
+/* line 425, ../sass/_theme.sass */
 .rate-widget .rate-button.button1:before {
   content: "\f164";
 }
-/* line 424, ../sass/_theme.sass */
+/* line 428, ../sass/_theme.sass */
 .rate-widget .rate-button.button2:before {
   content: "\f165";
 }
-/* line 426, ../sass/_theme.sass */
+/* line 430, ../sass/_theme.sass */
 .rate-widget .rate-button:first-child {
   margin-top: 0;
 }
-/* line 428, ../sass/_theme.sass */
+/* line 432, ../sass/_theme.sass */
 .rate-widget .rate-button:nth-child(2) {
   margin-bottom: 0;
 }
-/* line 430, ../sass/_theme.sass */
+/* line 434, ../sass/_theme.sass */
 .rate-widget .rate-button.highlighted {
   background: black;
   color: white;
 }
-/* line 433, ../sass/_theme.sass */
+/* line 437, ../sass/_theme.sass */
 .library .rate-widget .rate-button {
   display: none;
 }
-/* line 435, ../sass/_theme.sass */
+/* line 439, ../sass/_theme.sass */
 .rate-widget .rate-description {
   display: block;
   clear: both;
@@ -2454,23 +2460,23 @@ li.attached-block {
   text-align: center;
   padding: 20px;
 }
-/* line 443, ../sass/_theme.sass */
+/* line 447, ../sass/_theme.sass */
 .library .rate-widget .rate-description {
   display: none;
 }
 
-/* line 446, ../sass/_theme.sass */
+/* line 450, ../sass/_theme.sass */
 .flag-outer {
   clear: both;
   float: none;
   position: relative;
 }
 
-/* line 451, ../sass/_theme.sass */
+/* line 455, ../sass/_theme.sass */
 .flag-abuse-node a {
   padding: 0 0 0 30px;
 }
-/* line 453, ../sass/_theme.sass */
+/* line 457, ../sass/_theme.sass */
 .flag-abuse-node a:before {
   position: absolute;
   display: block;
@@ -2481,31 +2487,31 @@ li.attached-block {
   content: "\f024";
 }
 
-/* line 462, ../sass/_theme.sass */
+/* line 466, ../sass/_theme.sass */
 .edit-submit-library {
   font-family: "FontAwesome";
 }
 
 /* these apply to auto-completing form fields */
-/* line 468, ../sass/_theme.sass */
+/* line 472, ../sass/_theme.sass */
 html.js input.form-autocomplete {
   background-image: url(../images/throbber.gif);
   background-position: 100% 0px;
   background-repeat: no-repeat;
 }
-/* line 472, ../sass/_theme.sass */
+/* line 476, ../sass/_theme.sass */
 html.js input.throbbing {
   background-position: 100% -16px;
 }
 
 /* these apply to all ajax progresses */
-/* line 477, ../sass/_theme.sass */
+/* line 481, ../sass/_theme.sass */
 .ajax-progress {
   display: inline-block;
   *display: inline;
   *zoom: 1;
 }
-/* line 481, ../sass/_theme.sass */
+/* line 485, ../sass/_theme.sass */
 .ajax-progress .throbber {
   background: transparent url(../images/throbber.gif) no-repeat 0px 0px;
   float: left;
@@ -2514,13 +2520,13 @@ html.js input.throbbing {
   margin: 2px;
 }
 
-/* line 488, ../sass/_theme.sass */
+/* line 492, ../sass/_theme.sass */
 .flag-waiting .flag-throbber {
   background: url(../images/throbber-active.gif) no-repeat right center;
   padding-right: 13px;
 }
 
-/* line 495, ../sass/_theme.sass */
+/* line 499, ../sass/_theme.sass */
 #comparetable {
   width: 100%;
   table-layout: fixed;
@@ -2528,27 +2534,27 @@ html.js input.throbbing {
   margin: 4em 0;
   border-collapse: collapse;
 }
-/* line 501, ../sass/_theme.sass */
+/* line 505, ../sass/_theme.sass */
 #comparetable tr {
   background: transparent !important;
 }
-/* line 503, ../sass/_theme.sass */
+/* line 507, ../sass/_theme.sass */
 #comparetable td, #comparetable th {
   padding: 20px;
   text-align: center;
 }
-/* line 506, ../sass/_theme.sass */
+/* line 510, ../sass/_theme.sass */
 #comparetable td.rowTitle {
   text-align: left;
 }
 
-/* line 509, ../sass/_theme.sass */
+/* line 513, ../sass/_theme.sass */
 .blank {
   background: none !important;
   border: none !important;
 }
 
-/* line 514, ../sass/_theme.sass */
+/* line 518, ../sass/_theme.sass */
 .clean th {
   background-color: #dfdfdf;
   font-size: 26px;
@@ -2558,23 +2564,23 @@ html.js input.throbbing {
   text-shadow: 0 1px 0 #e0ecf7;
   border: 1px solid #bbbbbb;
 }
-/* line 522, ../sass/_theme.sass */
+/* line 526, ../sass/_theme.sass */
 .clean td {
   background-color: #f0f1f1;
   border: 1px solid #c8d6e2;
 }
-/* line 525, ../sass/_theme.sass */
+/* line 529, ../sass/_theme.sass */
 .clean td.rowTitle {
   font-size: 20px;
   font-weight: 400;
 }
 
-/* line 529, ../sass/_theme.sass */
+/* line 533, ../sass/_theme.sass */
 #block-menu-menu-footer {
   clear: left;
   float: none;
 }
-/* line 533, ../sass/_theme.sass */
+/* line 537, ../sass/_theme.sass */
 #block-menu-menu-footer ul.menu, #block-menu-menu-footer ul.menu li {
   margin: 0;
   padding: 0;
@@ -2582,14 +2588,14 @@ html.js input.throbbing {
   list-style-type: none;
   display: inline;
 }
-/* line 540, ../sass/_theme.sass */
+/* line 544, ../sass/_theme.sass */
 #block-menu-menu-footer ul.menu li a {
   display: inline-block;
   padding: 20px;
   margin: 0;
   text-align: left;
 }
-/* line 545, ../sass/_theme.sass */
+/* line 549, ../sass/_theme.sass */
 #block-menu-menu-footer ul.menu li a:hover {
   background: black;
   color: white;
