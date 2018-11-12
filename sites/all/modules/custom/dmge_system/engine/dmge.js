@@ -2135,6 +2135,8 @@
       },
       dataType: 'json',
       success: function(response) {
+        console.log('success');
+        console.log(response);
         let library = $('#library');
         if (library.dialog('isOpen')) {
           $('#library .views').fadeOut();
