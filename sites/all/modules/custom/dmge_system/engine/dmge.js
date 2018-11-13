@@ -307,7 +307,6 @@
   map_canvas.on('selection:updated', function(e) {selected(e);});
 
   map_canvas.on('object:added', function(e) {
-    // check map size vs object size and adjust canvas to contain.
     check_object_vs_map(e);
     let id, from_id, row, new_row;
 
@@ -2135,11 +2134,10 @@
       },
       dataType: 'json',
       success: function(response) {
-        console.log('success');
         console.log(response);
         let library = $('#library');
         if (library.dialog('isOpen')) {
-          $('#library .views').fadeOut();
+          library.fadeOut();
         }
         if (response[1] !== undefined) {
           // we have data!
@@ -2149,10 +2147,11 @@
         }
       },
       error: function(response) {
-        console.log(response);
+        console.log('There was an error retrieving maps.');
+        // console.log(response);
       },
       complete: function(response) {
-        console.log(response);
+        // console.log(response);
       }
     });
   });
