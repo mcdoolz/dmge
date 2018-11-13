@@ -2021,36 +2021,41 @@ li.attached-block {
   align-content: center;
   justify-content: center;
 }
-/* line 165, ../sass/_theme.sass */
+/* line 164, ../sass/_theme.sass */
+.resources.frontpage .resource {
+  margin: 20px;
+  padding: 0;
+}
+/* line 167, ../sass/_theme.sass */
 .resources.frontpage .resource .resource-title {
   padding: 20px;
   clear: both;
 }
-/* line 168, ../sass/_theme.sass */
+/* line 170, ../sass/_theme.sass */
 .resources.frontpage .resource .resource-title, .resources.frontpage .resource .resource-title a {
   display: block;
   text-align: center;
   color: white;
   background: black;
 }
-/* line 174, ../sass/_theme.sass */
+/* line 176, ../sass/_theme.sass */
 .resources.frontpage .resource .resource-image, .resources.frontpage .resource .resource-image img {
   padding: 0;
   margin: 0 auto;
   display: block;
 }
 
-/* line 180, ../sass/_theme.sass */
+/* line 182, ../sass/_theme.sass */
 .library .resource .resource-title, .node-type-resource .resource-title {
   text-transform: uppercase;
 }
-/* line 182, ../sass/_theme.sass */
+/* line 184, ../sass/_theme.sass */
 .library .resource .resource-image, .node-type-resource .resource-image {
   float: none;
   clear: both;
   text-align: center;
 }
-/* line 186, ../sass/_theme.sass */
+/* line 188, ../sass/_theme.sass */
 .library .resource .map-author, .node-type-resource .map-author {
   font-size: 10px;
   display: block;
@@ -2059,7 +2064,7 @@ li.attached-block {
   position: relative;
   padding: 0 0 0 30px;
 }
-/* line 193, ../sass/_theme.sass */
+/* line 195, ../sass/_theme.sass */
 .library .resource .map-author:before, .node-type-resource .map-author:before {
   position: absolute;
   display: block;
@@ -2069,7 +2074,7 @@ li.attached-block {
   font-family: "FontAwesome";
   content: "\f007";
 }
-/* line 202, ../sass/_theme.sass */
+/* line 204, ../sass/_theme.sass */
 .library .resource .resource-type, .node-type-resource .resource-type {
   font-size: 10px;
   text-transform: uppercase;
@@ -2077,7 +2082,7 @@ li.attached-block {
   line-height: 20px;
   padding: 0 0 0 30px;
 }
-/* line 208, ../sass/_theme.sass */
+/* line 210, ../sass/_theme.sass */
 .library .resource .resource-type:before, .node-type-resource .resource-type:before {
   position: absolute;
   display: block;
@@ -2086,19 +2091,19 @@ li.attached-block {
   left: 0;
   font-family: "FontAwesome";
 }
-/* line 216, ../sass/_theme.sass */
+/* line 218, ../sass/_theme.sass */
 .library .resource .resource-type.animated:before, .node-type-resource .resource-type.animated:before {
   content: "\f03d";
 }
-/* line 219, ../sass/_theme.sass */
+/* line 221, ../sass/_theme.sass */
 .library .resource .resource-type.static:before, .node-type-resource .resource-type.static:before {
   content: "\f03e";
 }
-/* line 222, ../sass/_theme.sass */
+/* line 224, ../sass/_theme.sass */
 .library .resource .resource-link, .node-type-resource .resource-link {
   margin: 0 0 50px 0;
 }
-/* line 224, ../sass/_theme.sass */
+/* line 226, ../sass/_theme.sass */
 .library .resource .resource-link a, .node-type-resource .resource-link a {
   display: block;
   text-align: center;
@@ -2108,25 +2113,25 @@ li.attached-block {
   font-size: 20px;
   border: 1px solid black;
 }
-/* line 232, ../sass/_theme.sass */
+/* line 234, ../sass/_theme.sass */
 .library .resource .resource-link a:hover, .node-type-resource .resource-link a:hover {
   color: grey;
   border-color: grey;
 }
-/* line 235, ../sass/_theme.sass */
+/* line 237, ../sass/_theme.sass */
 .library .resource .resource-tags, .node-type-resource .resource-tags {
   position: relative;
   display: block;
   padding: 0 0 0 30px;
   text-transform: uppercase;
 }
-/* line 236, ../sass/_theme.sass */
+/* line 238, ../sass/_theme.sass */
 .library .resource .resource-tags ul, .library .resource .resource-tags ul li, .library .resource .resource-tags .item-list, .node-type-resource .resource-tags ul, .node-type-resource .resource-tags ul li, .node-type-resource .resource-tags .item-list {
   margin: 0;
   padding: 0;
   display: inline;
 }
-/* line 244, ../sass/_theme.sass */
+/* line 246, ../sass/_theme.sass */
 .library .resource .resource-tags:before, .node-type-resource .resource-tags:before {
   position: absolute;
   display: block;
@@ -2136,7 +2141,7 @@ li.attached-block {
   font-family: "FontAwesome";
   content: "\f02c";
 }
-/* line 252, ../sass/_theme.sass */
+/* line 254, ../sass/_theme.sass */
 .library .resource .resource-tags a, .node-type-resource .resource-tags a {
   display: inline-block;
   text-transform: uppercase;
@@ -2146,7 +2151,7 @@ li.attached-block {
   padding: 0;
   margin: 0;
 }
-/* line 260, ../sass/_theme.sass */
+/* line 262, ../sass/_theme.sass */
 .library .resource .resource-tags a:first-child, .node-type-resource .resource-tags a:first-child {
   margin: 0;
 }
@@ -2160,7 +2165,7 @@ li.attached-block {
 .node-resource:after {
   clear: both;
 }
-/* line 264, ../sass/_theme.sass */
+/* line 266, ../sass/_theme.sass */
 .node-resource .resource-type {
   float: left;
   width: 100%;
@@ -2168,7 +2173,7 @@ li.attached-block {
   margin-right: -100%;
   margin: 0 0 10px 0;
 }
-/* line 267, ../sass/_theme.sass */
+/* line 269, ../sass/_theme.sass */
 .node-resource .map-author {
   float: left;
   width: 43.75%;
@@ -2176,14 +2181,14 @@ li.attached-block {
   margin-right: -43.75%;
   clear: left;
 }
-/* line 270, ../sass/_theme.sass */
+/* line 272, ../sass/_theme.sass */
 .node-resource .resource-links {
   float: left;
   width: 31.25%;
   margin-left: 62.5%;
   margin-right: -93.75%;
 }
-/* line 272, ../sass/_theme.sass */
+/* line 274, ../sass/_theme.sass */
 .node-resource .resource-tags {
   float: left;
   width: 25%;
@@ -2191,7 +2196,7 @@ li.attached-block {
   margin-right: -56.25%;
   clear: right;
 }
-/* line 275, ../sass/_theme.sass */
+/* line 277, ../sass/_theme.sass */
 .node-resource .rate-widget {
   float: left;
   width: 18.75%;
@@ -2200,35 +2205,35 @@ li.attached-block {
   clear: left;
 }
 
-/* line 280, ../sass/_theme.sass */
+/* line 282, ../sass/_theme.sass */
 .artist .artist-image, .node-type-artist .artist-image {
   display: block;
   margin: 0 auto;
   text-align: center;
 }
-/* line 284, ../sass/_theme.sass */
+/* line 286, ../sass/_theme.sass */
 .artist .artist-copy, .node-type-artist .artist-copy {
   font-size: 16px;
   line-height: 24px;
   margin: 0 0 50px 0;
 }
-/* line 288, ../sass/_theme.sass */
+/* line 290, ../sass/_theme.sass */
 .artist .artist-links, .node-type-artist .artist-links {
   margin-bottom: 20px;
 }
-/* line 290, ../sass/_theme.sass */
+/* line 292, ../sass/_theme.sass */
 .artist .artist-links, .node-type-artist .artist-links {
   font-family: sans-serif;
   text-transform: uppercase;
   font-size: 10px;
 }
-/* line 294, ../sass/_theme.sass */
+/* line 296, ../sass/_theme.sass */
 .artist .artist-links ul, .node-type-artist .artist-links ul {
   margin: 0;
   padding: 0;
   list-style: none;
 }
-/* line 298, ../sass/_theme.sass */
+/* line 300, ../sass/_theme.sass */
 .artist .artist-links ul li, .node-type-artist .artist-links ul li {
   margin: 0;
   padding: 0;
@@ -2236,27 +2241,27 @@ li.attached-block {
   margin: 0 20px;
   display: inline-block;
 }
-/* line 304, ../sass/_theme.sass */
+/* line 306, ../sass/_theme.sass */
 .artist .artist-links ul li a, .node-type-artist .artist-links ul li a {
   display: block;
   border: 1px solid black;
   padding: 20px;
 }
-/* line 308, ../sass/_theme.sass */
+/* line 310, ../sass/_theme.sass */
 .artist .artist-links ul li:first-child, .node-type-artist .artist-links ul li:first-child {
   margin-left: 0;
 }
-/* line 310, ../sass/_theme.sass */
+/* line 312, ../sass/_theme.sass */
 .artist .artist-links ul li:last-child, .node-type-artist .artist-links ul li:last-child {
   margin-right: 0;
 }
-/* line 312, ../sass/_theme.sass */
+/* line 314, ../sass/_theme.sass */
 .artist .artist-tags, .node-type-artist .artist-tags {
   position: relative;
   padding: 0 0 0 20px;
   margin: 0;
 }
-/* line 316, ../sass/_theme.sass */
+/* line 318, ../sass/_theme.sass */
 .artist .artist-tags:before, .node-type-artist .artist-tags:before {
   position: absolute;
   display: block;
@@ -2266,7 +2271,7 @@ li.attached-block {
   font-family: "FontAwesome";
   content: "\f02c";
 }
-/* line 324, ../sass/_theme.sass */
+/* line 326, ../sass/_theme.sass */
 .artist .artist-tags a, .node-type-artist .artist-tags a {
   display: inline-block;
   text-transform: uppercase;
@@ -2275,12 +2280,12 @@ li.attached-block {
   line-height: 20px;
   padding: 0 20px;
 }
-/* line 331, ../sass/_theme.sass */
+/* line 333, ../sass/_theme.sass */
 .artist .artist-tags a:first-child, .node-type-artist .artist-tags a:first-child {
   margin: 0;
 }
 
-/* line 334, ../sass/_theme.sass */
+/* line 336, ../sass/_theme.sass */
 .node-artist .artist-links {
   clear: left;
   float: left;
@@ -2288,21 +2293,21 @@ li.attached-block {
   margin-left: 0%;
   margin-right: -18.75%;
 }
-/* line 337, ../sass/_theme.sass */
+/* line 339, ../sass/_theme.sass */
 .node-artist .artist-image {
   float: left;
   width: 25%;
   margin-left: 12.5%;
   margin-right: -37.5%;
 }
-/* line 339, ../sass/_theme.sass */
+/* line 341, ../sass/_theme.sass */
 .node-artist .artist-copy {
   float: left;
   width: 43.75%;
   margin-left: 50%;
   margin-right: -93.75%;
 }
-/* line 341, ../sass/_theme.sass */
+/* line 343, ../sass/_theme.sass */
 .node-artist .artist-rating {
   float: left;
   width: 37.5%;
@@ -2310,7 +2315,7 @@ li.attached-block {
   margin-right: -37.5%;
   clear: left;
 }
-/* line 344, ../sass/_theme.sass */
+/* line 346, ../sass/_theme.sass */
 .node-artist .artist-tags {
   float: left;
   width: 50%;
@@ -2318,11 +2323,11 @@ li.attached-block {
   margin-right: -100%;
   clear: left;
 }
-/* line 347, ../sass/_theme.sass */
+/* line 349, ../sass/_theme.sass */
 .node-artist #block-views-library-author-maps-block {
   clear: both;
 }
-/* line 349, ../sass/_theme.sass */
+/* line 351, ../sass/_theme.sass */
 .node-artist .rate-widget {
   float: left;
   width: 37.5%;
@@ -2331,16 +2336,16 @@ li.attached-block {
   clear: left;
 }
 
-/* line 354, ../sass/_theme.sass */
+/* line 356, ../sass/_theme.sass */
 #block-views-artists-artist-block .artist {
   clear: both;
 }
-/* line 356, ../sass/_theme.sass */
+/* line 358, ../sass/_theme.sass */
 #block-views-artists-artist-block .artist .artist-name {
   font-size: 30px;
   line-height: 30px;
 }
-/* line 359, ../sass/_theme.sass */
+/* line 361, ../sass/_theme.sass */
 #block-views-artists-artist-block .artist .rate-widget {
   float: right;
   width: 18.75%;
@@ -2348,19 +2353,19 @@ li.attached-block {
   margin-left: -18.75%;
 }
 
-/* line 367, ../sass/_theme.sass */
+/* line 369, ../sass/_theme.sass */
 .library .views-exposed-form label {
   font-weight: normal;
   text-transform: uppercase;
 }
-/* line 370, ../sass/_theme.sass */
+/* line 372, ../sass/_theme.sass */
 .library .views-exposed-form input[type=text] {
   font-size: 20px;
   line-height: 30px;
   padding: 20px;
   border: 1px solid black;
 }
-/* line 375, ../sass/_theme.sass */
+/* line 377, ../sass/_theme.sass */
 .library .views-exposed-form input[type='submit'], .library .views-exposed-form input[type='button'] {
   font-size: 20px;
   line-height: 30px;
@@ -2369,12 +2374,12 @@ li.attached-block {
   border: 1px solid black;
   padding: 20px;
 }
-/* line 382, ../sass/_theme.sass */
+/* line 384, ../sass/_theme.sass */
 .library .views-exposed-form input[type='submit']:hover, .library .views-exposed-form input[type='button']:hover {
   background: black;
   color: white;
 }
-/* line 386, ../sass/_theme.sass */
+/* line 388, ../sass/_theme.sass */
 .library .resource-group {
   position: relative;
   display: flex;
@@ -2386,33 +2391,33 @@ li.attached-block {
   margin: 20px 0;
   border: none;
 }
-/* line 396, ../sass/_theme.sass */
+/* line 398, ../sass/_theme.sass */
 .library .resource-group-title {
   width: 100%;
   text-transform: uppercase;
   border-bottom: 1px solid black;
   margin-bottom: 40px;
 }
-/* line 401, ../sass/_theme.sass */
+/* line 403, ../sass/_theme.sass */
 .library .resource {
   margin: 0 20px 20px 20px;
   padding: 20px;
 }
-/* line 405, ../sass/_theme.sass */
+/* line 407, ../sass/_theme.sass */
 .library .resource.views-row-odd, .library .resource.views-row-odd a {
   color: white;
   background: black;
 }
-/* line 409, ../sass/_theme.sass */
+/* line 411, ../sass/_theme.sass */
 .library .resource.views-row-odd a:hover {
   color: grey;
 }
-/* line 411, ../sass/_theme.sass */
+/* line 413, ../sass/_theme.sass */
 .library .rate-widget {
   font-size: 20px;
 }
 
-/* line 414, ../sass/_theme.sass */
+/* line 416, ../sass/_theme.sass */
 .rate-widget {
   position: relative;
   font-size: 60px;
@@ -2420,7 +2425,7 @@ li.attached-block {
   margin: 0 0 20px 0;
   padding: 0 0 0 50px;
 }
-/* line 420, ../sass/_theme.sass */
+/* line 422, ../sass/_theme.sass */
 .rate-widget:before {
   position: absolute;
   display: block;
@@ -2430,7 +2435,7 @@ li.attached-block {
   font-family: "FontAwesome";
   content: "\f005";
 }
-/* line 428, ../sass/_theme.sass */
+/* line 430, ../sass/_theme.sass */
 .rate-widget .rate-button {
   display: block;
   clear: right;
@@ -2444,7 +2449,7 @@ li.attached-block {
   width: 100px;
   position: relative;
 }
-/* line 440, ../sass/_theme.sass */
+/* line 442, ../sass/_theme.sass */
 .rate-widget .rate-button:before {
   position: absolute;
   display: block;
@@ -2453,32 +2458,32 @@ li.attached-block {
   left: 10px;
   font-family: "Font Awesome 5 Free";
 }
-/* line 449, ../sass/_theme.sass */
+/* line 451, ../sass/_theme.sass */
 .rate-widget .rate-button.button1:before {
   content: "\f164";
 }
-/* line 452, ../sass/_theme.sass */
+/* line 454, ../sass/_theme.sass */
 .rate-widget .rate-button.button2:before {
   content: "\f165";
 }
-/* line 454, ../sass/_theme.sass */
+/* line 456, ../sass/_theme.sass */
 .rate-widget .rate-button:first-child {
   margin-top: 0;
 }
-/* line 456, ../sass/_theme.sass */
+/* line 458, ../sass/_theme.sass */
 .rate-widget .rate-button:nth-child(2) {
   margin-bottom: 0;
 }
-/* line 458, ../sass/_theme.sass */
+/* line 460, ../sass/_theme.sass */
 .rate-widget .rate-button.highlighted {
   background: black;
   color: white;
 }
-/* line 461, ../sass/_theme.sass */
+/* line 463, ../sass/_theme.sass */
 .library .rate-widget .rate-button {
   display: none;
 }
-/* line 463, ../sass/_theme.sass */
+/* line 465, ../sass/_theme.sass */
 .rate-widget .rate-description {
   display: block;
   clear: both;
@@ -2488,23 +2493,23 @@ li.attached-block {
   text-align: center;
   padding: 20px;
 }
-/* line 471, ../sass/_theme.sass */
+/* line 473, ../sass/_theme.sass */
 .library .rate-widget .rate-description {
   display: none;
 }
 
-/* line 474, ../sass/_theme.sass */
+/* line 476, ../sass/_theme.sass */
 .flag-outer {
   clear: both;
   float: none;
   position: relative;
 }
 
-/* line 479, ../sass/_theme.sass */
+/* line 481, ../sass/_theme.sass */
 .flag-abuse-node a {
   padding: 0 0 0 30px;
 }
-/* line 481, ../sass/_theme.sass */
+/* line 483, ../sass/_theme.sass */
 .flag-abuse-node a:before {
   position: absolute;
   display: block;
@@ -2515,31 +2520,31 @@ li.attached-block {
   content: "\f024";
 }
 
-/* line 490, ../sass/_theme.sass */
+/* line 492, ../sass/_theme.sass */
 .edit-submit-library {
   font-family: "FontAwesome";
 }
 
 /* these apply to auto-completing form fields */
-/* line 496, ../sass/_theme.sass */
+/* line 498, ../sass/_theme.sass */
 html.js input.form-autocomplete {
   background-image: url(../images/throbber.gif);
   background-position: 100% 0px;
   background-repeat: no-repeat;
 }
-/* line 500, ../sass/_theme.sass */
+/* line 502, ../sass/_theme.sass */
 html.js input.throbbing {
   background-position: 100% -16px;
 }
 
 /* these apply to all ajax progresses */
-/* line 505, ../sass/_theme.sass */
+/* line 507, ../sass/_theme.sass */
 .ajax-progress {
   display: inline-block;
   *display: inline;
   *zoom: 1;
 }
-/* line 509, ../sass/_theme.sass */
+/* line 511, ../sass/_theme.sass */
 .ajax-progress .throbber {
   background: transparent url(../images/throbber.gif) no-repeat 0px 0px;
   float: left;
@@ -2548,13 +2553,13 @@ html.js input.throbbing {
   margin: 2px;
 }
 
-/* line 516, ../sass/_theme.sass */
+/* line 518, ../sass/_theme.sass */
 .flag-waiting .flag-throbber {
   background: url(../images/throbber-active.gif) no-repeat right center;
   padding-right: 13px;
 }
 
-/* line 523, ../sass/_theme.sass */
+/* line 525, ../sass/_theme.sass */
 #comparetable {
   width: 100%;
   table-layout: fixed;
@@ -2562,27 +2567,27 @@ html.js input.throbbing {
   margin: 4em 0;
   border-collapse: collapse;
 }
-/* line 529, ../sass/_theme.sass */
+/* line 531, ../sass/_theme.sass */
 #comparetable tr {
   background: transparent !important;
 }
-/* line 531, ../sass/_theme.sass */
+/* line 533, ../sass/_theme.sass */
 #comparetable td, #comparetable th {
   padding: 20px;
   text-align: center;
 }
-/* line 534, ../sass/_theme.sass */
+/* line 536, ../sass/_theme.sass */
 #comparetable td.rowTitle {
   text-align: left;
 }
 
-/* line 537, ../sass/_theme.sass */
+/* line 539, ../sass/_theme.sass */
 .blank {
   background: none !important;
   border: none !important;
 }
 
-/* line 542, ../sass/_theme.sass */
+/* line 544, ../sass/_theme.sass */
 .clean th {
   background-color: #dfdfdf;
   font-size: 26px;
@@ -2592,23 +2597,23 @@ html.js input.throbbing {
   text-shadow: 0 1px 0 #e0ecf7;
   border: 1px solid #bbbbbb;
 }
-/* line 550, ../sass/_theme.sass */
+/* line 552, ../sass/_theme.sass */
 .clean td {
   background-color: #f0f1f1;
   border: 1px solid #c8d6e2;
 }
-/* line 553, ../sass/_theme.sass */
+/* line 555, ../sass/_theme.sass */
 .clean td.rowTitle {
   font-size: 20px;
   font-weight: 400;
 }
 
-/* line 557, ../sass/_theme.sass */
+/* line 559, ../sass/_theme.sass */
 #block-menu-menu-footer {
   clear: left;
   float: none;
 }
-/* line 561, ../sass/_theme.sass */
+/* line 563, ../sass/_theme.sass */
 #block-menu-menu-footer ul.menu, #block-menu-menu-footer ul.menu li {
   margin: 0;
   padding: 0;
@@ -2616,14 +2621,14 @@ html.js input.throbbing {
   list-style-type: none;
   display: inline;
 }
-/* line 568, ../sass/_theme.sass */
+/* line 570, ../sass/_theme.sass */
 #block-menu-menu-footer ul.menu li a {
   display: inline-block;
   padding: 20px;
   margin: 0;
   text-align: left;
 }
-/* line 573, ../sass/_theme.sass */
+/* line 575, ../sass/_theme.sass */
 #block-menu-menu-footer ul.menu li a:hover {
   background: black;
   color: white;
