@@ -6,6 +6,7 @@
 # file for more information.
 #
 
+disable_warnings = true
 
 # Change this to :production when ready to deploy the CSS to the live server.
 environment = :development
