@@ -765,7 +765,16 @@
           e.cancelBubble = true;
         }
         break;
-
+      // ccccc
+      case 67:
+        if (e.ctrlKey) {
+          if (e.altKey) {
+            e.cancelBubble = true;
+            e.preventDefault();
+            open_map_catalog();
+          }
+        }
+        break;
       // Ffff
       case 70:
         e.preventDefault();
@@ -2124,6 +2133,21 @@
   });
 
   $('#map_catalog').click(function() {
+    open_map_catalog();
+  });
+
+  function open_map_catalog() {
+    let library = $('#library');
+    if (library.dialog('isOpen')) {
+      library.dialog('close');
+    }
+    let map_catalog_button = $('#map_catalog');
+    if (map_catalog_button.prop('disabled') == true) {
+      console.log('Already opening map catalogue.');
+      return;
+    }
+    // map_catalog_button.append('<div class="ajax-progress"><div class="throbber">&nbsp;</div></div>');
+    map_catalog_button.prop('disabled', true);
     $.ajax({
       url: '/views/ajax',
       type: 'post',
@@ -2134,27 +2158,64 @@
       },
       dataType: 'json',
       success: function(response) {
-        console.log(response);
-        let library = $('#library');
-        if (library.dialog('isOpen')) {
-          library.fadeOut();
-        }
         if (response[1] !== undefined) {
           // we have data!
           let data = response[1].data;
           library.html(data);
           library.dialog('open');
+
+          $('.library.resources .resource-link-type').each(function(e) {
+            $(this).remove();
+          });
+          $('.library.resources .resource-link-link a').each(function(e) {
+            let url = this.href;
+            if (!get_youtube_code(url)) {
+              // $(this).parent('.resource').remove();
+              this.disabled = true;
+              $(this).remove();
+            }
+          })
+          $('.library.resources .resource-link-link a').on('click', function(e) {
+            e.preventDefault();
+            let url = this.href;
+            library.dialog('close');
+            if (!get_youtube_code(url)) {
+              console.log('Could not find a YouTube code in ' + url);
+              return;
+            }
+            $('#questions').html('');
+            $('#questions').dialog({
+              title: 'Load from catalog',
+              resizable: false,
+              height: 'auto',
+              width: 400,
+              modal: true,
+              buttons: {
+                'Load this item': function() {
+                  $(this).dialog('close');
+                  $('library.resources .resource-link-link a').prop('disabled', true);
+                  if (do_youtube(url)) {
+                    $('library.resources .resource-link-link a').prop('disabled', false);
+                  }
+                },
+                Cancel: function() {
+                  $(this).dialog('close');
+                }
+              }
+            });
+          });
         }
       },
       error: function(response) {
         console.log('There was an error retrieving maps.');
-        // console.log(response);
       },
       complete: function(response) {
-        // console.log(response);
+        // $('#map_catalog .ajax-progress').remove();
+        map_catalog_button.prop('disabled', false);
+        $('library.resources .resource-link-link a').prop('disabled', false);
       }
     });
-  });
+  }
 
   $('#text_create_button').click(function() {
     map_canvas.off('mouse:down');
