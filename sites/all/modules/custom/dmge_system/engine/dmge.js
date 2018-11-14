@@ -2194,7 +2194,7 @@
                 'Load this item': function() {
                   $(this).dialog('close');
                   $('library.resources .resource-link-link a').prop('disabled', true);
-                  if (do_youtube(url)) {
+                  if (do_youtube(get_youtube_code(url))) {
                     $('library.resources .resource-link-link a').prop('disabled', false);
                   }
                 },
