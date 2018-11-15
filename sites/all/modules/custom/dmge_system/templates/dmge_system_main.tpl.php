@@ -136,8 +136,8 @@ $age = $incept_date->diff($today)->days;
           </div>
           <div id="fow_storage" class="fow_control">
             <label for="fow_storage">FoW Storage / Recall</label>
-            <input type="button" id="fow_store" value="Store FoW">
-            <input type="button" id="fow_recall" value="Recall FoW">
+            <input type="button" id="fow_store" value="Store FoW (Ctrl-Shift-F)">
+            <input type="button" id="fow_recall" value="Recall FoW (Ctrl-Alt-F)">
             <input type="button" id="fow_reset" value="Reset FoW">
           </div>
           <div class="fow_brush_property">

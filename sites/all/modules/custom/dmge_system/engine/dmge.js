@@ -778,44 +778,45 @@
       // Ffff
       case 70:
         e.preventDefault();
-        if (e.altKey) {
-          $('#questions').html('Restore this FOW?');
-          $('#questions').dialog({
-            resizable: false,
-            height: "auto",
-            width: 400,
-            modal: true,
-            buttons: {
-              "Yes": function() {
-                __fow = localStorage.getItem('fow_content');
-                $(this).dialog( "close" );
-              },
-              Cancel: function() {
-                $( this ).dialog( "close" );
+        if (e.shiftKey) {
+          if (e.altKey) {
+            $('#questions').html('Restore this FOW?');
+            $('#questions').dialog({
+              resizable: false,
+              height: "auto",
+              width: 400,
+              modal: true,
+              buttons: {
+                "Yes": function() {
+                  __fow = localStorage.getItem('fow_content');
+                  $(this).dialog( "close" );
+                },
+                Cancel: function() {
+                  $( this ).dialog( "close" );
+                }
               }
-            }
-          });
-        }
-        if (e.ctrlKey) {
-          $('#questions').html('Save this FOW?');
-          $('#questions').dialog({
-            resizable: false,
-            height: "auto",
-            width: 400,
-            modal: true,
-            buttons: {
-              "Yes": function() {
-                __fow = localStorage.setItem('fow_content', fow_canvas.toDataURL());
-                $(this).dialog( "close" );
-              },
-              Cancel: function() {
-                $( this ).dialog( "close" );
+            });
+          }
+          if (e.ctrlKey) {
+            $('#questions').html('Save this FOW?');
+            $('#questions').dialog({
+              resizable: false,
+              height: "auto",
+              width: 400,
+              modal: true,
+              buttons: {
+                "Yes": function() {
+                  __fow = localStorage.setItem('fow_content', fow_canvas.toDataURL());
+                  $(this).dialog( "close" );
+                },
+                Cancel: function() {
+                  $( this ).dialog( "close" );
+                }
               }
-            }
-          });
+            });
+          }
         }
         break;
-
       // Pppplayer view
       case 80:
         if (e.ctrlKey) {
