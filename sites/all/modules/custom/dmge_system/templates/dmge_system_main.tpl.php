@@ -27,6 +27,7 @@ $age = $incept_date->diff($today)->days;
       <li>Press Escape to toggle the sidebar.</li>
       <li>Use the numeric keys to quickly switch between tool sets.</li>
       <li>Press Ctrl-P to open the player view window.</li>
+      <li>Press Ctrl-Alt-C to open the player view window.</li>
       <li>Hold Ctrl when clicking on a map element to open its layer options.</li>
       <li>Press Delete or Backspace to remove selected elements from the map area.</li>
       <li>Zoom out and in by holding Ctrl and rolling your scroll wheel.  You can scale your map larger then the available space this way.</li>
@@ -270,8 +271,8 @@ $age = $incept_date->diff($today)->days;
         <button id="fullscreener" class="sidebar_tray_button" title="Fullscreen"><i class="fas fa-desktop"></i></button>
         <button id="map_reset_zoom" class="sidebar_tray_button" title="Reset Zoom"><i class="fas fa-bullseye"></i></button>
         <button id="map_clear" class="sidebar_tray_button" title="Clear Map"><i class="fas fa-eraser"></i></button>
-        <button id="player_view_open" class="sidebar_tray_button" title="Player View"><i class="fas fa-chess-knight"></i></button>
-        <button id="map_catalog" class="sidebar_tray_button" title="Map Catalogue"><i class="fas fa-database"></i></button>
+        <button id="player_view_open" class="sidebar_tray_button" title="Player View (Ctrl-P)"><i class="fas fa-chess-knight"></i></button>
+        <button id="map_catalog" class="sidebar_tray_button" title="Map Catalogue (Ctrl-Alt-C)"><i class="fas fa-database"></i></button>
       </div>
 
     </div>
