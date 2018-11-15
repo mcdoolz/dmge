@@ -783,16 +783,16 @@
             $('#questions').html('Restore this FOW?');
             $('#questions').dialog({
               resizable: false,
-              height: "auto",
+              height: 'auto',
               width: 400,
               modal: true,
               buttons: {
-                "Yes": function() {
+                'Yes': function() {
                   __fow = localStorage.getItem('fow_content');
-                  $(this).dialog( "close" );
+                  $(this).dialog('close');
                 },
                 Cancel: function() {
-                  $( this ).dialog( "close" );
+                  $(this).dialog('close');
                 }
               }
             });
@@ -801,16 +801,16 @@
             $('#questions').html('Save this FOW?');
             $('#questions').dialog({
               resizable: false,
-              height: "auto",
+              height: 'auto',
               width: 400,
               modal: true,
               buttons: {
-                "Yes": function() {
+                'Yes': function() {
                   __fow = localStorage.setItem('fow_content', fow_canvas.toDataURL());
-                  $(this).dialog( "close" );
+                  $(this).dialog('close');
                 },
                 Cancel: function() {
-                  $( this ).dialog( "close" );
+                  $(this).dialog('close');
                 }
               }
             });
