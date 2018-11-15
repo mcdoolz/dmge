@@ -7,7 +7,7 @@
 
 $aliases['live'] = array(
   'uri' => 'dmge.net',
-  'root' => '/home/dforge/ddmge',
+  'root' => '/home/dmge/public_html',
   'remote-host' => 'dmge.net',
   'remote-user' => 'dmge',
   'ssh-options' => '-o PasswordAuthentication=no -i /home/mcdoolz/.ssh/authorized_keys/dmge_rsa',
