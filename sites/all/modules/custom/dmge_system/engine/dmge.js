@@ -49,8 +49,8 @@
     skipOffscreen: false,
     selection: false
   };
-  const canvases = ['map', 'grid', 'fow'];
-  const canvas_canvases = ['map_canvas', 'grid_canvas', 'fow_canvas'];
+  const canvases = ['map', 'grid', 'fow', 'tokens', 'particles'];
+  const canvas_canvases = ['map_canvas', 'grid_canvas', 'fow_canvas', 'tokens_canvas', 'particles_canvas'];
 
   /**
    * Helper to set dimensions on all canvases.
@@ -75,6 +75,7 @@
       }
       window[_canvas].setWidth(_screensize.width);
       window[_canvas].setHeight(_screensize.height);
+      window[_canvas].clear();
     });
   }
 
