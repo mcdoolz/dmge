@@ -280,6 +280,12 @@ $age = $incept_date->diff($today)->days;
   </div>
 
   <div id="canvases_wrapper">
+    <div id="tokens_wrapper">
+      <canvas id="tokens" class="tokens_canvas"></canvas>
+    </div>
+    <div id="particles_wrapper">
+      <canvas id="particles" class="particles_canvas"></canvas>
+    </div>
     <div id="grid_wrapper">
       <canvas id="grid" class="grid_canvas"></canvas>
     </div>
