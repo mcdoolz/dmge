@@ -32,15 +32,7 @@ function mc_image_default_styles() {
   $styles['1000x600'] = array(
     'label' => '1000x600',
     'effects' => array(
-      6 => array(
-        'name' => 'smartcrop_scale_and_crop',
-        'data' => array(
-          'width' => 1000,
-          'height' => 600,
-          'upscale' => 1,
-        ),
-        'weight' => 1,
-      ),
+      6 => NULL,
     ),
   );
 
@@ -48,15 +40,7 @@ function mc_image_default_styles() {
   $styles['150x200'] = array(
     'label' => '150x200',
     'effects' => array(
-      12 => array(
-        'name' => 'smartcrop_scale_and_crop',
-        'data' => array(
-          'width' => 150,
-          'height' => 200,
-          'upscale' => 1,
-        ),
-        'weight' => 1,
-      ),
+      12 => NULL,
     ),
   );
 
@@ -64,15 +48,7 @@ function mc_image_default_styles() {
   $styles['1900x823'] = array(
     'label' => '1900x823',
     'effects' => array(
-      8 => array(
-        'name' => 'smartcrop_scale_and_crop',
-        'data' => array(
-          'width' => 1900,
-          'height' => 823,
-          'upscale' => 1,
-        ),
-        'weight' => 1,
-      ),
+      8 => NULL,
     ),
   );
 
@@ -80,15 +56,7 @@ function mc_image_default_styles() {
   $styles['1920x820'] = array(
     'label' => '1920x820',
     'effects' => array(
-      4 => array(
-        'name' => 'smartcrop_scale_and_crop',
-        'data' => array(
-          'width' => 1920,
-          'height' => 820,
-          'upscale' => 1,
-        ),
-        'weight' => 1,
-      ),
+      4 => NULL,
     ),
   );
 
@@ -96,15 +64,7 @@ function mc_image_default_styles() {
   $styles['200x200'] = array(
     'label' => '200x200',
     'effects' => array(
-      11 => array(
-        'name' => 'smartcrop_scale_and_crop',
-        'data' => array(
-          'width' => 200,
-          'height' => 200,
-          'upscale' => 1,
-        ),
-        'weight' => 1,
-      ),
+      11 => NULL,
     ),
   );
 
@@ -112,15 +72,7 @@ function mc_image_default_styles() {
   $styles['2048x1280'] = array(
     'label' => '2048x1280',
     'effects' => array(
-      1 => array(
-        'name' => 'smartcrop_scale_and_crop',
-        'data' => array(
-          'width' => 2048,
-          'height' => 1280,
-          'upscale' => 1,
-        ),
-        'weight' => 1,
-      ),
+      1 => NULL,
     ),
   );
 
@@ -128,15 +80,7 @@ function mc_image_default_styles() {
   $styles['275x275'] = array(
     'label' => '275x275',
     'effects' => array(
-      10 => array(
-        'name' => 'smartcrop_scale_and_crop',
-        'data' => array(
-          'width' => 275,
-          'height' => 275,
-          'upscale' => 1,
-        ),
-        'weight' => 1,
-      ),
+      10 => NULL,
     ),
   );
 
@@ -144,15 +88,7 @@ function mc_image_default_styles() {
   $styles['32x32'] = array(
     'label' => '32x32',
     'effects' => array(
-      2 => array(
-        'name' => 'smartcrop_scale_and_crop',
-        'data' => array(
-          'width' => 32,
-          'height' => 32,
-          'upscale' => 1,
-        ),
-        'weight' => 1,
-      ),
+      2 => NULL,
     ),
   );
 
@@ -160,15 +96,7 @@ function mc_image_default_styles() {
   $styles['360x275'] = array(
     'label' => '360x275',
     'effects' => array(
-      3 => array(
-        'name' => 'smartcrop_scale_and_crop',
-        'data' => array(
-          'width' => 360,
-          'height' => 275,
-          'upscale' => 1,
-        ),
-        'weight' => 1,
-      ),
+      3 => NULL,
     ),
   );
 
@@ -176,15 +104,7 @@ function mc_image_default_styles() {
   $styles['365x300'] = array(
     'label' => '365x300',
     'effects' => array(
-      9 => array(
-        'name' => 'smartcrop_scale_and_crop',
-        'data' => array(
-          'width' => 365,
-          'height' => 300,
-          'upscale' => 1,
-        ),
-        'weight' => 1,
-      ),
+      9 => NULL,
     ),
   );
 
@@ -192,15 +112,7 @@ function mc_image_default_styles() {
   $styles['460x460'] = array(
     'label' => '460x460',
     'effects' => array(
-      7 => array(
-        'name' => 'smartcrop_scale_and_crop',
-        'data' => array(
-          'width' => 460,
-          'height' => 460,
-          'upscale' => 1,
-        ),
-        'weight' => 1,
-      ),
+      7 => NULL,
     ),
   );
 
@@ -208,15 +120,7 @@ function mc_image_default_styles() {
   $styles['90x90'] = array(
     'label' => '90x90',
     'effects' => array(
-      5 => array(
-        'name' => 'smartcrop_scale_and_crop',
-        'data' => array(
-          'width' => 90,
-          'height' => 90,
-          'upscale' => 1,
-        ),
-        'weight' => 1,
-      ),
+      5 => NULL,
     ),
   );
 

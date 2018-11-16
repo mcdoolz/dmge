@@ -78,8 +78,9 @@ function mc_strongarm() {
   $strongarm->api_version = 1;
   $strongarm->name = 'menu_options_page';
   $strongarm->value = array(
-    0 => 'main-menu',
-    1 => 'user-menu',
+    0 => 'menu-footer-menu',
+    1 => 'main-menu',
+    2 => 'user-menu',
   );
   $export['menu_options_page'] = $strongarm;
 
