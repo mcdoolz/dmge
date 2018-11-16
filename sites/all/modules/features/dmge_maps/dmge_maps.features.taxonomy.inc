@@ -17,5 +17,21 @@ function dmge_maps_taxonomy_default_vocabularies() {
       'module' => 'taxonomy',
       'weight' => 0,
     ),
+    'resource_tags' => array(
+      'name' => 'Resource Tags',
+      'machine_name' => 'resource_tags',
+      'description' => '',
+      'hierarchy' => 0,
+      'module' => 'taxonomy',
+      'weight' => 0,
+    ),
+    'resource_type' => array(
+      'name' => 'Resource Type',
+      'machine_name' => 'resource_type',
+      'description' => '',
+      'hierarchy' => 0,
+      'module' => 'taxonomy',
+      'weight' => 0,
+    ),
   );
 }

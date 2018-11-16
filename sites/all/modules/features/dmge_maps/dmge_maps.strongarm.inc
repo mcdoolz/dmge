@@ -21,7 +21,7 @@ function dmge_maps_strongarm() {
   $strongarm->disabled = FALSE; /* Edit this to true to make a default strongarm disabled initially */
   $strongarm->api_version = 1;
   $strongarm->name = 'auto_entitylabel_node_resource';
-  $strongarm->value = '1';
+  $strongarm->value = '0';
   $export['auto_entitylabel_node_resource'] = $strongarm;
 
   $strongarm = new stdClass();
@@ -112,13 +112,20 @@ function dmge_maps_strongarm() {
     'extra_fields' => array(
       'form' => array(
         'title' => array(
-          'weight' => '0',
+          'weight' => '1',
         ),
         'path' => array(
-          'weight' => '2',
+          'weight' => '8',
         ),
       ),
-      'display' => array(),
+      'display' => array(
+        'flag_abuse_node' => array(
+          'default' => array(
+            'weight' => '6',
+            'visible' => TRUE,
+          ),
+        ),
+      ),
     ),
   );
   $export['field_bundle_settings_node__resource'] = $strongarm;
@@ -127,15 +134,24 @@ function dmge_maps_strongarm() {
   $strongarm->disabled = FALSE; /* Edit this to true to make a default strongarm disabled initially */
   $strongarm->api_version = 1;
   $strongarm->name = 'field_bundle_settings_taxonomy_term__resource_link';
-  $strongarm->value = array();
+  $strongarm->value = array(
+    'view_modes' => array(),
+    'extra_fields' => array(
+      'form' => array(
+        'path' => array(
+          'weight' => '4',
+        ),
+        'name' => array(
+          'weight' => '1',
+        ),
+        'description' => array(
+          'weight' => '3',
+        ),
+      ),
+      'display' => array(),
+    ),
+  );
   $export['field_bundle_settings_taxonomy_term__resource_link'] = $strongarm;
-
-  $strongarm = new stdClass();
-  $strongarm->disabled = FALSE; /* Edit this to true to make a default strongarm disabled initially */
-  $strongarm->api_version = 1;
-  $strongarm->name = 'honeypot_form_resource_node_form';
-  $strongarm->value = 0;
-  $export['honeypot_form_resource_node_form'] = $strongarm;
 
   $strongarm = new stdClass();
   $strongarm->disabled = FALSE; /* Edit this to true to make a default strongarm disabled initially */
@@ -178,8 +194,29 @@ function dmge_maps_strongarm() {
   $strongarm->disabled = FALSE; /* Edit this to true to make a default strongarm disabled initially */
   $strongarm->api_version = 1;
   $strongarm->name = 'pathauto_node_resource_pattern';
-  $strongarm->value = 'map/[node:title]';
+  $strongarm->value = 'library/[node:title]';
   $export['pathauto_node_resource_pattern'] = $strongarm;
+
+  $strongarm = new stdClass();
+  $strongarm->disabled = FALSE; /* Edit this to true to make a default strongarm disabled initially */
+  $strongarm->api_version = 1;
+  $strongarm->name = 'pathauto_taxonomy_term_resource_link_pattern';
+  $strongarm->value = 'library/[term:name]';
+  $export['pathauto_taxonomy_term_resource_link_pattern'] = $strongarm;
+
+  $strongarm = new stdClass();
+  $strongarm->disabled = FALSE; /* Edit this to true to make a default strongarm disabled initially */
+  $strongarm->api_version = 1;
+  $strongarm->name = 'pathauto_taxonomy_term_resource_tags_pattern';
+  $strongarm->value = 'library/tags/[term:name]';
+  $export['pathauto_taxonomy_term_resource_tags_pattern'] = $strongarm;
+
+  $strongarm = new stdClass();
+  $strongarm->disabled = FALSE; /* Edit this to true to make a default strongarm disabled initially */
+  $strongarm->api_version = 1;
+  $strongarm->name = 'pathauto_taxonomy_term_resource_type_pattern';
+  $strongarm->value = 'library/[term:name]';
+  $export['pathauto_taxonomy_term_resource_type_pattern'] = $strongarm;
 
   $strongarm = new stdClass();
   $strongarm->disabled = FALSE; /* Edit this to true to make a default strongarm disabled initially */
