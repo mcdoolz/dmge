@@ -69,7 +69,14 @@ function dmge_artists_strongarm() {
           'weight' => '7',
         ),
       ),
-      'display' => array(),
+      'display' => array(
+        'flag_abuse_node' => array(
+          'default' => array(
+            'weight' => '6',
+            'visible' => TRUE,
+          ),
+        ),
+      ),
     ),
   );
   $export['field_bundle_settings_node__artist'] = $strongarm;
@@ -122,14 +129,14 @@ function dmge_artists_strongarm() {
   $strongarm->disabled = FALSE; /* Edit this to true to make a default strongarm disabled initially */
   $strongarm->api_version = 1;
   $strongarm->name = 'pathauto_taxonomy_term_artist_link_pattern';
-  $strongarm->value = 'artist/[term:name]';
+  $strongarm->value = 'artists/[term:name]';
   $export['pathauto_taxonomy_term_artist_link_pattern'] = $strongarm;
 
   $strongarm = new stdClass();
   $strongarm->disabled = FALSE; /* Edit this to true to make a default strongarm disabled initially */
   $strongarm->api_version = 1;
   $strongarm->name = 'pathauto_taxonomy_term_artist_tags_pattern';
-  $strongarm->value = 'artist/tags/[term:name]';
+  $strongarm->value = 'artists/tags/[term:name]';
   $export['pathauto_taxonomy_term_artist_tags_pattern'] = $strongarm;
 
   $strongarm = new stdClass();
