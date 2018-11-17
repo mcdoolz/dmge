@@ -35,8 +35,40 @@ function dmge_cart_views_default_views() {
   $handler->display->display_options['fields']['title']['id'] = 'title';
   $handler->display->display_options['fields']['title']['table'] = 'node';
   $handler->display->display_options['fields']['title']['field'] = 'title';
+  $handler->display->display_options['fields']['title']['label'] = '';
   $handler->display->display_options['fields']['title']['alter']['word_boundary'] = FALSE;
   $handler->display->display_options['fields']['title']['alter']['ellipsis'] = FALSE;
+  $handler->display->display_options['fields']['title']['element_label_colon'] = FALSE;
+  /* Field: Content: Image */
+  $handler->display->display_options['fields']['uc_product_image']['id'] = 'uc_product_image';
+  $handler->display->display_options['fields']['uc_product_image']['table'] = 'field_data_uc_product_image';
+  $handler->display->display_options['fields']['uc_product_image']['field'] = 'uc_product_image';
+  $handler->display->display_options['fields']['uc_product_image']['label'] = '';
+  $handler->display->display_options['fields']['uc_product_image']['element_type'] = '0';
+  $handler->display->display_options['fields']['uc_product_image']['element_label_colon'] = FALSE;
+  $handler->display->display_options['fields']['uc_product_image']['element_wrapper_type'] = '0';
+  $handler->display->display_options['fields']['uc_product_image']['element_default_classes'] = FALSE;
+  $handler->display->display_options['fields']['uc_product_image']['click_sort_column'] = 'fid';
+  $handler->display->display_options['fields']['uc_product_image']['settings'] = array(
+    'image_style' => 'large',
+    'image_link' => '',
+    'field_formatter_class' => '',
+    'field_formatter_class_remove_defaults' => 0,
+  );
+  $handler->display->display_options['fields']['uc_product_image']['delta_offset'] = '0';
+  /* Field: Field: Copy */
+  $handler->display->display_options['fields']['field_copy']['id'] = 'field_copy';
+  $handler->display->display_options['fields']['field_copy']['table'] = 'field_data_field_copy';
+  $handler->display->display_options['fields']['field_copy']['field'] = 'field_copy';
+  $handler->display->display_options['fields']['field_copy']['label'] = '';
+  $handler->display->display_options['fields']['field_copy']['element_type'] = '0';
+  $handler->display->display_options['fields']['field_copy']['element_label_colon'] = FALSE;
+  $handler->display->display_options['fields']['field_copy']['element_wrapper_type'] = '0';
+  $handler->display->display_options['fields']['field_copy']['element_default_classes'] = FALSE;
+  $handler->display->display_options['fields']['field_copy']['settings'] = array(
+    'field_formatter_class' => '',
+    'field_formatter_class_remove_defaults' => 0,
+  );
   /* Sort criterion: Content: Title */
   $handler->display->display_options['sorts']['title']['id'] = 'title';
   $handler->display->display_options['sorts']['title']['table'] = 'node';
