@@ -75,7 +75,6 @@
       }
       window[_canvas].setWidth(_screensize.width);
       window[_canvas].setHeight(_screensize.height);
-      window[_canvas].clear();
     });
   }
 
