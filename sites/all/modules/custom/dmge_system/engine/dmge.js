@@ -1497,6 +1497,10 @@
     _rows = (_height / _size);
 
     const __grid = Grid.rectangle({width: _cols, height: _rows});
+    if ((grid_canvas.width !== map_canvas.width) || (grid_canvas.height !== map_canvas.height)) {
+      grid_canvas.width = map_canvas.width;
+      grid_canvas.height = map_canvas.height;
+    }
 
 
     if (_type === 'H_Hex' || _type === 'V_Hex') {
