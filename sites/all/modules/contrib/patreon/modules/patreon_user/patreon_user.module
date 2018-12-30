@@ -257,7 +257,6 @@ function patreon_user_create_role($roles = array('patreon_user', 'deleted_patreo
  */
 function patreon_user_can_login($patreon_account) {
   $return = FALSE;
-  dpm($patreon_account);
 
   if ($patreon_id = filter_xss(patreon_get_value_by_key($patreon_account, 'email'))) {
     if ($settings = variable_get('patreon_user_registration', PATREON_USER_NO_LOGIN)) {
