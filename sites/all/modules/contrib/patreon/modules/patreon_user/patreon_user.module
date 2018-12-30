@@ -258,7 +258,7 @@ function patreon_user_create_role($roles = array('patreon_user', 'deleted_patreo
 function patreon_user_can_login($patreon_account) {
   $return = FALSE;
 
-  if ($patreon_id = patreon_get_value_by_key($patreon_account, 'id')) {
+  if ($patreon_id = filter_xss(patreon_get_value_by_key($patreon_account, 'email'))) {
     if ($settings = variable_get('patreon_user_registration', PATREON_USER_NO_LOGIN)) {
       if ($settings != PATREON_USER_NO_LOGIN) {
         if ($settings == PATREON_USER_ONLY_PATRONS) {
@@ -288,7 +288,19 @@ function patreon_user_can_login($patreon_account) {
 function patreon_user_get_user($patreon_account) {
   $return = FALSE;
 
+  // Is there a user account at this id?
+  // Let's change the user id to be the email address.
   if ($patreon_id = patreon_get_value_by_key($patreon_account, 'id')) {
+    if ($account = patreon_user_get_user_from_id($patreon_id)) {
+      $wrapper = entity_metadata_wrapper('user', $account);
+      if ($wrapper) {
+        $wrapper->field_user_patreon_id = filter_xss(patreon_get_value_by_key($patreon_account, 'email'));
+        $wrapper->save();
+      }
+    }
+  }
+
+  if ($patreon_id = filter_xss(patreon_get_value_by_key($patreon_account, 'email'))) {
     if ($account = patreon_user_get_user_from_id($patreon_id)) {
       $return = $account;
     }
@@ -350,7 +362,8 @@ function patreon_user_get_user_from_id($patreon_id) {
 function patreon_user_create_user_from_account($patreon_account) {
   $return = FALSE;
 
-  if ($patreon_id = patreon_get_value_by_key($patreon_account, 'id')) {
+  if ($patreon_id = filter_xss(patreon_get_value_by_key($patreon_account, 'email'))) {
+
     $fields = array(
       'pass' => user_password(8),
       'status' => 1,
@@ -373,7 +386,7 @@ function patreon_user_create_user_from_account($patreon_account) {
             $wrapper = entity_metadata_wrapper('user', $return);
 
             if ($wrapper) {
-              $wrapper->field_user_patreon_id = filter_xss($patreon_id);
+              $wrapper->field_user_patreon_id = $patreon_id;
               $wrapper->save();
 
               patreon_user_assign_roles($return, $patreon_account);
