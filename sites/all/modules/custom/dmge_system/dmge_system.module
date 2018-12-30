@@ -202,6 +202,8 @@ function dmge_system_main() {
   }
   $path = drupal_get_path('module', 'dmge_system');
 
+  drupal_add_js(array('dmge_system' => array('basepath' => $path)), 'setting');
+
   $cloudinary = libraries_load('cloudinary');
   if (empty($cloudinary['loaded'])) {
     drupal_set_message(t('Cloudinary SDK PHP didn\'t load.', 'error'));
@@ -306,7 +308,7 @@ function dmge_system_menu() {
   $items['admin/config/administration/dmge_system'] = array(
     'title' => 'DMGE',
     'description' => 'Adjust DMGE settings.',
-    'page callback' => 'drupal_get_form',
+    'page callback' => 'system_settings_form',
     'page arguments' => array('dmge_system_theme_settings'),
     'access arguments' => array('configure dmge'),
   );
@@ -323,7 +325,10 @@ function dmge_system_menu() {
  * I have no settings.
  */
 function dmge_system_theme_settings($form = array()) {
-  $form['markup']['#markup'] = "I should do something with this.";
+  $form['sidebar']['dmge_sidebar_about'] = array(
+    '#type' => 'textarea',
+    '#title' => 'About Text',
+  );
   return $form;
 }
 

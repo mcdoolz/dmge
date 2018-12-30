@@ -11,6 +11,7 @@ $age = $incept_date->diff($today)->days;
   <div id="library" class="dialog" title="Map Library"></div>
 
   <div id="about" class="dialog" title="How to use the DMGE">
+    <?php print variable_get('dmge_sidebar_about', '
     <h4>How to Use</h4>
     <ol>
       <li>Click the File tab, then Choose File and select an image or video to use as a map.</li>
@@ -38,6 +39,7 @@ $age = $incept_date->diff($today)->days;
     Report problems to <a href="mailto:contact@dmge.net">contact@dmge.net</a><br>
     Code was lifted from various sources, or written personally.</p>
   </div>
+  '); ?>
 
   <div id="file_preview_dialog" title="Preview">
     <img id="file_preview">
