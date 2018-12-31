@@ -114,9 +114,6 @@
 
     opacity = obj.opacity ? obj.opacity : 1;
 
-    remove_color = obj.filters[FILTER_REMOVE_COLOR] ? obj.filters[FILTER_REMOVE_COLOR] : null;
-    remove_color_color = obj.filters[FILTER_REMOVE_COLOR] ? obj.filters[FILTER_REMOVE_COLOR].color : '';
-
     blending_mode_content = `
       <div id="element_blending_mode_wrapper">
         <label for="element_blending_modes">Blending Mode</label>
@@ -142,20 +139,29 @@
         </select>
       </div>
     `;
-    // remove_color_content = `
-    //   <div id="element_remove_color_wrapper">
-    //     <label for="element_remove_color">Remove Colour</label>
-    //     <input id="element_remove_color" type="checkbox" value="${remove_color}" />
-    //     <input id="element_remove_color_color" type="color" value="${color}" />
-    //     <input id="element_remove_color_distance" type="range" value="${distance}" min="0" max="100" step="1" />
-    //   </div>
-    // `;
+
     opacity_content = `
       <div id="element_opacity_wrapper">
         <label for="element_opacity">Opacity</label>
         <input id="element_opacity" type="range" value="${opacity}" min="0" max="1" step="0.01" />
       </div>
     `;
+
+    // If we are not looking at a videos properties, we will print the filter controls.
+    if (!obj.video) {
+      remove_color = obj.filters[FILTER_REMOVE_COLOR] ? obj.filters[FILTER_REMOVE_COLOR] : null;
+      remove_color_color = obj.filters[FILTER_REMOVE_COLOR] ? obj.filters[FILTER_REMOVE_COLOR].color : '';
+
+      remove_color_content = `
+        <div id="element_remove_color_wrapper">
+          <label for="element_remove_color">Remove Colour</label>
+          <input id="element_remove_color" type="checkbox" value="${remove_color}" />
+          <input id="element_remove_color_color" type="color" value="${remove_color_color}" />
+          <label for"element_remove_color_distance">Color Range</label>
+          <input id="element_remove_color_distance" type="range" value="${distance}" min="0.01" max="1" step="0.01" />
+        </div>
+      `;
+    }
 
     html = blending_mode_content + remove_color_content + opacity_content;
 
@@ -182,23 +188,39 @@
     }).change();
 
     $('#element_remove_color').on('click', function() {
-      if (this.value) {
+      if (this.checked) {
+        if (obj.video) {
+          alert('Cannot remove colour from video yet.');
+          this.checked = false;
+          return;
+        }
+        // Turn on FILTER_REMOVE_COLOR.
         applyFilter(obj, FILTER_REMOVE_COLOR, new f.RemoveColor({
           distance: $('#element_remove_color_distance').val(),
           color: $('#element_remove_color_color').val()
         }));
       }
       else {
+        // Turn off FILTER_REMOVE_COLOR.
         if (getFilter(obj, FILTER_REMOVE_COLOR)) {
           obj.filters.splice([FILTER_REMOVE_COLOR]);
           obj.applyFilters();
         }
       }
     });
-    $('#element_remove_color_distance').on('change, input',function() {
+    $('#element_remove_color_color').on('change, input',function() {
+      let color = $('#element_remove_color_color').val();
       if (obj) {
         if (getFilter(obj, FILTER_REMOVE_COLOR)) {
-          applyFilterValue(obj, FILTER_REMOVE_COLOR, 'distance', this.value);
+          applyFilterValue(obj, FILTER_REMOVE_COLOR, 'color', color);
+        }
+      }
+    });
+    $('#element_remove_color_distance').on('change, input',function() {
+      let distance = $('#element_remove_color_distance').val();
+      if (obj) {
+        if (getFilter(obj, FILTER_REMOVE_COLOR)) {
+          applyFilterValue(obj, FILTER_REMOVE_COLOR, 'distance', distance);
         }
       }
     });
@@ -224,35 +246,48 @@
     if (!obj) {
       obj = map_canvas.getActiveObject();
     }
+    // if (obj)
     obj.filters[index] = filter;
-    var timeStart = +new Date();
+    // var timeStart = +new Date();
     obj.applyFilters();
-    var timeEnd = +new Date();
-    var dimString = map_canvas.getActiveObject().width + ' x ' +
-      map_canvas.getActiveObject().height;
-    console.log(dimString + 'px ' +
-      parseFloat(timeEnd-timeStart) + 'ms');
+    // var timeEnd = +new Date();
+    // var dimString = map_canvas.getActiveObject().width + ' x ' +
+      // map_canvas.getActiveObject().height;
+    // console.log(dimString + 'px ' +
+    //   parseFloat(timeEnd-timeStart) + 'ms');
   }
 
-  function applyFilterValue(index, prop, value) {
-    var obj = map_canvas.getActiveObject();
+  function applyFilterValue(obj = null, index, prop, value) {
+    if (!obj) {
+      obj = map_canvas.getActiveObject();
+    }
     if (obj.filters[index]) {
       obj.filters[index][prop] = value;
-      var timeStart = +new Date();
+      // var timeStart = +new Date();
       obj.applyFilters();
-      var timeEnd = +new Date();
-      var dimString = map_canvas.getActiveObject().width + ' x ' +
-        map_canvas.getActiveObject().height;
-      console.log(dimString + 'px ' +
-        parseFloat(timeEnd-timeStart) + 'ms');
+      // var timeEnd = +new Date();
+      // var dimString = map_canvas.getActiveObject().width + ' x ' +
+      //   map_canvas.getActiveObject().height;
+      // console.log(dimString + 'px ' +
+      //   parseFloat(timeEnd-timeStart) + 'ms');
     }
   }
 
   function open_layer_options(obj) {
     $('#questions').html(object_options(obj));
     object_options_events(obj);
+
     let blending_mode = obj.globalCompositeOperation ? obj.globalCompositeOperation : 'source-over';
     document.getElementById('element_blending_modes').value = blending_mode;
+
+    if (!obj.video) {
+      let remove_color = obj.filters.FILTER_REMOVE_COLOR;
+      if (remove_color) {
+        document.getElementById('element_remove_color').value = true;
+        document.getElementById('element_remove_color_color').value = remove_color.color;
+        document.getElementById('element_remove_color_distance').value = remove_color.distance;
+      }
+    }
 
     $('#questions').dialog({
       resizable: false,
@@ -360,6 +395,25 @@
   }
 
   fabric.util.requestAnimFrame(function render() {
+    // Pre filter filtered images before rendering the canvas.
+    // let result = canvas.item.find(obj => {
+    //   return obj.b === 6;
+    // })
+    map_canvas.getObjects().forEach(function(obj) {
+      let backend = fabric.filterBackend;
+      if (obj.video) {
+        if (0 < obj.filters.length) {
+          if (backend && backend.evictCachesForKey) {
+            console.log(map_canvas);
+            console.log(obj);
+            backend.evictCachesForKey(obj.cacheKey);
+            backend.evictCachesForKey(obj.cacheKey + '_filtered');
+            obj.applyFilters();
+          }
+        }
+      }
+    });
+
     map_canvas.renderAll();
 
     /**
@@ -1750,6 +1804,7 @@
     },
 
     onItemInserted: function(e) {
+      // The closest to a central function for video loading we have.
       let item = e.item;
       let _id = $('#' + item.id);
       let tag = document.getElementById(item.id);
@@ -1768,6 +1823,7 @@
             originY: 'top',
             height: tag.videoHeight,
             width: tag.videoWidth,
+            video: true,
             left: 0,
             top: 0
           });
