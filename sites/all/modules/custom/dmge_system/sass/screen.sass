@@ -9,6 +9,20 @@
 
 $g: 20px
 
+.messages
+  position: absolute
+  z-index: 9999
+  overflow: hidden
+  top: 50%
+  left: 0
+  width: 0
+  padding: 0
+  margin: 0
+  +single-transition(all, 1s, ease-in-out)
+  &:hover
+    +single-transition(all, 1s, ease-in-out)
+    width: 100%
+
 #cursor
   +transition(opacity 0.5s)
   position: absolute

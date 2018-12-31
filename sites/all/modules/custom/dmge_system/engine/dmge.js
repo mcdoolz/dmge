@@ -7,6 +7,7 @@
   const f = fabric.Image.filters;
 
   fabric.filterBackend = fabric.initFilterBackend();
+  fabric.isWebglSupported(fabric.textureSize);
 
   // Our filter constants.  These will be important later on.
   const FILTER_REMOVE_COLOR = 2;
