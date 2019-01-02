@@ -1826,9 +1826,6 @@
     pageButtonCount: 5,
 
     confirmDeleting: true,
-    onItemDeleted: function(e) {
-
-    },
 
     onItemInserted: function(e) {
       // The closest to a central function for video loading we have.
@@ -1901,9 +1898,9 @@
             let obj = -1;
             obj = getObjectFromCanvasById(id, map_canvas);
             if (obj) {
-              removeObjectFromCanvas(id, map_canvas);
-              while (getObjectFromCanvasByFromId(obj.from_id, map_canvas)) {
-                removeObjectFromCanvas(obj.from_id, map_canvas);
+              removeObjectFromCanvasById(id, map_canvas);
+              if (objs = getObjectsFromCanvasByFromId(obj.from_id, map_canvas)) {
+                removeObjectsFromCanvas(objs, map_canvas);
               }
             }
             $('#files').jsGrid('deleteItem', $(item));
@@ -1951,21 +1948,13 @@
     editing: false,
 
     pageSize: 999,
-    // pageButtonCount: 5,
 
     confirmDeleting: false,
-    // deleteConfirm: 'Remove?',
+
     onItemDeleted: function(e) {
-      // Nothing.
+      removeObjectFromCanvasById(e.item.id, map_canvas);
     },
-    // rowClick: function(e) {
-    //   let row = this.rowByItem(e.item),
-    //       selected_row = $("#layering").find('table tr.highlight');
-    //   if (selected_row.length) {
-    //       selected_row.removeClass('highlight');
-    //   };
-    //   row.addClass("highlight");
-    // },
+    },
 
     fields: [
       { name: 'Thumbnail',
@@ -2010,9 +1999,6 @@
       { name: 'Delete',
         itemTemplate: function(val, item) {
           return $('<button>').html('<i class="fa fa-trash" aria-hidden="true"></i> Delete').attr({'class': 'file_delete_from_canvas'}).css({ 'display': 'block' }).on('click', function(e) {
-            if (item.id) {
-              removeObjectFromCanvas(item.id, map_canvas);
-            }
             $('#layering').jsGrid('deleteItem', item);
           });
         },
@@ -2098,7 +2084,8 @@
     let data = $('#layering').jsGrid('option', 'data');
     let row = -1;
     if (e.target && e.target.id) {
-      row = data[find_attr(data, 'id', e.target.id)];
+      // row = data[find_attr(data, 'id', e.target.id)];
+      row = get_row(e.target.id, data);
       if (row) {
         $('#layering').jsGrid('deleteItem', row);
       }
@@ -2108,13 +2095,18 @@
   });
 
   function clean_videos() {
-    let videos = $('video').toArray(),
-    data = $('#files').jsGrid('option', 'data');
+    let videos = $('video.map_video').toArray(),
+    data = $('#files').jsGrid('option', 'data'),
+    row = null;
 
     videos.forEach(function(video) {
       if (!getObjectFromCanvasById(video.id, map_canvas)) {
-        if (getObjectFromCanvasByFromId(video.id, map_canvas)) {
-          return;
+        if ((getObjectsFromCanvasByFromId(video.id, map_canvas)).length > 0) {
+          return false;
+        }
+        row = get_row(video.id);
+        if (row) {
+          $('#files').jsGrid('deleteItem', row);
         }
         $('#' + video.id).remove();
       }
