@@ -75,23 +75,25 @@ $age = $incept_date->diff($today)->days;
         <div id="files_settings" class="sidebar_section">
           <h2>Files</h2>
           <div id="file_status"></div>
-          <div id="files_wrapper">
-            <div id="files"></div>
-            <form id="file_local_load">
-              <input id="file" type="file" multiple />
-            </form>
-            <form id="file_remote_load">
-              <label for="map_embed">Paste the URL to any MP4 Video</label>
-              <input type="text" id="map_embed"><input type="button" id="map_embed_submit" value="Import">
-              <p><sup>Recognizes YouTube URLs and any publically available MP4.</sup></p>
-            </form>
-          </div>
+          <form id="file_local_load">
+            <input id="file" type="file" multiple />
+          </form>
+          <form id="file_remote_load">
+            <label for="map_embed">Paste the URL to any publically available file.</label>
+            <input type="text" id="map_embed"><input type="button" id="map_embed_submit" value="Import">
+            <p><sup>Recognizes YouTube URLs, mp4, mkv, png and jpg.</sup></p>
+          </form>
           <div id="files_storage_path">
-            <div id="files_storage_path"><label for="files_storage_path_configure">Select Resource Folder</label>
+            <div id="files_storage_path"><label for="files_storage_path_configure">Load campaign folder</label>
             <input id="files_storage_path_configure" type="file" webkitdirectory mozdirectory msdirectory odirectory directory multiple />
           </div>
-            <div id="files_storage_path_description">Select the folder in which you wish to save your compiled maps.</div>
+            <div id="files_storage_path_description">Select the folder in which you wish to save your campaign.</div>
           </div>
+
+          <div id="files_wrapper">
+            <div id="files"></div>
+          </div>
+
         </div>
 
         <div id="map_settings" class="sidebar_section">

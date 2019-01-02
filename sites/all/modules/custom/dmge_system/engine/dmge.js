@@ -439,15 +439,33 @@
 
   // Using jQuery with fabricjs to call the canvas function
   function load_canvas_data(data = null) {
-    if (data) {
-      let data = JSON.parse(data);
-      // console.log(data);
-    }
     canvases.forEach(function(e) {
+      console.log(e);
+      let canvas = e.target;
       let _canvas_content = e + '_canvas_content';
-      // window[_canvas_content] = localStorage.getItem(canvas + '_canvas_content');
-      window.e.loadFromJSON(window[_canvas_content]);
+      if (Drupal.settings.use_local_storage) {
+        window[_canvas_content] = localStorage.getItem(canvas + '_canvas_content');
+        if (window[_canvas_content]) {
+          window[_canvas_content].loadFromJSON(window[_canvas_content]);
+        }
+        return;
+      }
+      if (!data) {
+        console.log('No canvas data found in dmge file.')
+        return;
+      }
+      if (data) {
+        data = JSON.parse(data);
+        window[canvas].loadFromJSON(data, function() {}, function(o, object){
+          console.log(o, object);
+        });
+        if (window[_canvas_content]) {
+          window[_canvas_content].loadFromJSON(window[_canvas_content]);
+        }
+        return;
+      }
     });
+
   }
 
   /**
@@ -494,14 +512,19 @@
       // eval finds the object, and the next line gets the json from the canvas ala fabricjs.
       let _e = eval(e + '_canvas');
       console.log('saving ' + _e);
-      let _e_json = _e.toJSON();
+      let _e_json;
+      if (_e == map_canvas) {
+        _e_json = _e.toJSON(['rotation', 'x', 'y', 'width', 'height']);
+      } else {
+        _e_json = _e.toJSON();
+      }
 
       // Set content variable for local storage.
       // let _e_content = e + '_content';
       // localStorage.setItem(_e_content, _e_json);
 
       // Set up object for json export.
-      storage._e_content = _e_json;
+      storage[_e + '_content'] = _e_json;
     });
     if (storage) {
       let file = file_storage(JSON.stringify(storage), map_name + '.dmge');
@@ -1745,11 +1768,15 @@
         break;
 
       case 'txt':
-        let reader = new FileReader();
-        reader.addEventListener('load', function (e) {
-          console.log(e.target.result);
+      case 'dmge':
+        $.ajax({
+          url : _url,
+          dataType: "text",
+          success : function (data) {
+            console.log(data);
+            load_canvas_data(data);
+          }
         });
-        reader.readAsBinaryString(_url);
         break;
     default:
      items = ['You look great, by the way :)', 'You look very nice today.  I hope you\'re well.', 'That tickled.', 'I wish all my friends looked as good as you :)'];
