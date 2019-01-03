@@ -593,6 +593,7 @@
       'mouseup': function() {
         $('#map_wrapper').removeClass('notouchie');
         clicked = false;
+        document.getElementById('grid_wrapper').style.pointerEvents = false;
         map_canvas.selection = true;
         $('html').css('cursor', 'auto');
         if ($('#error')) {
@@ -2032,14 +2033,6 @@
     onItemDeleted: function(e) {
       removeObjectFromCanvasById(e.item.id, map_canvas);
     },
-    // rowClick: function(e) {
-    //   let row = this.rowByItem(e.item),
-    //       selected_row = $("#layering").find('table tr.highlight');
-    //   if (selected_row.length) {
-    //       selected_row.removeClass('highlight');
-    //   };
-    //   row.addClass("highlight");
-    // },
 
     fields: [
       { name: 'Thumbnail',
