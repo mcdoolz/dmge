@@ -701,8 +701,9 @@
    * Helper function get canvas object.
    */
   function getObjectFromCanvasById(id, canvas = map_canvas) {
-    let objs = canvas.getObjects().filter((item) => {
-      return item.id === parseInt(id);
+    let objs = -1;
+    objs = canvas.getObjects().filter(function (item) {
+      return item.id == parseInt(id);
     });
     if (objs) {
       return objs[0];
@@ -1713,23 +1714,27 @@
    * Helper loads files from input or dialog.
    */
   function loadFiles(files) {
-    files = files.prop('files');
+    if (typeof files.prop === "function") {
+      files = files.prop('files');
+    }
+    let data;
     if (!files) {
       console.error('No files selected?');
       return;
     }
     $.each(files, function(key, _file) {
-      let _url = window.URL.createObjectURL(_file);
-      let _id = make_file_id(_url);
-      let _thumbnail = _url;
-      let _type = 'Static';
-      let ext = getExtension(_file.name);
+      let _url = window.URL.createObjectURL(_file),
+      _id = make_file_id(_url),
+      _thumbnail = _url,
+      _type = 'Static',
+      ext = getExtension(_file.name);
+
       if (ext == 'gif') {
         _url = _file;
       }
 
       if (loaded = loadFile(_url, ext, _id)) {
-        if (ext !== 'gif') {
+        if (!['gif', 'dmge'].includes(ext)) {
           $('#files').jsGrid('insertItem', {'id': _id, 'Filename': _file.name, 'Blob': _url, 'Type': loaded.type, 'Thumbnail': _thumbnail });
         }
       }
