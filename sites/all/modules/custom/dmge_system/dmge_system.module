@@ -194,7 +194,14 @@ function dmge_system_main() {
   }
   $path = drupal_get_path('module', 'dmge_system');
 
-  drupal_add_js(array('dmge_system' => array('basepath' => $path)), 'setting');
+  $default_campaign = variable_get('dmge_default_campaign', undefined);
+
+  drupal_add_js(array(
+    'dmge_system' => array(
+      'basepath' => $path,
+      'default_campaign' => $default_campaign,
+    )
+  ), 'settings');
 
   $cloudinary = libraries_load('cloudinary');
   if (empty($cloudinary['loaded'])) {
@@ -321,14 +328,22 @@ function dmge_system_theme_settings($form = array()) {
     '#type' => 'textarea',
     '#title' => 'About Text',
   );
-  return $form;
+  $form['map']['map_settings']['dmge_default_campaign'] = array(
+    '#type' => 'textfield',
+    '#title' => 'Default Campaign Name',
+  );
+  $form['save_load']['dmge_save_load_local_storage'] = array(
+    '#type' => 'boolean',
+    '#title' => 'Use Browser Local Storage?',
+  );
+  return system_settings_form($form);
 }
 
 /**
  * In case we need a redirect in code.
  */
 function dmge_system_engine($form = array()) {
-  $form['markup']['#markup'] = "hello world";
+  $form['markup']['#markup'] = "Hello world.";
   return $form;
 }
 
