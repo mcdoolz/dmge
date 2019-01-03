@@ -1633,11 +1633,13 @@
     const Hex = Honeycomb.extendHex(__gridoptions);
 
     var Grid = Honeycomb.defineGrid(Hex)
+    grid_canvas.Grid = Grid;
 
     _cols = (_width / _size);
     _rows = (_height / _size);
 
     const __grid = Grid.rectangle({width: _cols, height: _rows});
+    grid_canvas.__grid = __grid;
     if ((grid_canvas.width !== map_canvas.width) || (grid_canvas.height !== map_canvas.height)) {
       grid_canvas.width = map_canvas.width;
       grid_canvas.height = map_canvas.height;
@@ -1665,7 +1667,12 @@
           originY: 'top',
           centeredRotation: true,
           hasRotatingPoint: false,
-          selectable: false,
+          // selectable: false,
+          selectable: true,
+
+          hasBorders: false,
+          hasControls: false,
+
           lockMovementX: true,
           lockMovementY: true,
           objectCaching: true
@@ -2025,14 +2032,14 @@
     onItemDeleted: function(e) {
       removeObjectFromCanvasById(e.item.id, map_canvas);
     },
-      let row = this.rowByItem(e.item),
-          selected_row = $("#layering").find('table tr.highlight');
-      if (selected_row.length) {
-          selected_row.removeClass('highlight');
-      };
-      row.addClass("highlight");
-      // TODO: select object in canvas from layer table.
-    },
+    // rowClick: function(e) {
+    //   let row = this.rowByItem(e.item),
+    //       selected_row = $("#layering").find('table tr.highlight');
+    //   if (selected_row.length) {
+    //       selected_row.removeClass('highlight');
+    //   };
+    //   row.addClass("highlight");
+    // },
 
     fields: [
       { name: 'Thumbnail',
