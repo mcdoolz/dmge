@@ -1748,8 +1748,12 @@
     $('video').prop('volume', $(this).val());
   }).change();
 
-  $('#files_storage_path_configure').on('change, input', function(e) {
-    let files = e.target.files;
+
+  /**
+   * Load a campaign folder.
+   */
+  $('#files_storage_path_configure').change(function() {
+    let files = this.files;
     if (!files) {
       return;
     }
@@ -1760,11 +1764,12 @@
     loadFiles(files);
   });
 
-  // File loaders.
+  /**
+   * Load files from the file dialogue.
+   */
   $('#file').change(function() {
     loadFiles($(this));
-    this.value = null;
-  })
+  });
 
   if (!Array.isArray) {
     Array.isArray = function(arg) {
@@ -1840,7 +1845,6 @@
           url : _url,
           dataType: "text",
           success : function (data) {
-            console.log(data);
             load_canvas_data(data);
           }
         });
