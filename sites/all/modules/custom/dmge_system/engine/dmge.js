@@ -726,25 +726,40 @@
     return false;
   }
 
-  function getObjectFromCanvasByFromId(id, canvas) {
-    let objs = canvas.getObjects().filter((item) => {
-      return item.from_id === parseInt(id);
+  /**
+   * Gets all items by from id.
+   */
+  function getObjectsFromCanvasByFromId(from_id, canvas = map_canvas) {
+    let objs = -1;
+    objs = canvas.getObjects().filter(function (item) {
+      return item.from_id == parseInt(from_id);
     });
     if (objs) {
-      return objs[0];
+      return objs;
     }
     return false;
   }
 
   /**
-   * Helper to remove object from canvas.
+   * Helper to remove a single object from canvas.
    */
-  function removeObjectFromCanvas(id, canvas) {
+  function removeObjectFromCanvasById(id, canvas = map_canvas) {
     let obj = -1;
     obj = getObjectFromCanvasById(id, canvas);
     if (obj) {
       canvas.remove(obj);
+      return obj;
     }
+    return false;
+  }
+
+  /**
+   * Helper to remove multiple objects from canvas.
+   */
+  function removeObjectsFromCanvas(objs, canvas = map_canvas) {
+    objs.forEach(function(item) {
+      canvas.remove(item);
+    });
   }
 
   var updateScrollPos = function(e, _window) {
