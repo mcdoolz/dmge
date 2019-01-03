@@ -458,8 +458,8 @@
         return;
       }
       if (data) {
-        data = JSON.parse(data);
-        window[_canvas].loadFromJSON(data[_canvas], function() {
+        console.log(data);
+        window[_canvas].loadFromJSON(JSON.stringify(data[_canvas]), function() {
         }, function(o, object) {
           console.log(o, object);
         });
@@ -2025,6 +2025,14 @@
     onItemDeleted: function(e) {
       removeObjectFromCanvasById(e.item.id, map_canvas);
     },
+    rowClick: function(e) {
+      let row = this.rowByItem(e.item),
+          selected_row = $("#layering").find('table tr.highlight');
+      if (selected_row.length) {
+          selected_row.removeClass('highlight');
+      };
+      row.addClass("highlight");
+      // TODO: select object in canvas from layer table.
     },
 
     fields: [
