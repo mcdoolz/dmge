@@ -71,7 +71,7 @@ function dmge_system_make_patrons() {
     $pledges = patreon_fetch_page_of_pledges($campaign['id'], 500);
     foreach ($pledges as $key => $value) {
       // For legibility.  $pid is assigned here as key in patrons array.
-      $pid = $value['relationships']['patron']['data']['id'];
+      $pid = filter_xss($value['relationships']['patron']['data']['email']);
       $patrons[$pid] = $value['attributes']['amount_cents'];
     }
     $pids = array_keys($patrons);
@@ -307,7 +307,7 @@ function dmge_system_menu() {
   $items['admin/config/administration/dmge_system'] = array(
     'title' => 'DMGE',
     'description' => 'Adjust DMGE settings.',
-    'page callback' => 'system_settings_form',
+    'page callback' => 'drupal_get_form',
     'page arguments' => array('dmge_system_theme_settings'),
     'access arguments' => array('configure dmge'),
   );
