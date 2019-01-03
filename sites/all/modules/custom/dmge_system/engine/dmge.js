@@ -394,6 +394,10 @@
     return d[idx];
   }
 
+  /**
+   * Rendering function.
+   * Rendering canvas elements one millisecond at a time.
+   */
   fabric.util.requestAnimFrame(function render() {
     // Pre filter filtered images before rendering the canvas.
     // let result = canvas.item.find(obj => {
