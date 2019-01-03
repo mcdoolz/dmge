@@ -183,14 +183,6 @@ function dmge_system_players() {
   return theme('dmge_system_players', array());
 }
 
-function dmge_system_init() {
-  // Set arbitrary setting.
-  $data = array(
-    'dmge_system' => array(),
-  );
-  drupal_add_js($data, 'setting');
-}
-
 /**
  * The Main DMGE window generation.
  */
