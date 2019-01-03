@@ -2025,7 +2025,6 @@
     onItemDeleted: function(e) {
       removeObjectFromCanvasById(e.item.id, map_canvas);
     },
-    rowClick: function(e) {
       let row = this.rowByItem(e.item),
           selected_row = $("#layering").find('table tr.highlight');
       if (selected_row.length) {
