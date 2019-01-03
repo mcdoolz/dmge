@@ -503,32 +503,46 @@
     $('#save_icon').fadeOut();
   }
 
+  /**
+   * Helper to run the saving of canvases.
+   */
   function save_canvases() {
     let map_name = document.getElementById('map_name').value;
     if (!map_name) {
       map_name = 'untitled';
     }
-    let storage = {'fow': null, 'grid': null, 'map': null};
-    canvases.forEach(function(e) {
-      // eval finds the object, and the next line gets the json from the canvas ala fabricjs.
-      let _e = eval(e + '_canvas');
-      console.log('saving ' + _e);
-      let _e_json;
-      if (_e == map_canvas) {
-        _e_json = _e.toJSON(['rotation', 'x', 'y', 'width', 'height']);
+    let storage = {};
+    storage.grid = {
+      size: parseInt(document.getElementById('map_grid_size').value),
+      type: $('input[name=map_grid_type]:checked').val(),
+    }
+    canvases.forEach(function(canvas) {
+      let _canvas = canvas + '_canvas';
+      let $_canvas = $('#' + canvas).get(0);
+      let _canvas_content = _canvas + '_content';
+      let _json = -1;
+
+      if (['grid', 'map', 'particles', 'tokens'].includes(canvas)) {
+        if (['grid'].includes(canvas)) {
+          return;
+        }
+        _json = window[_canvas].toJSON(['rotation', 'x', 'y', 'width', 'height']);
       } else {
-        _e_json = _e.toJSON();
+        _json = $_canvas.toDataURL();
       }
+      if (_json) {
+        // Set content variable for local storage.
+        if (Drupal.settings.use_local_storage) {
+          localStorage.setItem(_canvas_content, _json);
+        }
 
-      // Set content variable for local storage.
-      // let _e_content = e + '_content';
-      // localStorage.setItem(_e_content, _e_json);
-
-      // Set up object for json export.
-      storage[_e + '_content'] = _e_json;
+        // Add to storage object for json export.
+        storage[_canvas] = _json;
+      }
     });
     if (storage) {
-      let file = file_storage(JSON.stringify(storage), map_name + '.dmge');
+      storage = JSON.stringify(storage);
+      let file = file_storage(storage, map_name + '.dmge');
       if (file) {
         return true;
       }
