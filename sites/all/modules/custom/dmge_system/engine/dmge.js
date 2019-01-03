@@ -1295,9 +1295,12 @@
     };
     // If we got bupkiss, let's look for an extension?  Maybe it's an mp4.
     if (!code) {
+      console.log('Not a youtube.  Load a file.');
+
       let url = $('#map_embed').val();
       let ext = getExtension(url);
-      if (ext === 'mp4') {
+
+      if (['mp4', 'mkv'].includes(ext)) {
         let id = make_file_id(url);
         let name = url.split(/(\\|\/)/g).pop();
         $('#file_status').html('<div id="file_remote_load_progress"><i class="fas fa-cog fa-spin"></i> Reaching out for ' + name + '</div>');
@@ -1313,6 +1316,36 @@
         });
         $('#files').jsGrid('insertItem', {'id': id, 'Filename': name, 'Blob': url, 'Type': 'Remote'});
       }
+
+      if (['jpg', 'png'].includes(ext)) {
+        let id = make_file_id(url);
+        let name = url.split(/(\\|\/)/g).pop();
+        $('#file_status').html('<div id="file_remote_load_progress"><i class="fas fa-cog fa-spin"></i> Reaching out for ' + name + '</div>');
+        do_image(id, url);
+        $('#files').jsGrid('insertItem', {'id': id, 'Filename': name, 'Blob': url, 'Type': 'Remote'});
+      }
+
+      if (url.includes('https://www.patreon.com/file')) {
+        $.ajax({
+          url: url,
+          // type: 'get',
+          dataType: 'script',
+          success: function(response) {
+            console.log(response);
+            $('#file_status').html('<div id="file_remote_load_progress"><i class="fab fa-patreon"></i> loaded from Patreon.</div>');
+            $('#file_remote_load_progress').fadeOut(2000);
+          },
+          complete: function(response) {
+            console.log(response);
+            $('#file_status').html('<div id="file_remote_load_progress"><i class="fab fa-patreon"></i> loaded from Patreon.</div>');
+            $('#file_remote_load_progress').fadeOut(2000);
+          },
+          beforeSend: function(data) {
+            $('#file_status').html('<div id="file_remote_load_progress"><i class="fab fa-patreon"></i> reaching out to Patreon.</div>');
+          }
+        });
+      }
+
     }
   });
 
@@ -1350,10 +1383,9 @@
   }
 
   /**
-   * Returns reference to added canvas entity.
+   * Adds image to canvas from provided url, with provided id.
    */
   function do_image(_id, _url) {
-    // let _id = make_file_id(_url);
     window[_id] = fabric.Image.fromURL(_url, function(img) {
       img.set({
         id: _id
