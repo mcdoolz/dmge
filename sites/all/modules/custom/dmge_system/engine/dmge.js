@@ -443,29 +443,26 @@
 
   // Using jQuery with fabricjs to call the canvas function
   function load_canvas_data(data = null) {
-    canvases.forEach(function(e) {
-      console.log(e);
-      let canvas = e.target;
-      let _canvas_content = e + '_canvas_content';
+    canvases.forEach(function(canvas) {
+      let _canvas = canvas + '_canvas';
+      let _canvas_content = canvas + '_canvas_content';
       if (Drupal.settings.use_local_storage) {
         window[_canvas_content] = localStorage.getItem(canvas + '_canvas_content');
         if (window[_canvas_content]) {
-          window[_canvas_content].loadFromJSON(window[_canvas_content]);
+          window[_canvas].loadFromJSON(window[_canvas_content]);
         }
         return;
       }
       if (!data) {
-        console.log('No canvas data found in dmge file.')
+        console.log('No canvas data found in .dmge file.')
         return;
       }
       if (data) {
         data = JSON.parse(data);
-        window[canvas].loadFromJSON(data, function() {}, function(o, object){
+        window[_canvas].loadFromJSON(data[_canvas], function() {
+        }, function(o, object) {
           console.log(o, object);
         });
-        if (window[_canvas_content]) {
-          window[_canvas_content].loadFromJSON(window[_canvas_content]);
-        }
         return;
       }
     });
