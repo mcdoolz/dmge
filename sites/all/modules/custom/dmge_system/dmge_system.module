@@ -194,14 +194,14 @@ function dmge_system_main() {
   }
   $path = drupal_get_path('module', 'dmge_system');
 
-  $default_campaign = variable_get('dmge_default_campaign', undefined);
+  $default_campaign = variable_get('dmge_default_campaign', 'undefined');
 
   drupal_add_js(array(
     'dmge_system' => array(
       'basepath' => $path,
       'default_campaign' => $default_campaign,
     )
-  ), 'settings');
+  ), 'setting');
 
   $cloudinary = libraries_load('cloudinary');
   if (empty($cloudinary['loaded'])) {

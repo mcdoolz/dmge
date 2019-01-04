@@ -2025,9 +2025,7 @@
     width: '100%',
 
     editing: false,
-
     pageSize: 999,
-
     confirmDeleting: false,
 
     onItemDeleted: function(e) {
