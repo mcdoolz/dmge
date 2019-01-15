@@ -86,23 +86,28 @@ video
   display: none
 
 #dmge
-  canvas
+  #canvases_wrapper
+    border: 1px solid white
+  div[id*="_wrapper"]
     position: absolute
-    z-index: 100
     left: 0px
     top: 0px
-    border: 1px solid white
+  canvas
+    position: absolute
+    // z-index: 100
+    left: 0px
+    top: 0px
     background: none
     &.tokens_canvas
-      z-index: 550
+      // z-index: 550
     &.grid_canvas
-      z-index: 500
+      // z-index: 500
     &.particles_canvas
-      z-index: 125
+      // z-index: 125
     &.fow_canvas
       pointer-events: none
       display: none
-      z-index: 150
+      // z-index: 150
       &.active
         display: block
       &.brush-active
@@ -117,32 +122,8 @@ video
 .active
   display: block
 
-#tokens_wrapper
-  position: absolute
-  z-index: 550
-  pointer-events: none
-
 #fow_wrapper
-  position: absolute
-  z-index: 150
-  pointer-events: none
   opacity: 0.5
-
-#particles_wrapper
-  position: absolute
-  z-index: 125
-  pointer-events: none
-
-#grid_wrapper
-  position: absolute
-  top: 0
-  left: 0
-  z-index: 500
-  pointer-events: none
-
-#map_wrapper
-  z-index: 100
-  position: absolute
 
 #map_video_wrapper
   display: none

@@ -170,123 +170,86 @@ video {
 }
 
 /* line 89, ../sass/screen.sass */
-#dmge canvas {
+#dmge #canvases_wrapper {
+  border: 1px solid white;
+}
+/* line 91, ../sass/screen.sass */
+#dmge div[id*="_wrapper"] {
   position: absolute;
-  z-index: 100;
   left: 0px;
   top: 0px;
-  border: 1px solid white;
+}
+/* line 95, ../sass/screen.sass */
+#dmge canvas {
+  position: absolute;
+  left: 0px;
+  top: 0px;
   background: none;
 }
-/* line 96, ../sass/screen.sass */
-#dmge canvas.tokens_canvas {
-  z-index: 550;
-}
-/* line 98, ../sass/screen.sass */
-#dmge canvas.grid_canvas {
-  z-index: 500;
-}
-/* line 100, ../sass/screen.sass */
-#dmge canvas.particles_canvas {
-  z-index: 125;
-}
-/* line 102, ../sass/screen.sass */
+/* line 107, ../sass/screen.sass */
 #dmge canvas.fow_canvas {
   pointer-events: none;
   display: none;
-  z-index: 150;
 }
-/* line 106, ../sass/screen.sass */
+/* line 111, ../sass/screen.sass */
 #dmge canvas.fow_canvas.active {
   display: block;
 }
-/* line 108, ../sass/screen.sass */
+/* line 113, ../sass/screen.sass */
 #dmge canvas.fow_canvas.brush-active {
   pointer-events: all;
   cursor: none;
 }
 
-/* line 112, ../sass/screen.sass */
+/* line 117, ../sass/screen.sass */
 .hideBrush {
   opacity: 0;
 }
-/* line 114, ../sass/screen.sass */
+/* line 119, ../sass/screen.sass */
 .fow_canvas .hideBrush {
   cursor: pointer !important;
 }
 
-/* line 117, ../sass/screen.sass */
+/* line 122, ../sass/screen.sass */
 .active {
   display: block;
 }
 
-/* line 120, ../sass/screen.sass */
-#tokens_wrapper {
-  position: absolute;
-  z-index: 550;
-  pointer-events: none;
-}
-
 /* line 125, ../sass/screen.sass */
 #fow_wrapper {
-  position: absolute;
-  z-index: 150;
-  pointer-events: none;
   opacity: 0.5;
 }
 
-/* line 131, ../sass/screen.sass */
-#particles_wrapper {
-  position: absolute;
-  z-index: 125;
-  pointer-events: none;
-}
-
-/* line 136, ../sass/screen.sass */
-#grid_wrapper {
-  position: absolute;
-  top: 0;
-  left: 0;
-  z-index: 500;
-  pointer-events: none;
-}
-
-/* line 143, ../sass/screen.sass */
-#map_wrapper {
-  z-index: 100;
-  position: absolute;
-}
-
-/* line 147, ../sass/screen.sass */
+/* line 128, ../sass/screen.sass */
 #map_video_wrapper {
   display: none;
 }
 
-/* line 150, ../sass/screen.sass */
+/* line 131, ../sass/screen.sass */
 .map_grid_type, .map_grid_property, .fow_brush_property {
   position: relative;
   margin: 0 0 20px;
 }
 
-/* line 154, ../sass/screen.sass */
+/* line 135, ../sass/screen.sass */
 .map_grid_type {
   display: inline-block;
   white-space: nowrap;
   margin: 0 20px 20px 0;
 }
 
-/* line 159, ../sass/screen.sass */
+/* line 140, ../sass/screen.sass */
 #map_file_settings, #fow_settings, #grid_settings {
   padding: 20px 0;
   position: relative;
 }
 
-/* line 163, ../sass/screen.sass */
+/* line 144, ../sass/screen.sass */
 input[type=range] {
   width: auto;
 }
 
-/* line 166, ../sass/screen.sass */
+/* line 147, ../sass/screen.sass */
 output {
   background: darkred;
   width: 40px;
@@ -300,7 +263,7 @@ output {
   pointer-events: none;
 }
 
-/* line 178, ../sass/screen.sass */
+/* line 159, ../sass/screen.sass */
 #wrench {
   position: fixed;
   top: 0;
@@ -313,16 +276,16 @@ output {
   background: white;
   cursor: pointer;
 }
-/* line 189, ../sass/screen.sass */
+/* line 170, ../sass/screen.sass */
 #wrench:hover {
   background: black;
   color: white;
 }
-/* line 193, ../sass/screen.sass */
+/* line 174, ../sass/screen.sass */
 #wrench.newbie #wrench_innerwrapper {
   animation: wrench 2.5s ease infinite;
 }
-/* line 195, ../sass/screen.sass */
+/* line 176, ../sass/screen.sass */
 #wrench.newbie:before {
   position: absolute;
   content: "";
@@ -339,7 +302,7 @@ output {
   animation: horizontal 2s ease-in-out infinite;
 }
 
-/* line 210, ../sass/screen.sass */
+/* line 191, ../sass/screen.sass */
 #menu {
   position: absolute;
   top: 0;
@@ -347,19 +310,19 @@ output {
   height: auto;
   display: block;
 }
-/* line 216, ../sass/screen.sass */
+/* line 197, ../sass/screen.sass */
 #menu ul, #menu li, #menu ul li {
   margin: 0;
   padding: 0;
 }
-/* line 219, ../sass/screen.sass */
+/* line 200, ../sass/screen.sass */
 #menu a {
   display: block;
   font-size: 32px;
   padding: 16px;
 }
 
-/* line 224, ../sass/screen.sass */
+/* line 205, ../sass/screen.sass */
 #sidebar {
   top: 0;
   right: 0;
@@ -373,45 +336,45 @@ output {
   z-index: 1000;
   height: 100%;
 }
-/* line 236, ../sass/screen.sass */
+/* line 217, ../sass/screen.sass */
 #sidebar.active {
   display: block;
 }
 
-/* line 239, ../sass/screen.sass */
+/* line 220, ../sass/screen.sass */
 #sidebar_innerwrapper {
   padding: 20px 20px 80px 80px;
   height: 100%;
 }
 
-/* line 243, ../sass/screen.sass */
+/* line 224, ../sass/screen.sass */
 #sidebar_tray {
   position: fixed;
   bottom: 0;
   text-align: center;
 }
-/* line 247, ../sass/screen.sass */
+/* line 228, ../sass/screen.sass */
 #sidebar_tray button, #sidebar_tray input[type="button"] {
   display: inline-block;
 }
-/* line 249, ../sass/screen.sass */
+/* line 230, ../sass/screen.sass */
 #sidebar_tray button, #sidebar_tray button:visited, #sidebar_tray input[type="button"], #sidebar_tray input[type="button"]:visited {
   background: white;
   border: none;
   padding: 20px;
 }
-/* line 253, ../sass/screen.sass */
+/* line 234, ../sass/screen.sass */
 #sidebar_tray button:hover, #sidebar_tray button:active, #sidebar_tray input[type="button"]:hover, #sidebar_tray input[type="button"]:active {
   background: black;
   color: white;
 }
 
-/* line 257, ../sass/screen.sass */
+/* line 238, ../sass/screen.sass */
 .highlight {
   background: lightblue;
 }
 
-/* line 260, ../sass/screen.sass */
+/* line 241, ../sass/screen.sass */
 .css-triangle {
   display: block;
   float: left;
@@ -423,24 +386,24 @@ output {
   border-color: transparent transparent #000000 transparent;
 }
 
-/* line 270, ../sass/screen.sass */
+/* line 251, ../sass/screen.sass */
 .dialog {
   z-index: 1080;
 }
 
-/* line 273, ../sass/screen.sass */
+/* line 254, ../sass/screen.sass */
 .grid_setting {
   display: inline-block;
   margin-right: 4em;
   text-align: center;
 }
 
-/* line 278, ../sass/screen.sass */
+/* line 259, ../sass/screen.sass */
 .jsgrid-cell {
   overflow: hidden;
 }
 
-/* line 281, ../sass/screen.sass */
+/* line 262, ../sass/screen.sass */
 .temp_text {
   z-index: 99999;
   position: absolute;

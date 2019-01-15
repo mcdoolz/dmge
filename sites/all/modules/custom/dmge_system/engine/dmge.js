@@ -14,7 +14,6 @@
 
   // We set these now for assignment later.
   var player_view, player_map, player_fow, player_grid, player_paint, map_scroll_synch,
-  fow_ctx = document.getElementById('fow').getContext('2d'),
   r1 = $('#fow_brush_size').val(),
   r2 = $('#fow_brush_feather_size').val(),
   dragging = false;
@@ -50,8 +49,41 @@
     skipOffscreen: false,
     selection: false
   };
-  const canvases = ['map', 'grid', 'fow', 'tokens', 'particles'];
-  const canvas_canvases = ['map_canvas', 'grid_canvas', 'fow_canvas', 'tokens_canvas', 'particles_canvas'];
+
+  const canvases = ['map', 'grid', 'fow', 'tokens', 'particles', 'paint'];
+  const canvas_canvases = new Array();
+
+  // zIndexes for Canvases
+  const ACTIVE_CANVAS_ZINDEX = 500;
+  const TOKENS_CANVAS_ZINDEX = 475;
+  const PARTICLES_CANVAS_ZINDEX = 450;
+  const PAINT_CANVAS_ZINDEX = 425;
+  const GRID_CANVAS_ZINDEX = 400;
+  const FOW_CANVAS_ZINDEX = 350;
+  const MAP_CANVAS_ZINDEX = 300;
+
+  canvases.forEach(function(e) {
+    let _e = e + '_canvas';
+    canvas_canvases.push(_e);
+  });
+  if (_canvases = $('#canvases_wrapper')) {
+    canvas_canvases.forEach(function(_e) {
+      let e = _e.replace('_canvas', '');
+      console.log('About to make ' + e);
+      let _wrapper = e + '_wrapper';
+      if (e !== 'map') {
+        window[e] = `<div id="${_wrapper}" class="notouchie"><canvas id="${e}" class="${_e}"></canvas></div>`;
+      }
+      if (e === 'map') {
+        window[e] = `<div id="${_wrapper}"><canvas id="${e}" class="${_e}"></canvas><div id="map_video_wrapper"></div></div>`;
+      }
+      _canvases.append(window[e]);
+      // $(`canvas#${e}`).css('z-index', eval(_e.toUpperCase() + '_ZINDEX'));
+      $(_wrapper).css('z-index', eval(_e.toUpperCase() + '_ZINDEX'));
+    });
+  }
+
+  const fow_ctx = $('#fow').get(0).getContext('2d');
 
   /**
    * Helper to set dimensions on all canvases.

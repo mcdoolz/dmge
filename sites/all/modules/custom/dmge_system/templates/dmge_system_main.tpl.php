@@ -283,24 +283,6 @@ $age = $incept_date->diff($today)->days;
 
   </div>
 
-  <div id="canvases_wrapper">
-    <div id="tokens_wrapper">
-      <canvas id="tokens" class="tokens_canvas"></canvas>
-    </div>
-    <div id="particles_wrapper">
-      <canvas id="particles" class="particles_canvas"></canvas>
-    </div>
-    <div id="grid_wrapper">
-      <canvas id="grid" class="grid_canvas"></canvas>
-    </div>
-    <div id="fow_wrapper">
-      <canvas id="fow" class="fow_canvas"></canvas>
-    </div>
-    <div id="map_wrapper">
-      <canvas id="map" class="map_canvas"></canvas>
-      <div id="map_video_wrapper">
-      </div>
-    </div>
-  </div>
+  <div id="canvases_wrapper"></div>
 
 </div>
