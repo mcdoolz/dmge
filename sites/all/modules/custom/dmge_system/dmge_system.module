@@ -784,3 +784,15 @@ function dmge_system_cloudinary_config_alter($config) {
   }
   return $config;
 }
+
+/**
+ * Alter user profile menu to add patreon id field for admins.
+ */
+function dmge_system_form_user_profile_form_alter(&$form, $form_state) {
+  global $user;
+  if (!empty($user->uid)) {
+    if ($user->uid == 1 || user_has_role(3, $user)) {
+      $form['field_user_patreon_id']['#access'] = TRUE;
+    }
+  }
+}
