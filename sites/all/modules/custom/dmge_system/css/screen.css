@@ -174,7 +174,7 @@ video {
   border: 1px solid white;
 }
 /* line 91, ../sass/screen.sass */
-#dmge div[id*="_wrapper"] {
+#dmge #canvases_wrapper div[id*="_wrapper"] {
   position: absolute;
   left: 0px;
   top: 0px;
