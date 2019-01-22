@@ -11,7 +11,7 @@
  this snippet is a good example of how to do so.
  */
 
-require_once('vendor/patreon/patreon/src/patreon.php');
+require_once('../src/patreon.php');
 
 use Patreon\API;
 use Patreon\OAuth;
