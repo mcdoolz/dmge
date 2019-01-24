@@ -130,11 +130,11 @@ $age = $incept_date->diff($today)->days;
         <div id="tokens_settings" class="sidebar_section">
           <h3>Tokens Settings</h3>
           <p><sup>
-            Tokens sit above all other layers as markers.  They are not tracked on a layers grid.<br />
+            Tokens sit above all other layers as markers.  They are <strong>not</strong> tracked in layers.<br />
             Sidebar settings are for new tokens.<br />
-            Double click on an existing token to pop settings for that token.<br />
+            Click an existing token to pop settings for that token.<br />
             Hold shift when clicking on a token to delete it.<br />
-            Press T or M to activate the Tokens layer.  Hold shift and press T or M to deactivate the Tokens layer.
+            Press T or M to toggle the Tokens layer.
           </sup></p>
           <div class="tokens_setting">
             <label for="tokens_toggle">Tokens</label>
