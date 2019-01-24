@@ -1764,7 +1764,6 @@
     $('#wrench').addClass('newbie');
     Cookies.set('DMGE_Veteran', 'true');
   }
-  Cookies.remove('DMGE_Veteran');
 
   $('#fow').on('mousedown', function() {
     dragging = true;
