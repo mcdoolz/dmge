@@ -1345,7 +1345,7 @@
     }
   }).change();
 
-  $('#fow_brush_toggle').change(function() {
+  $('#fow_toggle').change(function() {
     $('#cursor').toggleClass('active', this.checked);
     $('#fow').toggleClass('brush-active', this.checked);
   }).change();
