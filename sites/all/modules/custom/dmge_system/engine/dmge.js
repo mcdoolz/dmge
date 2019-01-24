@@ -157,6 +157,7 @@
    * Helper function activates and deactivates canvases for interaction.
    */
   function toggle_canvas(selected_canvas = null) {
+    console.log('Activating ' + selected_canvas);
     let _selected_toggle = $('#' + selected_canvas + '_toggle');
     let _selected_wrapper = $('#' + selected_canvas + '_wrapper');
     let _selected_link = $('#' + selected_canvas + '_link');
