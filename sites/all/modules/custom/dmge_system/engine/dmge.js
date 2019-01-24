@@ -1076,15 +1076,11 @@
         e.cancelBubble = true;
         e.preventDefault();
         open_map_catalog();
-        // if (e.ctrlKey) {
-        //   if (e.altKey) {
-        //   }
-        // }
         break;
       // Ffff
       case 70:
+        e.cancelBubble = true;
         e.preventDefault();
-        toggle_canvas('fow');
         if (e.shiftKey) {
           if (e.altKey) {
             $('#questions').html('Restore this FOW?');
@@ -1122,7 +1118,9 @@
               }
             });
           }
+          return;
         }
+        toggle_canvas('fow');
         break;
       // Pppplayer view
       case 80:
@@ -1765,12 +1763,7 @@
     Cookies.set('DMGE_Veteran', 'true');
   }
 
-  $('#fow').on('mousedown', function() {
-    dragging = true;
-  });
-
   $('#fow').on('mouseup', function() {
-    dragging = false;
     if (player_fow) {
       player_fow.width = window['fow'].width;
       player_fow.height = window['fow'].height;
@@ -1779,7 +1772,7 @@
   });
 
   $('#fow').on('mousemove', function(ev, ev2) {
-    if (dragging) {
+    if (ev.buttons == 1) {
       r1 = $('#fow_brush_size').val() / 2;
       r2 = $('#fow_brush_feather_size').val() / 2;
 
@@ -1876,8 +1869,7 @@
           originY: 'top',
           centeredRotation: true,
           hasRotatingPoint: false,
-          // selectable: false,
-          selectable: true,
+          selectable: false,
 
           hasBorders: false,
           hasControls: false,
@@ -1919,27 +1911,6 @@
         window['grid'].add(quadSymbol);
       });
 
-      /**
-       * This doesn't work because:
-       * We're using Fabric because:
-       * We want to interact with the grid because:
-       * Grid marking, etc.
-       */
-      // var canvas = $('#grid').get(0);
-      // var context = canvas.getContext("2d");
-      // context.beginPath();
-      // for (var x = 0; x <= _width; x += _size) {
-      //   context.moveTo(0.5 + x, 0);
-      //   context.lineTo(0.5 + x, _height);
-      // }
-      // for (var x = 0; x <= _height; x += _size) {
-      //   context.moveTo(p, 0.5 + x);
-      //   context.lineTo(bw, 0.5 + x);
-      // }
-      // context.closePath();
-      // context.strokeStyle = "white";
-      // context.lineWidth = 1;
-      // context.stroke();
     }
 
     window['grid'].renderAll();
