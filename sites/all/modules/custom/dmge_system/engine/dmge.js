@@ -58,14 +58,14 @@
     selection: false
   };
 
-  const canvases = ['map', 'grid', 'fow', 'tokens', 'particles', 'paint'];
+  const canvases = ['map', 'grid', 'fow', 'tokens', 'particles', 'painting'];
   const canvas_canvases = new Array();
 
   // zIndexes for Canvases
   const ACTIVE_CANVAS_ZINDEX = 500;
   const TOKENS_CANVAS_ZINDEX = 475;
   const PARTICLES_CANVAS_ZINDEX = 450;
-  const PAINT_CANVAS_ZINDEX = 425;
+  const PAINTING_CANVAS_ZINDEX = 425;
   const GRID_CANVAS_ZINDEX = 400;
   const FOW_CANVAS_ZINDEX = 350;
   const MAP_CANVAS_ZINDEX = 300;
