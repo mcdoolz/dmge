@@ -18,6 +18,14 @@
   r2 = $('#fow_brush_feather_size').val(),
   dragging = false;
 
+  fabric.Object.prototype.originX = fabric.Object.prototype.originY = 'center';
+  fabric.Canvas.prototype.getAbsoluteCoords = function(object) {
+    return {
+      left: object.left + this._offset.left,
+      top: object.top + this._offset.top
+    };
+  }
+
   /**
    * Hash code helper.
    * https://stackoverflow.com/a/7616484/4942292
