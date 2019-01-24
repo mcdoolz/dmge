@@ -1691,6 +1691,8 @@
     if (params.v) {
       do_youtube(params.v);
     }
+    $('#map_width').val(screensize.width);
+    $('#map_height').val(screensize.height);
   });
 
   /**

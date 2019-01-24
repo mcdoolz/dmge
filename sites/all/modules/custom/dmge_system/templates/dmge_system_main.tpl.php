@@ -74,14 +74,17 @@ $age = $incept_date->diff($today)->days;
       <div id="sidebar_sections">
 
         <div id="map_settings" class="sidebar_section">
+          <h3>Map Settings</h3>
+          <p><sup>
+            Set the size of your map surface in the width and height.  They default to your screen resolution or the largest element you've loaded.<br />
+            Press F11 or click the Monitor icon in the bottom tray for Full Screen mode.
+          </sup></p>
           <div class="map_setting">
-            <h3>Map Settings</h3>
             <label for="map_name">Map Name</label>
             <input type="text" id="map_name" placeholder="Untitled" class="ui-corner-all">
           </div>
           <div class="map_setting">
             <h4>Map Size</h4>
-            <p>Defaults to your screen resolution.<br />Press F11 for Full Screen.</p>
             <label for="map_width">Width</label>
             <input type="number" id="map_width" class="ui-corner-all">
             <label for="map_height">Height</label>
@@ -105,6 +108,13 @@ $age = $incept_date->diff($today)->days;
 
         <div id="files_settings" class="sidebar_section">
           <h2>Files Settings</h2>
+          <p><sup>
+            Use the file dialog to select multiple files to load.<br />
+            Copy and paste the address of a remote file to load it to the canvas (loading may take time).<br />
+            Select a campaign folder to load all files in a folder.<br />
+            Clicking 'Add' will add a layer copy of the respective row item.  Layers are controlled on the Layers tab.<br />
+            Hold Ctrl when clicking an element on the map to pop the settings.
+          </p></sup>
           <div id="file_status"></div>
           <form id="file_local_load">
             <input id="file" type="file" multiple />
@@ -151,12 +161,21 @@ $age = $incept_date->diff($today)->days;
 
         <div id="layers" class="sidebar_section">
           <h3>Layers Settings</h3>
-          <p>Click and drag the entries to sort them on the map.</p>
+          <p><sup>
+            Click and drag rows to sort them on the map.<br />
+            Hold Ctrl when clicking an element on the map to pop the settings.
+          </sup></p>
           <div id="layering"></div>
         </div>
 
         <div id="fow_settings" class="sidebar_section">
           <h3>Fog of War Settings</h3>
+          <p><sup>
+            Press F to toggle the FoW.<br />
+            Hold shift and ctrl and press F to save an FoW.<br />
+            Hold shift and alt and press F to restore the saved FoW.<br />
+            You must reset the FoW when you first begin.
+          </sup></p>
           <div class="fow_control">
             <label for="fow_toggle">Fog of War</label>
             <input type="checkbox" id="fow_toggle">
