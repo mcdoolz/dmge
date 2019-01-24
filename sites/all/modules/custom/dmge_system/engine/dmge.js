@@ -74,23 +74,41 @@
     let _e = e + '_canvas';
     canvas_canvases.push(_e);
   });
+
   if (_canvases = $('#canvases_wrapper')) {
     canvas_canvases.forEach(function(_e) {
       let e = _e.replace('_canvas', '');
-      console.log('About to make ' + e);
       let _wrapper = e + '_wrapper';
       if (e !== 'map') {
-        window[e] = `<div id="${_wrapper}" class="notouchie"><canvas id="${e}" class="${_e}"></canvas></div>`;
+        window[e] = `<div id="${_wrapper}" class="notouchie"><canvas id="${e}" class="${_e}"> </canvas></div>`;
       }
       if (e === 'map') {
-        window[e] = `<div id="${_wrapper}"><canvas id="${e}" class="${_e}"></canvas><div id="map_video_wrapper"></div></div>`;
+        window[e] = `<div id="${_wrapper}"><canvas id="${e}" class="${_e}"> </canvas><div id="map_video_wrapper"></div></div>`;
       }
       _canvases.append(window[e]);
-      // $(`canvas#${e}`).css('z-index', eval(_e.toUpperCase() + '_ZINDEX'));
+      switch (e) {
+        case 'fow':
+        case 'grid':
+          window[e] = new fabric.StaticCanvas(document.getElementById(e), _canvas_props);
+          break;
+        default:
+          window[e] = new fabric.Canvas(document.getElementById(e), _canvas_props);
+      }
+      switch (e) {
+        case 'map':
+        case 'grid':
+        // Do nothing.
+          break;
+        default:
+          let _toggle = $('#' + e + '_toggle');
+          $(_toggle).on('change', function() {
+            toggle_canvas(e);
+          });
+      }
+      window['map'].selection = true;
       $(_wrapper).css('z-index', eval(_e.toUpperCase() + '_ZINDEX'));
     });
   }
-
   const fow_ctx = $('#fow').get(0).getContext('2d');
 
   /**
@@ -102,25 +120,16 @@
       let _screensize = screensize;
     }
     canvases.forEach(function(e) {
-      let _canvas = e + '_canvas';
-      if (!window[_canvas]) {
-        switch (e) {
-          case 'fow':
-          case 'grid':
-            window[_canvas] = new fabric.StaticCanvas(e, _canvas_props);
-            break;
-          default:
-            window[_canvas] = new fabric.Canvas(e, _canvas_props);
-        }
-        map_canvas.selection = true;
-      }
-      window[_canvas].setWidth(_screensize.width);
-      window[_canvas].setHeight(_screensize.height);
+      window[e].setWidth(_screensize.width);
+      window[e].setHeight(_screensize.height);
     });
   }
 
   set_canvas_dimensions(screensize);
 
+  /**
+   * Helper renders canvases on command.
+   */
   function update_canvases() {
     canvases.forEach(function(e) {
       let _canvas = e + '_canvas';
@@ -142,6 +151,32 @@
       }
       set_canvas_dimensions(_screensize);
     }
+  }
+
+  /**
+   * Helper function activates and deactivates canvases for interaction.
+   */
+  function toggle_canvas(selected_canvas = null) {
+    let _selected_toggle = $('#' + selected_canvas + '_toggle');
+    let _selected_wrapper = $('#' + selected_canvas + '_wrapper');
+    let _selected_link = $('#' + selected_canvas + '_link');
+
+    canvases.forEach(function(_canvas) {
+      $('#' + _canvas + '_toggle').not(_selected_toggle).prop('checked', false);
+      $('#' + _canvas + '_wrapper').not('#map_wrapper').addClass('notouchie');
+      $('#' + _canvas + '_link').removeClass('selected');
+      // Ditch selections when switching canvases.
+      if (window[_canvas].discardActiveObject) {
+        window[_canvas].discardActiveObject().renderAll();
+      }
+    });
+
+    // If the checkbox is turned on, we activate the selected canvas.
+    if ((_selected_toggle).prop('checked')) {
+      _selected_wrapper.removeClass('notouchie');
+      _selected_link.addClass('selected');
+    }
+    $('#map_wrapper').removeClass('notouchie');
   }
 
   /**
@@ -272,7 +307,7 @@
    */
   function getFilter(obj = NULL, index) {
     if (!obj) {
-      obj = map_canvas.getActiveObject();
+      obj = window['map'].getActiveObject();
     }
     if (obj) {
       if (obj.filters[index]) {
@@ -284,30 +319,30 @@
 
   function applyFilter(obj = NULL, index, filter) {
     if (!obj) {
-      obj = map_canvas.getActiveObject();
+      obj = window['map'].getActiveObject();
     }
     // if (obj)
     obj.filters[index] = filter;
     // var timeStart = +new Date();
     obj.applyFilters();
     // var timeEnd = +new Date();
-    // var dimString = map_canvas.getActiveObject().width + ' x ' +
-      // map_canvas.getActiveObject().height;
+    // var dimString = window['map'].getActiveObject().width + ' x ' +
+      // window['map'].getActiveObject().height;
     // console.log(dimString + 'px ' +
     //   parseFloat(timeEnd-timeStart) + 'ms');
   }
 
   function applyFilterValue(obj = null, index, prop, value) {
     if (!obj) {
-      obj = map_canvas.getActiveObject();
+      obj = window['map'].getActiveObject();
     }
     if (obj.filters[index]) {
       obj.filters[index][prop] = value;
       // var timeStart = +new Date();
       obj.applyFilters();
       // var timeEnd = +new Date();
-      // var dimString = map_canvas.getActiveObject().width + ' x ' +
-      //   map_canvas.getActiveObject().height;
+      // var dimString = window['map'].getActiveObject().width + ' x ' +
+      //   window['map'].getActiveObject().height;
       // console.log(dimString + 'px ' +
       //   parseFloat(timeEnd-timeStart) + 'ms');
     }
@@ -379,10 +414,10 @@
     }
   }
 
-  map_canvas.on('object:selected', function(e) {selected(e);});
-  map_canvas.on('selection:updated', function(e) {selected(e);});
+  window['map'].on('object:selected', function(e) {selected(e);});
+  window['map'].on('selection:updated', function(e) {selected(e);});
 
-  map_canvas.on('object:added', function(e) {
+  window['map'].on('object:added', function(e) {
     check_object_vs_map(e);
     let id, from_id, row, new_row;
 
@@ -422,6 +457,116 @@
   });
 
   /**
+   * Token time.  Here's our settings html.
+   */
+  function token_settings_html() {
+    let html = `
+    <div id="token_settings_wrapper">
+      <div id="token_settings_title">Token settings</div>
+      <div id="token_settings_close"><i class="fas fa-window-close"></i></div>
+      <label for="token_opacity">Opacity</label>
+      <input id="token_opacity" type="range" min="0.1" max="1" step="0.1" />
+      <label for="token_opacity">Colour</label>
+      <input id="token_color" type="color" />
+    </div>
+    `;
+    return html;
+  }
+
+  function open_token_settings(e) {
+    let _settings_wrapper = $('#token_settings_wrapper').get(0);
+    $('#token_opacity').target = window['tokens'].getActiveObject();
+    if (!_settings_wrapper) {
+      $(document.body).append(token_settings_html());
+    }
+    if (_opacity = $('#token_opacity').get(0)) {
+      _settings_wrapper = $('#token_settings_wrapper');
+      _settings_wrapper.fadeIn(250, function() {
+        _settings_wrapper.tid = e.target.id;
+      });
+      let _color = $('#token_color').get(0);
+
+      _opacity.value = e.target.opacity;
+      _color.value = e.target.fill;
+
+      $('#token_opacity').on('change, input', function(o) {
+        if (window['tokens'].getActiveObject()) {
+          window['tokens'].getActiveObject().set({
+            opacity: this.value
+          });
+          window['tokens'].renderAll();
+        }
+      }).change();
+
+      $('#token_color').on('change, input', function(o) {
+        console.log(this.value);
+        if (window['tokens'].getActiveObject()) {
+          window['tokens'].getActiveObject().set({
+            fill: this.value
+          });
+          window['tokens'].renderAll();
+        }
+      }).change();
+
+      $('#token_settings_close').on('click', function() {
+        _settings_wrapper.fadeOut(250, function() {
+          this.remove();
+        });
+      });
+      let absCoords = window['tokens'].getAbsoluteCoords(e.target);
+      _settings_wrapper.css({
+        'left': (absCoords.left - (_settings_wrapper.width() / 2)) + 'px',
+        'top': (absCoords.top +  (_settings_wrapper.height() / 2)) + 'px'
+      });
+    }
+  }
+
+  /**
+   * Token canvas events.
+   */
+  window['tokens'].observe('object:moving', function(e) {
+    let _settings_wrapper = $('#token_settings_wrapper');
+    if (_settings_wrapper.get(0)) {
+      let absCoords = window['tokens'].getAbsoluteCoords(e.target);
+      _settings_wrapper.css({
+        'left': (absCoords.left - (_settings_wrapper.width() / 2)) + 'px',
+        'top': (absCoords.top +  (_settings_wrapper.height() / 2)) + 'px'
+      });
+    }
+  });
+
+  window['tokens'].observe('mouse:down', function(e) {
+    if (!e.target) {
+      let color = $('#tokens_colour').val();
+      let pointer = window['tokens'].getPointer(e.e);
+      let radius = $('#tokens_size').val();
+      origX = pointer.x;
+      origY = pointer.y;
+      circle = new fabric.Circle({
+        left: pointer.x,
+        top: pointer.y,
+        radius: parseInt(radius),
+        // strokeWidth: 1,
+        // stroke: 'black',
+        fill: color,
+        selectable: true,
+        originX: 'center', originY: 'center'
+      });
+      window['tokens'].add(circle);
+    }
+    if (e.target) {
+      open_token_settings(e);
+    }
+    if (e.e.shiftKey) {
+      window['tokens'].remove(window['tokens'].getActiveObject());
+      $('#token_settings_wrapper').fadeOut(250, function() {
+        this.remove();
+      });
+    }
+    window['tokens'].renderAll();
+  })
+
+  /**
   * Get a row from provided jsgrid data.
    */
   function get_row(id, d = false) {
@@ -443,13 +588,11 @@
     // let result = canvas.item.find(obj => {
     //   return obj.b === 6;
     // })
-    map_canvas.getObjects().forEach(function(obj) {
+    window['map'].getObjects().forEach(function(obj) {
       let backend = fabric.filterBackend;
       if (obj.video) {
         if (0 < obj.filters.length) {
           if (backend && backend.evictCachesForKey) {
-            console.log(map_canvas);
-            console.log(obj);
             backend.evictCachesForKey(obj.cacheKey);
             backend.evictCachesForKey(obj.cacheKey + '_filtered');
             obj.applyFilters();
@@ -458,15 +601,15 @@
       }
     });
 
-    map_canvas.renderAll();
+    window['map'].renderAll();
 
     /**
      * Update the player view on frame.
      */
     if (window.player_view) {
       if (player_map) {
-        let map_width = map_canvas.width;
-        let map_height = map_canvas.height;
+        let map_width = window['map'].width;
+        let map_height = window['map'].height;
 
         window.player_view.width = map_width;
         window.player_view.height = map_height;
@@ -474,7 +617,7 @@
         player_map.width = map_width;
         player_map.height = map_height;
 
-        player_map.getContext('2d').drawImage(map_canvas.getElement(), 0, 0, map_width, map_height);
+        player_map.getContext('2d').drawImage(window['map'].getElement(), 0, 0, map_width, map_height);
       }
     }
 
@@ -602,7 +745,7 @@
   });
 
   function dragging_initialize() {
-    map_canvas.selection = false;
+    window['map'].selection = false;
     $('#map_wrapper').addClass('notouchie');
     map_scroll_synch = $('map_scroll_synch').val();
   }
@@ -619,6 +762,17 @@
 
       },
       'mousedown': function(e) {
+        if (e.ctrlKey) {
+          window['map'].selection = false;
+
+          // document.getElementById('grid_wrapper').style.pointerEvents = true;
+          // console.log(e);
+          // if (window['grid'].Grid) {
+          //   let hex = window['grid'].Grid.pointToHex(getMousePos(e));
+          //   console.log(window['grid'].__grid.get(hex));
+          // }
+
+        }
         if (e.altKey === true) {
           dragging_initialize();
           clicked = true;
@@ -634,7 +788,7 @@
         $('#map_wrapper').removeClass('notouchie');
         clicked = false;
         document.getElementById('grid_wrapper').style.pointerEvents = false;
-        map_canvas.selection = true;
+        window['map'].selection = true;
         $('html').css('cursor', 'auto');
         if ($('#error')) {
           $('#error').fadeOut();
@@ -646,7 +800,7 @@
    * Got it from stack overflow.
    * Snaps to grid.
    */
-  map_canvas.on('object:moving', function(options) {
+  window['map'].on('object:moving', function(options) {
     let grid_snap = document.getElementById('grid_snap');
     if (!grid_snap.checked) {
       return;
@@ -658,7 +812,7 @@
     });
   });
 
-  map_canvas.on('object:scaling', function(options) {
+  window['map'].on('object:scaling', function(options) {
     let grid_snap = document.getElementById('grid_snap');
     if (!grid_snap.checked) {
       return;
@@ -756,7 +910,7 @@
   /**
    * Helper function get canvas object.
    */
-  function getObjectFromCanvasById(id, canvas = map_canvas) {
+  function getObjectFromCanvasById(id, canvas = window['map']) {
     let objs = -1;
     objs = canvas.getObjects().filter(function (item) {
       return item.id == parseInt(id);
@@ -770,7 +924,7 @@
   /**
    * Gets all items by from id.
    */
-  function getObjectsFromCanvasByFromId(from_id, canvas = map_canvas) {
+  function getObjectsFromCanvasByFromId(from_id, canvas = window['map']) {
     let objs = -1;
     objs = canvas.getObjects().filter(function (item) {
       return item.from_id == parseInt(from_id);
@@ -784,7 +938,7 @@
   /**
    * Helper to remove a single object from canvas.
    */
-  function removeObjectFromCanvasById(id, canvas = map_canvas) {
+  function removeObjectFromCanvasById(id, canvas = window['map']) {
     let obj = -1;
     obj = getObjectFromCanvasById(id, canvas);
     if (obj) {
@@ -797,7 +951,7 @@
   /**
    * Helper to remove multiple objects from canvas.
    */
-  function removeObjectsFromCanvas(objs, canvas = map_canvas) {
+  function removeObjectsFromCanvas(objs, canvas = window['map']) {
     objs.forEach(function(item) {
       canvas.remove(item);
     });
@@ -820,7 +974,7 @@
       _e.zoomToPoint({ x: _x, y: _y }, zoom);
     });
     let _size = parseInt($('#map_grid_size').val());
-    _size = _size * map_canvas.getZoom();
+    _size = _size * window['map'].getZoom();
     $('#map_grid_display_size').val(_size);
     update_canvases();
   }
@@ -837,9 +991,9 @@
     full_screen();
   });
 
-  // map_canvas.on('mouse:wheel', function(opt) {
+  // window['map'].on('mouse:wheel', function(opt) {
   //   var delta = opt.e.deltaY;
-  //   var zoom = map_canvas.getZoom();
+  //   var zoom = window['map'].getZoom();
   //   zoom = zoom + delta/200;
   //   if (zoom > 10) {zoom = 10;}
   //   if (zoom < 1) {zoom = 1;}
@@ -850,14 +1004,14 @@
   //   opt.e.stopPropagation();
   //   var vpt = this.viewportTransform;
   //   if (vpt[4] >= 0) {
-  //     grid_canvas.viewportTransform[4] = this.viewportTransform[4] = 0;
-  //   } else if (vpt[4] < map_canvas.getWidth() * zoom) {
-  //     grid_canvas.viewportTransform[4] = this.viewportTransform[4] = map_canvas.getWidth() * zoom;
+  //     window['grid'].viewportTransform[4] = this.viewportTransform[4] = 0;
+  //   } else if (vpt[4] < window['map'].getWidth() * zoom) {
+  //     window['grid'].viewportTransform[4] = this.viewportTransform[4] = window['map'].getWidth() * zoom;
   //   }
   //   if (vpt[5] >= 0) {
-  //     grid_canvas.viewportTransform[5] = this.viewportTransform[5] = 0;
-  //   } else if (vpt[5] < map_canvas.getHeight() * zoom) {
-  //     grid_canvas.viewportTransform[5] = this.viewportTransform[5] = map_canvas.getHeight() * zoom;
+  //     window['grid'].viewportTransform[5] = this.viewportTransform[5] = 0;
+  //   } else if (vpt[5] < window['map'].getHeight() * zoom) {
+  //     window['grid'].viewportTransform[5] = this.viewportTransform[5] = window['map'].getHeight() * zoom;
   //   }
   // });
 
@@ -879,10 +1033,11 @@
    */
   $(document).on('keydown', function(e) {
 
-    // If it's one of the number keys at the top then count off and activate a sidebar menu item.
+    // If we're in an input, don't do shit.
     if ($('input').is(':focus')) {
       return;
     }
+    // If it's one of the number keys at the top then count off and activate a sidebar menu item.
     if ((e.which >= 48) && (e.which <= 57)) {
       $('#sidebar_sections .sidebar_section').hide();
       try {
@@ -956,7 +1111,7 @@
               modal: true,
               buttons: {
                 'Yes': function() {
-                  __fow = localStorage.setItem('fow_content', fow_canvas.toDataURL());
+                  __fow = localStorage.setItem('fow_content', window['fow'].toDataURL());
                   $(this).dialog('close');
                 },
                 Cancel: function() {
@@ -976,28 +1131,24 @@
         }
         break;
 
+      // ttttt
+      case 84:
+      // mmmmm
+      case 77:
+        e.cancelBubble = true;
+        e.preventDefault();
+        $('#tokens_toggle').click();
+        toggle_canvas('tokens');
+        break;
+
       // Zzzz
       case 90:
-        if (e.ctrlKey) {
-          // $('#grid_wrapper').removeClass();
-          // $('#grid_wrapper').addClass('active grid_canvas_drag');
-          // $('#grid_wrapper').draggable({disabled: false});
-        }
-        if (e.shiftKey) {
-          // $('#grid_wrapper').removeClass();
-          // $('#grid_wrapper').draggable({disabled: true});
-        }
+
         break;
 
       // XXX
       case 88:
-        // if (e.ctrlKey) {
-        //   $('#grid_wrapper').removeClass();
-        //   $('#grid_wrapper').addClass('active grid_canvas_marking');
-        // }
-        // if (e.shiftKey) {
-        //   $('#grid_wrapper').removeClass();
-        // }
+
         break;
 
       // Backspace
@@ -1007,9 +1158,6 @@
         e.preventDefault();
         e.cancelBubble = true;
         delete_objects();
-        if (e.ctrlKey) {
-          $('.map_token').remove();
-        }
         break;
 
       // F5
@@ -1025,14 +1173,27 @@
   });
 
   function delete_objects() {
-    if (!map_canvas.getActiveObject()) {
-      return;
-    }
-    if (map_canvas.getActiveObject()) {
-      if (confirm('Are you sure?')) {
-        map_canvas.remove(map_canvas.getActiveObject());
-      }
-    }
+    canvases.forEach(function(canvas) {
+      switch (canvas) {
+        case 'fow':
+        case 'grid':
+        //
+          break;
+        default:
+          let _obj;
+          if (_obj = window[canvas].getActiveObject()) {
+            switch (canvas) {
+              case 'map':
+                if (confirm('Are you sure?')) {
+                  window[canvas].remove(_obj);
+                }
+              break;
+              default:
+                window[canvas].remove(_obj);
+            }
+          }
+        }
+    });
   }
 
   /**
@@ -1040,7 +1201,7 @@
    */
   function get_opacity(thing) {
     _opacity = thing.val();
-    _opacity = _opacity / 100;
+    _opacity = parseInt(_opacity / 100);
     return _opacity;
   }
 
@@ -1116,7 +1277,7 @@
    */
   function fow_store_content() {
     // Get image data from canvas and store it to window variable.
-    window.fow_content = fow_ctx.getImageData(0, 0, fow_canvas.width, fow_canvas.height);
+    window.fow_content = fow_ctx.getImageData(0, 0, window['fow'].width, window['fow'].height);
     // Stringify the window variable for localstorage.
     // window.fow_content = JSON.stringify(window.fow_content);
     // localStorage.setItem('current_fow_content', window.fow_content);
@@ -1145,7 +1306,7 @@
    */
   function render_fow_canvas() {
     if (player_fow) {
-      player_fow.getContext('2d').drawImage(fow_canvas.getElement(), 0, 0, fow_canvas.width, fow_canvas.height);
+      player_fow.getContext('2d').drawImage(window['fow'].getElement(), 0, 0, window['fow'].width, window['fow'].height);
     }
   }
 
@@ -1155,10 +1316,10 @@
   function fow_reset() {
     fow_ctx.globalCompositeOperation = 'source-over';
     fow_ctx.fillStyle = 'rgba( 0, 0, 0, 1 )';
-    fow_ctx.fillRect(0, 0, fow_canvas.width, fow_canvas.height);
+    fow_ctx.fillRect(0, 0, window['fow'].width, window['fow'].height);
     if (player_fow) {
-      player_fow.width = fow_canvas.width;
-      player_fow.height = fow_canvas.height;
+      player_fow.width = window['fow'].width;
+      player_fow.height = window['fow'].height;
       render_fow_canvas();
     }
   }
@@ -1170,8 +1331,14 @@
   /**
    * Fog On!
    */
-  $("#fow_toggle").change(function() {
+  $("#fow_enabler").change(function() {
     fow_store_content();
+    if (this.checked) {
+      $('label[for="fow_enabler"]').html('Fog of War Visible');
+    }
+    if (!this.checked) {
+      $('label[for="fow_enabler"]').html('Fog of War Hidden');
+    }
     $('canvas#fow').toggleClass('active', this.checked);
     if ($(this).hasClass('active')) {
       fow_recall_content();
@@ -1431,7 +1598,7 @@
       img.set({
         id: _id
       })
-      map_canvas.add(img);
+      window['map'].add(img);
     });
   }
 
@@ -1440,8 +1607,8 @@
   });
 
   $('#map_clear').click(function() {
-    map_canvas.clear();
-    fow_canvas.clear();
+    window['map'].clear();
+    window['fow'].clear();
   });
 
   /**
@@ -1604,8 +1771,8 @@
   $('#fow').on('mouseup', function() {
     dragging = false;
     if (player_fow) {
-      player_fow.width = fow_canvas.width;
-      player_fow.height = fow_canvas.height;
+      player_fow.width = window['fow'].width;
+      player_fow.height = window['fow'].height;
       render_fow_canvas();
     }
   });
@@ -1640,9 +1807,9 @@
    * Helper creates grid.
    */
   function set_grid(_size) {
-    grid_canvas.clear();
+    window['grid'].clear();
     if (player_grid) {
-      player_grid.getContext('2d').clearRect(0, 0, grid_canvas.width, grid_canvas.height);
+      player_grid.getContext('2d').clearRect(0, 0, window['grid'].width, window['grid'].height);
     }
     var _type = $('input[name=map_grid_type]:checked').val();
     if (_type == 'None') {
@@ -1674,16 +1841,16 @@
     const Hex = Honeycomb.extendHex(__gridoptions);
 
     var Grid = Honeycomb.defineGrid(Hex)
-    grid_canvas.Grid = Grid;
+    window['grid'].Grid = Grid;
 
     _cols = (_width / _size);
     _rows = (_height / _size);
 
     const __grid = Grid.rectangle({width: _cols, height: _rows});
-    grid_canvas.__grid = __grid;
-    if ((grid_canvas.width !== map_canvas.width) || (grid_canvas.height !== map_canvas.height)) {
-      grid_canvas.width = map_canvas.width;
-      grid_canvas.height = map_canvas.height;
+    window['grid'].__grid = __grid;
+    if ((window['grid'].width !== window['map'].width) || (window['grid'].height !== window['map'].height)) {
+      window['grid'].width = window['map'].width;
+      window['grid'].height = window['map'].height;
     }
 
 
@@ -1721,7 +1888,7 @@
 
         let hexSymbol = new fabric.Polygon(corners, _props, false);
 
-        grid_canvas.add(hexSymbol);
+        window['grid'].add(hexSymbol);
 
       });
     }
@@ -1748,7 +1915,7 @@
         };
 
         let quadSymbol = new fabric.Rect(_props);
-        grid_canvas.add(quadSymbol);
+        window['grid'].add(quadSymbol);
       });
 
       /**
@@ -1774,12 +1941,12 @@
       // context.stroke();
     }
 
-    grid_canvas.renderAll();
+    window['grid'].renderAll();
 
     if (player_grid) {
-      player_grid.width = grid_canvas.width;
-      player_grid.height = grid_canvas.height;
-      player_grid.getContext('2d').drawImage(grid_canvas.getElement(), 0, 0, grid_canvas.width, grid_canvas.height);
+      player_grid.width = window['grid'].width;
+      player_grid.height = window['grid'].height;
+      player_grid.getContext('2d').drawImage(window['grid'].getElement(), 0, 0, window['grid'].width, window['grid'].height);
     }
   }
 
@@ -1795,7 +1962,6 @@
   $('#map_master_volume').on('change, input', function(e) {
     $('video').prop('volume', $(this).val());
   }).change();
-
 
   /**
    * Load a campaign folder.
@@ -1970,7 +2136,7 @@
             left: 0,
             top: 0
           });
-          map_canvas.add(window[item.id]);
+          window['map'].add(window[item.id]);
           $(_id).off('play');
         });
       }
@@ -2015,11 +2181,11 @@
             let id = item.id;
             let from_id = -1;
             let obj = -1;
-            obj = getObjectFromCanvasById(id, map_canvas);
+            obj = getObjectFromCanvasById(id, window['map']);
             if (obj) {
-              removeObjectFromCanvasById(id, map_canvas);
-              if (objs = getObjectsFromCanvasByFromId(obj.from_id, map_canvas)) {
-                removeObjectsFromCanvas(objs, map_canvas);
+              removeObjectFromCanvasById(id, window['map']);
+              if (objs = getObjectsFromCanvasByFromId(obj.from_id, window['map'])) {
+                removeObjectsFromCanvas(objs, window['map']);
               }
             }
             $('#files').jsGrid('deleteItem', $(item));
@@ -2033,7 +2199,7 @@
 
   function add_clone(val, item) {
     let obj, clone;
-    if (obj = getObjectFromCanvasById(item.id, map_canvas)) {
+    if (obj = getObjectFromCanvasById(item.id, window['map'])) {
       clone = fabric.util.object.clone(obj);
       clone.id = make_file_id(item.id);
       clone.from_id = obj.id;
@@ -2042,7 +2208,7 @@
         clone.from_id = obj.from_id;
       }
       if (!$.isEmptyObject(clone)) {
-        map_canvas.add(clone);
+        window['map'].add(clone);
       }
     }
     else {
@@ -2069,7 +2235,7 @@
     confirmDeleting: false,
 
     onItemDeleted: function(e) {
-      removeObjectFromCanvasById(e.item.id, map_canvas);
+      removeObjectFromCanvasById(e.item.id, window['map']);
     },
 
     fields: [
@@ -2093,7 +2259,7 @@
         itemTemplate: function(val, item) {
           return $('<button>').html('<i class="fa fa-puzzle-piece" aria-hidden="true"></i> Add').attr({'class': 'file_add_to_canvas'}).css({ 'display': 'block' }).on('click', function(e) {
             let obj;
-            if (obj = getObjectFromCanvasById(item.id, map_canvas)) {
+            if (obj = getObjectFromCanvasById(item.id, window['map'])) {
               add_clone(val, item);
             }
           });
@@ -2104,8 +2270,8 @@
       { name: 'Options',
         itemTemplate: function(val, item) {
           return $('<button>').html('<i class="fas fa-wrench"></i> Options').attr({'class': 'layer_options'}).css({ 'display': 'block' }).on('click', function(e) {
-            let obj = getObjectFromCanvasById(item.id, map_canvas);
-            map_canvas.setActiveObject(obj);
+            let obj = getObjectFromCanvasById(item.id, window['map']);
+            window['map'].setActiveObject(obj);
             open_layer_options(obj);
           });
         },
@@ -2144,7 +2310,7 @@
             return $(row).data("JSGridItem");
           });
           items.forEach(function(e) {
-            map_canvas.moveTo(getObjectFromCanvasById(e.id, map_canvas), e.row);
+            window['map'].moveTo(getObjectFromCanvasById(e.id, window['map']), e.row);
           });
         }
       });
@@ -2195,7 +2361,7 @@
   /**
    * Helper fires when object is deleted.
    */
-  map_canvas.on('object:removed', function (e) {
+  window['map'].on('object:removed', function (e) {
     // We are only worried about removing layers.
     let data = $('#layering').jsGrid('option', 'data');
     let row = -1;
@@ -2216,8 +2382,8 @@
     row = null;
 
     videos.forEach(function(video) {
-      if (!getObjectFromCanvasById(video.id, map_canvas)) {
-        if ((getObjectsFromCanvasByFromId(video.id, map_canvas)).length > 0) {
+      if (!getObjectFromCanvasById(video.id, window['map'])) {
+        if ((getObjectsFromCanvasByFromId(video.id, window['map'])).length > 0) {
           return false;
         }
         row = get_row(video.id);
@@ -2233,12 +2399,12 @@
   /**
    * Selection function opens element dialog and should set controls to match properties of object.
    */
-  map_canvas.on('selection:created', function (e) {
+  window['map'].on('selection:created', function (e) {
     if (e.shiftKey) {
       if (!$('#map_element_options').dialog('isOpen')) {
         $('#map_element_options').dialog('open');
       }
-      let obj = map_canvas.getActiveObject();
+      let obj = window['map'].getActiveObject();
       $('#map_element_opacity').val(obj.opacity);
     }
   });
@@ -2247,7 +2413,7 @@
    * ELement Opacity.
    */
   $('#map_element_opacity').on('input', function(e) {
-    let obj = map_canvas.getActiveObject();
+    let obj = window['map'].getActiveObject();
     obj.set({
       opacity: this.value
     });
@@ -2415,7 +2581,7 @@
   }
 
   $('#text_create_button').click(function() {
-    map_canvas.off('mouse:down');
+    window['map'].off('mouse:down');
     $('.temp_text').remove();
     let text = new fabric.Text($('#text_create_text').val());
     let textSize = ($('#text_size').val()) ? $('#text_size').val() : 15;
@@ -2427,7 +2593,7 @@
     });
 
     $('body').append(ttag[0]);
-    map_canvas.on('mouse:down', function(e) {
+    window['map'].on('mouse:down', function(e) {
       placeText(text, {'x': e.e.clientX, 'y': e.e.clientY});
     });
     $(document).on('mousemove', function(e) {
@@ -2446,8 +2612,8 @@
     text.id = make_file_id(text.text);
     text.fontSize = $('#text_size').val();
     text.setColor($('#text_colour').val());
-    map_canvas.add(text);
-    map_canvas.off('mouse:down');
+    window['map'].add(text);
+    window['map'].off('mouse:down');
     $('.temp_text').remove();
   }
 
