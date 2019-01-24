@@ -21,17 +21,15 @@ $age = $incept_date->diff($today)->days;
     </ol>
     <h4>Tips &amp; Tricks</h4>
     <ol>
-      <!-- <li>Press Ctrl-X to mark the grid before scrolling it, so you can track where your miniatures were.  Shift-X clears marking mode.</li> -->
-      <!-- <li>Press Backspace to clear marking or dragging mode.</li> -->
-      <!-- <li>Press Ctrl-Backspace to clear all marks.</li> -->
-      <!-- <li>Press Alt to pan around.</li> -->
       <li>Press Escape to toggle the sidebar.</li>
       <li>Use the numeric keys to quickly switch between tool sets.</li>
-      <li>Press Ctrl-P to open the player view window.</li>
-      <li>Press Ctrl-Alt-C to open the player view window.</li>
+      <li>Press P to open the player view window.</li>
+      <li>Press C to open the map catalog.</li>
+      <li>Press M to activate the Tokens layer.</li>
+      <li>Press F to activate the Fog of War layer.</li>
       <li>Hold Ctrl when clicking on a map element to open its layer options.</li>
       <li>Press Delete or Backspace to remove selected elements from the map area.</li>
-      <li>Zoom out and in by holding Ctrl and rolling your scroll wheel.  You can scale your map larger then the available space this way.</li>
+      <!-- <li>Zoom out and in by holding Ctrl and rolling your scroll wheel.  You can scale your map larger then the available space this way.</li> -->
       <li>If you lose the ability to interact with the board in some way, click the wrench and your mouse should start reacting.</li>
     </ol>
     <p>Crafted with <i class="fa fa-heart"></i> by Dooley P.<br>
@@ -314,11 +312,11 @@ $age = $incept_date->diff($today)->days;
 
       <div id="sidebar_tray">
         <button id="save_map"class="sidebar_tray_button" title="Save"><i class="fas fa-save"></i></button>
-        <button id="fullscreener" class="sidebar_tray_button" title="Fullscreen"><i class="fas fa-desktop"></i></button>
-        <button id="map_reset_zoom" class="sidebar_tray_button" title="Reset Zoom"><i class="fas fa-bullseye"></i></button>
+        <button id="fullscreener" class="sidebar_tray_button" title="Fullscreen (Press F11)"><i class="fas fa-desktop"></i></button>
+        <button id="map_reset_zoom" class="sidebar_tray_button" title="Reset Zoom (Press Ctrl 0)"><i class="fas fa-bullseye"></i></button>
         <button id="map_clear" class="sidebar_tray_button" title="Clear Map"><i class="fas fa-eraser"></i></button>
-        <button id="player_view_open" class="sidebar_tray_button" title="Player View (Ctrl-P)"><i class="fas fa-chess-knight"></i></button>
-        <button id="map_catalog" class="sidebar_tray_button" title="Map Catalogue (Ctrl-Alt-C)"><i class="fas fa-database"></i></button>
+        <button id="player_view_open" class="sidebar_tray_button" title="Player View (Press P)"><i class="fas fa-chess-knight"></i></button>
+        <button id="map_catalog" class="sidebar_tray_button" title="Map Catalogue (Press C)"><i class="fas fa-database"></i></button>
       </div>
 
     </div>

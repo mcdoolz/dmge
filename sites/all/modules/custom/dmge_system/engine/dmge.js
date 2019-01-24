@@ -1072,17 +1072,18 @@
         break;
       // ccccc
       case 67:
-        if (e.ctrlKey) {
-          if (e.altKey) {
-            e.cancelBubble = true;
-            e.preventDefault();
-            open_map_catalog();
-          }
-        }
+        e.cancelBubble = true;
+        e.preventDefault();
+        open_map_catalog();
+        // if (e.ctrlKey) {
+        //   if (e.altKey) {
+        //   }
+        // }
         break;
       // Ffff
       case 70:
         e.preventDefault();
+        toggle_canvas('fow');
         if (e.shiftKey) {
           if (e.altKey) {
             $('#questions').html('Restore this FOW?');
@@ -1124,11 +1125,9 @@
         break;
       // Pppplayer view
       case 80:
-        if (e.ctrlKey) {
-          e.cancelBubble = true;
-          e.preventDefault();
-          player_view_open();
-        }
+        e.cancelBubble = true;
+        e.preventDefault();
+        player_view_open();
         break;
 
       // ttttt
