@@ -37,7 +37,6 @@ function STARTERKIT_preprocess_maintenance_page(&$variables, $hook) {
 
 function dmge_preprocess_html(&$variables, $hook) {
   drupal_add_css('https://use.fontawesome.com/releases/v5.3.1/css/all.css', array('type' => 'external'));
-
   // The body tag's classes are controlled by the $classes_array variable. To
   // remove a class from $classes_array, use array_diff().
   //$variables['classes_array'] = array_diff($variables['classes_array'], array('class-to-remove'));
