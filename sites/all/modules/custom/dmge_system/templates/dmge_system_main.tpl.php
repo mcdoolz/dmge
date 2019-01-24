@@ -62,39 +62,16 @@ $age = $incept_date->diff($today)->days;
         <ul>
           <li><a href="#map_settings" title="Map"><i class="fas fa-map"></i></a></li>
           <li><a href="#files_settings" title="Files"><i class="fas fa-file"></i></a></li>
+          <li><a id="tokens_link" href="#tokens_settings" title="Tokens"><i class="fas fa-chess-pawn"></i></a></li>
           <li><a href="#layers" title="Layers"><i class="fas fa-layer-group"></i></a></li>
-          <li><a href="#fow_settings" title="Fog of War"><i class="fas fa-eye"></i></a></li>
+          <li><a id="fow_link" href="#fow_settings" title="Fog of War"><i class="fas fa-eye"></i></a></li>
           <li><a href="#grid_settings" title="Grids"><i class="fas fa-th"></i></a></li>
-          <li><a href="#paint_box" title="Painters Box"><i class="fas fa-paint-brush"></i></a></li>
+          <li><a id="painting_link" href="#paint_box" title="Painters Box"><i class="fas fa-paint-brush"></i></a></li>
           <li><a href="#rulers" title="Rulers &amp; Templates"><i class="fas fa-pencil-ruler"></i></a></li>
         </ul>
       </div>
 
       <div id="sidebar_sections">
-
-        <div id="files_settings" class="sidebar_section">
-          <h2>Files</h2>
-          <div id="file_status"></div>
-          <form id="file_local_load">
-            <input id="file" type="file" multiple />
-          </form>
-          <form id="file_remote_load">
-            <label for="map_embed">Paste the URL to any publically available file.</label>
-            <input type="text" id="map_embed"><input type="button" id="map_embed_submit" value="Import">
-            <p><sup>Recognizes YouTube URLs, mp4, mkv, png and jpg.</sup></p>
-          </form>
-          <div id="files_storage_path">
-            <div id="files_storage_path"><label for="files_storage_path_configure">Load campaign folder</label>
-            <input id="files_storage_path_configure" type="file" webkitdirectory mozdirectory msdirectory odirectory directory multiple />
-          </div>
-            <div id="files_storage_path_description">Select the folder in which you wish to save your campaign.</div>
-          </div>
-
-          <div id="files_wrapper">
-            <div id="files"></div>
-          </div>
-
-        </div>
 
         <div id="map_settings" class="sidebar_section">
           <div class="map_setting">
@@ -126,8 +103,54 @@ $age = $incept_date->diff($today)->days;
 
         </div>
 
+        <div id="files_settings" class="sidebar_section">
+          <h2>Files Settings</h2>
+          <div id="file_status"></div>
+          <form id="file_local_load">
+            <input id="file" type="file" multiple />
+          </form>
+          <form id="file_remote_load">
+            <label for="map_embed">Paste the URL to any publically available file.</label>
+            <input type="text" id="map_embed"><input type="button" id="map_embed_submit" value="Import">
+            <p><sup>Recognizes YouTube URLs, mp4, mkv, png and jpg.</sup></p>
+          </form>
+          <div id="files_storage_path">
+            <div id="files_storage_path"><label for="files_storage_path_configure">Load campaign folder</label>
+            <input id="files_storage_path_configure" type="file" webkitdirectory mozdirectory msdirectory odirectory directory multiple />
+          </div>
+            <div id="files_storage_path_description">Select the folder in which you wish to save your campaign.</div>
+          </div>
+
+          <div id="files_wrapper">
+            <div id="files"></div>
+          </div>
+
+        </div>
+
+        <div id="tokens_settings" class="sidebar_section">
+          <h3>Tokens Settings</h3>
+          <p><sup>
+            Tokens sit above all other layers as markers.  They are not tracked on a layers grid.<br />
+            Sidebar settings are for new tokens.<br />
+            Double click on an existing token to pop settings for that token.<br />
+            Hold shift when clicking on a token to delete it.<br />
+            Press T or M to activate the Tokens layer.  Hold shift and press T or M to deactivate the Tokens layer.
+          </sup></p>
+          <div class="tokens_setting">
+            <label for="tokens_toggle">Tokens</label>
+            <input class="tokens_control" type="checkbox" id="tokens_toggle">
+          </div>
+          <div class="tokens_setting">
+            <label for="tokens_size">Token Size</label>
+            <input type="range" id="tokens_size" name="tokens_size" min="1" max="100" step="10" value="50">
+          </div>
+          <div class="tokens_setting">
+            <input class="tokens_setting" type="color" id="tokens_colour" value="#ffffff">
+          </div>
+        </div>
+
         <div id="layers" class="sidebar_section">
-          <h3>Layers</h3>
+          <h3>Layers Settings</h3>
           <p>Click and drag the entries to sort them on the map.</p>
           <div id="layering"></div>
         </div>
@@ -137,6 +160,10 @@ $age = $incept_date->diff($today)->days;
           <div class="fow_control">
             <label for="fow_toggle">Fog of War</label>
             <input type="checkbox" id="fow_toggle">
+          </div>
+          <div class="fow_control">
+            <label for="fow_enabler">Fog of War Enabled</label>
+            <input type="checkbox" id="fow_enabler">
           </div>
           <div id="fow_storage" class="fow_control">
             <label for="fow_storage">FoW Storage / Recall</label>
