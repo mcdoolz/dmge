@@ -1268,7 +1268,7 @@
   $('#fow_opacity').on('input', function() {
     $('#fow_wrapper').css('opacity', get_opacity($('#fow_opacity')) / 2);
     if (player_view) {
-      player_fow_wrapper.css('opacity', get_opacity($('#map_grid_opacity')));
+      player_fow_wrapper.css('opacity', get_opacity($('#fow_opacity')));
     }
   });
 
