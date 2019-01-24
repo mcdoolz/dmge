@@ -174,31 +174,33 @@ $age = $incept_date->diff($today)->days;
             Hold shift and alt and press F to restore the saved FoW.<br />
             You must reset the FoW when you first begin.
           </sup></p>
-          <div class="fow_control">
+          <div class="sidebar_control">
             <label for="fow_toggle">Fog of War</label>
             <input type="checkbox" id="fow_toggle">
           </div>
-          <div class="fow_control">
-            <label for="fow_enabler">Fog of War Enabled</label>
+          <div class="sidebar_control">
+            <label for="fow_enabler">Fog of War Hidden</label>
             <input type="checkbox" id="fow_enabler">
           </div>
-          <div id="fow_storage" class="fow_control">
+          <div id="fow_storage" class="sidebar_control">
             <label for="fow_storage">FoW Storage / Recall</label>
             <input type="button" id="fow_store" value="Store FoW (Ctrl-Shift-F)">
             <input type="button" id="fow_recall" value="Recall FoW (Ctrl-Alt-F)">
             <input type="button" id="fow_reset" value="Reset FoW">
           </div>
-          <div class="fow_brush_property">
-            <label for="fow_opacity">FoW Opacity %</label>
-            <input type="number" id="fow_opacity" value="100">
-          </div>
-          <div class="fow_brush_property">
-            <label for="fow_brush_size">FoW Brush Size</label>
-            <input type="number" id="fow_brush_size" value="100">
-          </div>
-          <div class="fow_brush_property">
-            <label for="fow_brush_feather_size">FoW Feather</label>
-            <input type="number" id="fow_brush_feather_size" value="300">
+          <div class="sidebar_control">
+            <div class="fow_brush_property">
+              <label for="fow_opacity">FoW Opacity %</label>
+              <input type="number" id="fow_opacity" value="100">
+            </div>
+            <div class="fow_brush_property">
+              <label for="fow_brush_size">FoW Brush Size</label>
+              <input type="number" id="fow_brush_size" value="100">
+            </div>
+            <div class="fow_brush_property">
+              <label for="fow_brush_feather_size">FoW Feather</label>
+              <input type="number" id="fow_brush_feather_size" value="300">
+            </div>
           </div>
         </div>
 
