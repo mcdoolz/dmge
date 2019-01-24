@@ -58,29 +58,22 @@ ol
   li
     list-style: decimal
 
-.notouchie
-  pointer-events: none
-  user-select: none
-  -webkit-user-select: none
-  -moz-user-select: none
 
 =notouchie
   pointer-events: none
   user-select: none
   -webkit-user-select: none
   -moz-user-select: none
-
-.touchme
-  pointer-events: all
-  user-select: all
-  -webkit-user-select: all
-  -moz-user-select: all
-
 =touchme
   pointer-events: all
   user-select: all
   -webkit-user-select: all
   -moz-user-select: all
+
+.notouchie
+  +notouchie
+.touchme
+  +touchme
 
 video
   display: none
@@ -200,7 +193,13 @@ output
   a
     display: block
     font-size: 32px
-    padding: 16px
+    line-height: 64px
+    // padding: 32px
+    text-align: center
+    width: 64px
+    &.selected
+      background: grey
+      color: white
 
 #sidebar
   top: 0
@@ -264,3 +263,22 @@ output
   position: absolute
   pointer-events: none
   font-family: serif
+
+#token_settings_wrapper
+  position: absolute
+  z-index: 1500
+  padding: 20px
+  background: rgba(255, 255, 255, 0.66)
+  display: none
+  +single-transition(left, 0.25s, ease-out)
+  +transition-property(top, left)
+  text-align: center
+  #token_settings_close
+    position: absolute
+    top: 0
+    right: 0
+    font-size: 20px
+    line-height: 20px
+    width: 20px
+    display: block
+    cursor: pointer
