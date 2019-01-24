@@ -165,7 +165,7 @@ function dmge_system_players() {
     $path . '/css/players.css',
   );
   $ext_css_files = array(
-    'https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css',
+    // 'https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css',
     // 'https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css'
   );
   foreach($ext_css_files as $ext_css_file) {
@@ -249,7 +249,7 @@ function dmge_system_main() {
     $path . '/css/screen.css',
   );
   $ext_css_files = array(
-    'https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css',
+    // 'https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css',
     'https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css'
   );
   foreach($ext_css_files as $ext_css_file) {
