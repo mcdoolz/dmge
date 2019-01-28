@@ -10,7 +10,7 @@
  */
 function dmge_system_cron() {
   // Adds respective patreon roles to patrons.
-  dmge_system_make_patrons();
+  // dmge_system_make_patrons();
 }
 
 /**
