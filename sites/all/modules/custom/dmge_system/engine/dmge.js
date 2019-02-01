@@ -1928,31 +1928,22 @@
       });
     }
 
+    // The grid is now just lines.
     if (_type === 'Quad') {
-      const __grid = Grid.rectangle({ width: _cols, height: _rows });
-
-      __grid.forEach(quad => {
-        let _props = {
-          left: quad.x*_size,
-          top: quad.y*_size,
-          width: _size,
-          height: _size,
-          stroke: 'white',
+      for (var x = 1; x < (window['grid'].width / _size); x++) {
+        window['grid'].add(new fabric.Line([_size * x, 0, _size * x, window['grid'].height], {
+          stroke: "#ffffff",
           strokeWidth: 1,
-          fill: '',
-          originX: 'left',
-          originY: 'top',
-          centeredRotation: true,
-          selectable: false,
-          lockMovementX: true,
-          lockMovementY: true,
-          objectCaching: true
-        };
-
-        let quadSymbol = new fabric.Rect(_props);
-        window['grid'].add(quadSymbol);
-      });
-
+          selectable: false
+        }));
+      }
+      for (var x = 1; x < (window['grid'].height / _size); x++) {
+        window['grid'].add(new fabric.Line([0, _size * x, window['grid'].width, _size * x], {
+          stroke: "#ffffff",
+          strokeWidth: 1,
+          selectable: false
+        }));
+      }
     }
 
     window['grid'].renderAll();
