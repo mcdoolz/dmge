@@ -193,7 +193,6 @@
 
     // If the checkbox is turned on, we activate the selected canvas.
     if ((_selected_toggle).prop('checked')) {
-      console.log('Activating ' + selected_canvas);
       _selected_wrapper.removeClass('notouchie');
       _selected_link.addClass('selected');
     }
@@ -600,7 +599,6 @@
   function update_player_tokens() {
     if (player_view) {
       if (window['player_tokens']) {
-        console.log('Updating player tokens.');
         let box = window['player_tokens'].getBoundingClientRect();
         let ctx = window['player_tokens'].getContext('2d');
         ctx.clearRect(0, 0, box.width, box.height)
@@ -702,7 +700,6 @@
   }
 
   function save_show_save_icon() {
-    // console.log('saving.');
     if (!$('#save_icon')) {
       let div = document.createElement('div');
       div.setAttribute('id', 'save_icon');
@@ -788,6 +785,7 @@
   }
 
   var clicked = false, clickY, clickX;
+
   $(document).on({
       'mousemove': function(e) {
         if (clicked) {
@@ -1753,9 +1751,6 @@
 
 
   $('#template_circle, #template_square, #template_triangle').click(function(e) {
-
-    console.log('Selected ' + e.id);
-
     switch (e.id) {
       case 'template_circle':
 
@@ -2641,7 +2636,6 @@
    * Helper opens the player window and sets the reference to local storage.
    */
   function player_view_open() {
-    console.log('Starting player view.');
     player_view = window.player_view = window['player_view'] = window.open('/engine/players', 'player_window', 'toolbar=0, location=0, menubar=0');
     player_view_initialize();
     player_view.onbeforeunload = function() {
@@ -2659,7 +2653,6 @@
     }
     if (player_view) {
       player_view.onload = function() {
-        console.log('Player view opened.  Attempting connection.');
         player_view_connect();
       };
     }
@@ -2683,9 +2676,8 @@
         window[_wrapper] = $player_view_content.find('#' + _wrapper);
         window[_e] = $player_view_content.find('#' + _e).get(0);
         if (window[_e]) {
-          console.log('Connected ' + _e);
+          $(window[_e]).css('z-index', eval(e.toUpperCase() + '_CANVAS_ZINDEX'));
         }
-        $(window[_e]).css('z-index', eval(e.toUpperCase() + '_CANVAS_ZINDEX'));
       });
       set_canvas_dimensions();
     }
