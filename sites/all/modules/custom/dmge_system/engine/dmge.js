@@ -1099,7 +1099,7 @@
           e.cancelBubble = true;
         }
         break;
-      // ccccc
+      // cccccatalogue
       case 67:
         e.cancelBubble = true;
         e.preventDefault();
@@ -1282,12 +1282,6 @@
    */
   $('#grid_toggle').change(function() {
     toggle_canvas('grid');
-    if (this.checked) {
-      console.log('yes');
-    }
-    else {
-      console.log('no');
-    }
   });
 
   /**
@@ -2686,10 +2680,9 @@
       canvases.forEach(function(e) {
         let _wrapper = 'player_' + e + '_wrapper';
         let _e = 'player_' + e;
-        window[_wrapper] = $player_view_content.find('#' + _wrapper).get(0);
+        window[_wrapper] = $player_view_content.find('#' + _wrapper);
         window[_e] = $player_view_content.find('#' + _e).get(0);
         if (window[_e]) {
-          console.log(window[_e]);
           console.log('Connected ' + _e);
         }
         $(window[_e]).css('z-index', eval(e.toUpperCase() + '_CANVAS_ZINDEX'));
