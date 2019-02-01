@@ -13,7 +13,7 @@
   const FILTER_REMOVE_COLOR = 2;
 
   // We set these now for assignment later.
-  var player_view, player_map, player_fow, player_grid, player_paint, map_scroll_synch,
+  var player_view, map_scroll_synch,
   r1 = $('#fow_brush_size').val(),
   r2 = $('#fow_brush_feather_size').val(),
   dragging = false;
@@ -58,11 +58,12 @@
     selection: false
   };
 
-  const canvases = ['map', 'grid', 'fow', 'tokens', 'particles', 'painting'];
+  const canvases = ['map', 'grid', 'fow', 'tokens', 'templates', 'particles', 'painting'];
   const canvas_canvases = new Array();
 
   // zIndexes for Canvases
-  const ACTIVE_CANVAS_ZINDEX = 500;
+  const ACTIVE_CANVAS_ZINDEX = 700;
+  const TEMPLATES_CANVAS_ZINDEX = 500;
   const TOKENS_CANVAS_ZINDEX = 475;
   const PARTICLES_CANVAS_ZINDEX = 450;
   const PAINTING_CANVAS_ZINDEX = 425;
@@ -86,6 +87,7 @@
         window[e] = `<div id="${_wrapper}"><canvas id="${e}" class="${_e}"> </canvas><div id="map_video_wrapper"></div></div>`;
       }
       _canvases.append(window[e]);
+      // Make TYPE of canvas.
       switch (e) {
         case 'fow':
         case 'grid':
@@ -94,9 +96,9 @@
         default:
           window[e] = new fabric.Canvas(document.getElementById(e), _canvas_props);
       }
+      // Make events for 'toggling' canvases that can be interacted with.
       switch (e) {
         case 'map':
-        case 'grid':
         // Do nothing.
           break;
         default:
@@ -115,13 +117,19 @@
    * Helper to set dimensions on all canvases.
    * Defines the canvases to fabricjs.
    */
-  function set_canvas_dimensions(_screensize) {
-    if (!_screensize) {
-      let _screensize = screensize;
-    }
+  function set_canvas_dimensions(_screensize = window.screen) {
     canvases.forEach(function(e) {
       window[e].setWidth(_screensize.width);
       window[e].setHeight(_screensize.height);
+      if (player_view) {
+        let width = player_view.screen.width;
+        let height = player_view.screen.height;
+        let _e = 'player_' + e;
+        if (window[_e]) {
+          window[_e].width = width;
+          window[_e].height = height;
+        }
+      }
     });
   }
 
@@ -134,6 +142,17 @@
     canvases.forEach(function(e) {
       let _canvas = e + '_canvas';
       window[_canvas].renderAll();
+      if (player_view) {
+        let _e = 'player_' + e;
+        let width = player_view.width;
+        let height = player_view.height;
+        let box = window[_e].getBoundingClientRect();
+        if (window[_e]) {
+          let ctx = window[_e].getContext('2d');
+          ctx.clearRect(0, 0, box.width, box.height);
+          ctx.drawImage(window[e].getElement(), 0, 0, box.width, box.height);
+        }
+      }
     });
   }
 
@@ -157,7 +176,6 @@
    * Helper function activates and deactivates canvases for interaction.
    */
   function toggle_canvas(selected_canvas = null) {
-    console.log('Activating ' + selected_canvas);
     let _selected_toggle = $('#' + selected_canvas + '_toggle');
     let _selected_wrapper = $('#' + selected_canvas + '_wrapper');
     let _selected_link = $('#' + selected_canvas + '_link');
@@ -166,6 +184,7 @@
       $('#' + _canvas + '_toggle').not(_selected_toggle).prop('checked', false);
       $('#' + _canvas + '_wrapper').not('#map_wrapper').addClass('notouchie');
       $('#' + _canvas + '_link').removeClass('selected');
+
       // Ditch selections when switching canvases.
       if (window[_canvas].discardActiveObject) {
         window[_canvas].discardActiveObject().renderAll();
@@ -174,6 +193,7 @@
 
     // If the checkbox is turned on, we activate the selected canvas.
     if ((_selected_toggle).prop('checked')) {
+      console.log('Activating ' + selected_canvas);
       _selected_wrapper.removeClass('notouchie');
       _selected_link.addClass('selected');
     }
@@ -525,6 +545,12 @@
   /**
    * Token canvas events.
    */
+  window['tokens'].observe('selection:cleared', function() {
+    $('#token_settings_wrapper').fadeOut(250, function() {
+      this.remove();
+    });
+  });
+
   window['tokens'].observe('object:moving', function(e) {
     let _settings_wrapper = $('#token_settings_wrapper');
     if (_settings_wrapper.get(0)) {
@@ -565,7 +591,23 @@
       });
     }
     window['tokens'].renderAll();
+  });
+
+  window['tokens'].observe('after:render', function() {
+    update_player_tokens();
   })
+
+  function update_player_tokens() {
+    if (player_view) {
+      if (window['player_tokens']) {
+        console.log('Updating player tokens.');
+        let box = window['player_tokens'].getBoundingClientRect();
+        let ctx = window['player_tokens'].getContext('2d');
+        ctx.clearRect(0, 0, box.width, box.height)
+        ctx.drawImage(window['tokens'].getElement(), 0, 0, box.width, box.height);
+      }
+    }
+  }
 
   /**
   * Get a row from provided jsgrid data.
@@ -607,18 +649,12 @@
     /**
      * Update the player view on frame.
      */
-    if (window.player_view) {
-      if (player_map) {
-        let map_width = window['map'].width;
-        let map_height = window['map'].height;
-
-        window.player_view.width = map_width;
-        window.player_view.height = map_height;
-
-        player_map.width = map_width;
-        player_map.height = map_height;
-
-        player_map.getContext('2d').drawImage(window['map'].getElement(), 0, 0, map_width, map_height);
+    if (player_view) {
+      if (window['player_map']) {
+        let box = window['player_map'].getBoundingClientRect();
+        let ctx = window['player_map'].getContext('2d');
+        ctx.clearRect(0, 0, box.width, box.height);
+        ctx.drawImage(window['map'].getElement(), 0, 0, box.width, box.height);
       }
     }
 
@@ -760,21 +796,11 @@
             updateScrollPos(e, player_view);
           }
         }
-
       },
       'mousedown': function(e) {
-        if (e.ctrlKey) {
-          window['map'].selection = false;
-
-          // document.getElementById('grid_wrapper').style.pointerEvents = true;
-          // console.log(e);
-          // if (window['grid'].Grid) {
-          //   let hex = window['grid'].Grid.pointToHex(getMousePos(e));
-          //   console.log(window['grid'].__grid.get(hex));
-          // }
-
-        }
-        if (e.altKey === true) {
+        // If holding shift, scroll the screen.
+        // TODO: This will be changed for viewport.
+        if (e.shiftKey) {
           dragging_initialize();
           clicked = true;
           clickY = e.pageY;
@@ -1259,14 +1285,14 @@
   $('#map_grid_opacity').on('input', function() {
     $('#grid_wrapper').css('opacity', get_opacity($('#map_grid_opacity')));
     if (player_view) {
-      player_grid_wrapper.css('opacity', get_opacity($('#map_grid_opacity')));
+      window['player_grid_wrapper'].css('opacity', get_opacity($('#map_grid_opacity')));
     }
   });
 
   $('#fow_opacity').on('input', function() {
     $('#fow_wrapper').css('opacity', get_opacity($('#fow_opacity')) / 2);
     if (player_view) {
-      player_fow_wrapper.css('opacity', get_opacity($('#fow_opacity')));
+      window['player_fow_wrapper'].css('opacity', get_opacity($('#fow_opacity')));
     }
   });
 
@@ -1303,8 +1329,11 @@
    * Render the Fog of War data in variable to player canvas
    */
   function render_fow_canvas() {
-    if (player_fow) {
-      player_fow.getContext('2d').drawImage(window['fow'].getElement(), 0, 0, window['fow'].width, window['fow'].height);
+    if (window['player_fow']) {
+      let box = window['player_fow'].getBoundingClientRect();
+      let ctx = window['player_fow'].getContext('2d');
+      ctx.clearRect(0, 0, box.width, box.height);
+      ctx.drawImage(window['fow'].getElement(), 0, 0, box.width, box.height);
     }
   }
 
@@ -1315,16 +1344,16 @@
     fow_ctx.globalCompositeOperation = 'source-over';
     fow_ctx.fillStyle = 'rgba( 0, 0, 0, 1 )';
     fow_ctx.fillRect(0, 0, window['fow'].width, window['fow'].height);
-    if (player_fow) {
-      player_fow.width = window['fow'].width;
-      player_fow.height = window['fow'].height;
+    if (window['player_fow']) {
+      window['player_fow'].width = window['fow'].width;
+      window['player_fow'].height = window['fow'].height;
       render_fow_canvas();
     }
   }
   $('#fow_reset').click(function(e) {
     fow_reset();
   });
-  fow_reset()
+  fow_reset();
 
   /**
    * Fog On!
@@ -1764,9 +1793,9 @@
   }
 
   $('#fow').on('mouseup', function() {
-    if (player_fow) {
-      player_fow.width = window['fow'].width;
-      player_fow.height = window['fow'].height;
+    if (window['player_fow']) {
+      window['player_fow'].width = window['fow'].width;
+      window['player_fow'].height = window['fow'].height;
       render_fow_canvas();
     }
   });
@@ -1802,8 +1831,9 @@
    */
   function set_grid(_size) {
     window['grid'].clear();
-    if (player_grid) {
-      player_grid.getContext('2d').clearRect(0, 0, window['grid'].width, window['grid'].height);
+    if (window['player_grid']) {
+      let box = window['player_grid'].getBoundingClientRect();
+      window['player_grid'].getContext('2d').clearRect(0, 0, box.width, box.height);
     }
     var _type = $('input[name=map_grid_type]:checked').val();
     if (_type == 'None') {
@@ -1915,10 +1945,11 @@
 
     window['grid'].renderAll();
 
-    if (player_grid) {
-      player_grid.width = window['grid'].width;
-      player_grid.height = window['grid'].height;
-      player_grid.getContext('2d').drawImage(window['grid'].getElement(), 0, 0, window['grid'].width, window['grid'].height);
+    if (window['player_grid']) {
+      let box = window['player_grid'].getBoundingClientRect();
+      let ctx = window['player_grid'].getContext('2d');
+      ctx.clearRect(0, 0, box.width, box.height);
+      ctx.drawImage(window['grid'].getElement(), 0, 0, box.width, box.height);
     }
   }
 
@@ -2593,16 +2624,25 @@
    * Helper opens the player window and sets the reference to local storage.
    */
   function player_view_open() {
-    player_view = window.player_view = window.open('/engine/players', 'player_window');
+    console.log('Starting player view.');
+    player_view = window.player_view = window['player_view'] = window.open('/engine/players', 'player_window', 'toolbar=0, location=0, menubar=0');
     player_view_initialize();
+    player_view.onbeforeunload = function() {
+      player_view = undefined;
+    };
   }
 
   /**
    * Sets event handler for onload and assigns player canvases to variables in local window.
    */
   function player_view_initialize() {
+    if (!player_view) {
+      setTimeout(player_view_initialize, 1000);
+      return;
+    }
     if (player_view) {
       player_view.onload = function() {
+        console.log('Player view opened.  Attempting connection.');
         player_view_connect();
       };
     }
@@ -2620,12 +2660,18 @@
     }
     $player_view_content = $(player_view.document.body);
     if ($player_view_content) {
-      player_map_wrapper = $player_view_content.find('#player_map');
-      player_map = player_map_wrapper[0];
-      player_fow_wrapper = $player_view_content.find('#player_fow');
-      player_fow = player_fow_wrapper[0];
-      player_grid_wrapper = $player_view_content.find('#player_grid');
-      player_grid = player_grid_wrapper[0];
+      canvases.forEach(function(e) {
+        let _wrapper = 'player_' + e + '_wrapper';
+        let _e = 'player_' + e;
+        window[_wrapper] = $player_view_content.find('#' + _wrapper).get(0);
+        window[_e] = $player_view_content.find('#' + _e).get(0);
+        if (window[_e]) {
+          console.log(window[_e]);
+          console.log('Connected ' + _e);
+        }
+        $(window[_e]).css('z-index', eval(e.toUpperCase() + '_CANVAS_ZINDEX'));
+      });
+      set_canvas_dimensions();
     }
     else {
       alert("Couldn't connect to player window.  Re open the window.");
