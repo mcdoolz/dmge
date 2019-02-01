@@ -811,16 +811,16 @@
           }
         }
       },
-      'mouseup': function() {
-        $('#map_wrapper').removeClass('notouchie');
-        clicked = false;
-        document.getElementById('grid_wrapper').style.pointerEvents = false;
-        window['map'].selection = true;
-        $('html').css('cursor', 'auto');
-        if ($('#error')) {
-          $('#error').fadeOut();
-        }
-      }
+      // 'mouseup': function() {
+      //   $('#map_wrapper').removeClass('notouchie');
+      //   clicked = false;
+      //   document.getElementById('grid_wrapper').style.pointerEvents = false;
+      //   window['map'].selection = true;
+      //   $('html').css('cursor', 'auto');
+      //   if ($('#error')) {
+      //     $('#error').fadeOut();
+      //   }
+      // }
   });
 
   /**
@@ -1042,6 +1042,8 @@
   //   }
   // });
 
+
+  // General click event to close the sidebar.
   $(document).on('click', function(e) {
     if ($(e.target).closest('#sidebar').length === 0) {
       $('#sidebar').hide('slide', {direction:'right'});
@@ -1049,7 +1051,7 @@
   });
 
   /**
-   * No right click in the fow of war, it complicates matters.
+   * No right click in the Fog of war, it complicates matters.
    */
   $('#fow').contextmenu(function() {
       return false;
@@ -1084,12 +1086,12 @@
 
       // f1
       case 112:
-      // Qqqq
+      // Qqqqqqquestions need answers
       case 81:
         __toggle = Drupal.howto.dialog('isOpen') ? 'close' : 'open';
         Drupal.howto.dialog(__toggle);
         break;
-      // rrrr
+      // rrrrrefresh killer
       case 81:
         // Disable ctrl r refresh.
         if (e.ctrlKey) {
@@ -1103,7 +1105,7 @@
         e.preventDefault();
         open_map_catalog();
         break;
-      // Ffff
+      // Fffffog of war
       case 70:
         e.cancelBubble = true;
         e.preventDefault();
@@ -1147,6 +1149,13 @@
           return;
         }
         toggle_canvas('fow');
+        break;
+      // gggggrid toggle
+      case 71:
+        e.cancelBubble = true;
+        e.preventDefault();
+        $('#grid_toggle').click();
+        toggle_canvas('grid');
         break;
       // Pppplayer view
       case 80:
@@ -1196,6 +1205,9 @@
     }
   });
 
+  /**
+   * Someones got to delete objects.
+   */
   function delete_objects() {
     canvases.forEach(function(canvas) {
       switch (canvas) {
@@ -1225,7 +1237,7 @@
    */
   function get_opacity(thing) {
     _opacity = thing.val();
-    _opacity = parseInt(_opacity / 100);
+    _opacity = _opacity / 100;
     return _opacity;
   }
 
@@ -1263,6 +1275,19 @@
     $('#sidebar').toggle('slide', {direction:'right'});
   }).one('click', function() {
     $('#wrench').removeClass('newbie');
+  });
+
+  /**
+   * Grid drag a-go.
+   */
+  $('#grid_toggle').change(function() {
+    toggle_canvas('grid');
+    if (this.checked) {
+      console.log('yes');
+    }
+    else {
+      console.log('no');
+    }
   });
 
   /**
@@ -1839,10 +1864,8 @@
     if (_type == 'None') {
       return;
     }
-    var __map = $('#map_wrapper');
-    var __grid_wrapper = $('#grid_wrapper');
 
-    __grid_wrapper.css('opacity', get_opacity($('#map_grid_opacity')));
+    $('#grid_wrapper').css('opacity', get_opacity($('#map_grid_opacity')));
 
     if (!_size) {
       var _size = parseInt($('#map_grid_size').val());
