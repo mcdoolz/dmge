@@ -210,7 +210,6 @@ function dmge_system_main() {
   }
 
   $header_javascripts = array(
-    $path . '/lib/honeycomb.min.js',
     $path . '/lib/jsgrid.min.js',
     $path . '/lib/fabric.min.js',
     $path . '/lib/js.cookie.js',
