@@ -1824,13 +1824,19 @@
   /**
    * Helper creates grid.
    */
-  function set_grid(_size) {
-    window['grid'].clear();
-    if (window['player_grid']) {
-      let box = window['player_grid'].getBoundingClientRect();
-      window['player_grid'].getContext('2d').clearRect(0, 0, box.width, box.height);
-    }
-    var _type = $('input[name=map_grid_type]:checked').val();
+  function set_grid(_size = undefined) {
+
+    let box = window['grid'].getElement().getBoundingClientRect(),
+    width = box.width,
+    height = box.height,
+    thickness = 1;
+    let ctx = window['grid'].getElement().getContext('2d');
+    ctx.clearRect(0, 0, box.width, box.height);
+    ctx.strokeRect(0, 0, box.width, box.height);
+    ctx.strokeStyle = 'white';
+    ctx.lineWidth = thickness;
+
+    let _type = $('input[name=map_grid_type]:checked').val();
     if (_type == 'None') {
       return;
     }
@@ -1838,97 +1844,65 @@
     $('#grid_wrapper').css('opacity', get_opacity($('#map_grid_opacity')));
 
     if (!_size) {
-      var _size = parseInt($('#map_grid_size').val());
+      _size = $('#map_grid_size').val();
     }
+    if (!_size) {
+       console.log('Grid settnig requested but no size provided.  Wtf is going on?');
+    }
+    _size = _size/2;
 
-    var _width = $('#map_width').val() ? $('#map_width').val() : screensize.width;
-    var _height = $('#map_height').val() ? $('#map_height').val() : screensize.height;
-
-    var _cols = (_width / _size);
-    var _rows = (_height / _size);
-
-    var __gridoptions = {size: _size};
-
-    // Single option switch sets an otherwise default.
     switch (_type) {
       case 'H_Hex':
-      __gridoptions.orientation = 'Flat';
-        break;
-    }
-    const Hex = Honeycomb.extendHex(__gridoptions);
+        // Original resource: https://codepen.io/timaikens/pen/ojqPmd
 
-    var Grid = Honeycomb.defineGrid(Hex)
-    window['grid'].Grid = Grid;
+        let _x = 2 * _size * Math.sin(Math.PI / 3),
+          numHexW = Math.ceil(width / (2 * _x)) + 1,
+          numHexH = Math.ceil(height / (3 * _size)) + 1,
+          _hex;
 
-    _cols = (_width / _size);
-    _rows = (_height / _size);
+        ctx.beginPath();
+        for (var i = 0; i < numHexH; i++) {
+          _hex = (i * 3 + 2) * _size - i % 2 * _size;
+          ctx.moveTo(0, _hex);
+          for (var j = 1; j <= numHexW; j++) {
+            if (i % 2) {
+              ctx.lineTo((2 * j - 1) * _x, _hex + _size);
+              ctx.lineTo(2 * j * _x, _hex);
+              ctx.moveTo(2 * j * _x, _hex - 2 * _size);
+              ctx.lineTo(2 * j * _x, _hex);
+            }
+            else {
+              ctx.lineTo((2 * j - 1) * _x, _hex - _size);
+              ctx.lineTo((2 * j - 1) * _x, _hex - 3 * _size);
+              ctx.moveTo((2 * j - 1) * _x, _hex - _size);
+              ctx.lineTo(2 * j * _x, _hex);
+            }
+          }
+        }
+        ctx.stroke();
+      break;
 
-    const __grid = Grid.rectangle({width: _cols, height: _rows});
-    window['grid'].__grid = __grid;
-    if ((window['grid'].width !== window['map'].width) || (window['grid'].height !== window['map'].height)) {
-      window['grid'].width = window['map'].width;
-      window['grid'].height = window['map'].height;
-    }
+      // The grid is now just lines.
+      case 'Quad' :
+        ctx.beginPath()
+        // Drawing vertical lines
+        let x;
+        for (let x = 0; x <= width; x += _size) {
+          ctx.moveTo(x + thickness, 0);
+          ctx.lineTo(x + thickness, height);
+        }
 
-
-    if (_type === 'H_Hex' || _type === 'V_Hex') {
-      var _points = regularPolygonPoints(6, _size);
-      var corners = Hex().corners();
-
-      __grid.forEach(hex => {
-        const {x, y} = hex.toPoint();
-        var _corners = corners.map(({x, y}) => `${x}, ${y}`);
-
-        let _props = {
-          angle: 0,
-          left: x,
-          top: y,
-          width: _size,
-          height: _size,
-          stroke: 'white',
-          strokeWidth: 1,
-          fill: '',
-          originX: 'left',
-          originY: 'top',
-          centeredRotation: true,
-          hasRotatingPoint: false,
-          selectable: false,
-
-          hasBorders: false,
-          hasControls: false,
-
-          lockMovementX: true,
-          lockMovementY: true,
-          objectCaching: true
-        };
-
-        let hexSymbol = new fabric.Polygon(corners, _props, false);
-
-        window['grid'].add(hexSymbol);
-
-      });
+        // Drawing horizontal lines
+        let y;
+        for (let y = 0; y <= height; y += _size) {
+          ctx.moveTo(0, y + thickness);
+          ctx.lineTo(width, y + thickness);
+        }
+        ctx.stroke();
+      break;
     }
 
-    // The grid is now just lines.
-    if (_type === 'Quad') {
-      for (var x = 1; x < (window['grid'].width / _size); x++) {
-        window['grid'].add(new fabric.Line([_size * x, 0, _size * x, window['grid'].height], {
-          stroke: "#ffffff",
-          strokeWidth: 1,
-          selectable: false
-        }));
-      }
-      for (var x = 1; x < (window['grid'].height / _size); x++) {
-        window['grid'].add(new fabric.Line([0, _size * x, window['grid'].width, _size * x], {
-          stroke: "#ffffff",
-          strokeWidth: 1,
-          selectable: false
-        }));
-      }
-    }
-
-    window['grid'].renderAll();
-
+    // If there's a player grid, clear and redraw.
     if (window['player_grid']) {
       let box = window['player_grid'].getBoundingClientRect();
       let ctx = window['player_grid'].getContext('2d');
