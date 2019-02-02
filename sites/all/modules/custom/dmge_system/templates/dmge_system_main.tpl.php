@@ -246,8 +246,10 @@ $age = $incept_date->diff($today)->days;
         <div id="grid_settings" class="sidebar_section">
           <h3>Grid Settings</h3>
 
-          <label for="grid_toggle">Grid Drag</label>
-          <input class="grid_control" type="checkbox" id="grid_toggle">
+          <div id="grid_toggle_wrapper" class="grid_setting">
+            <label for="grid_toggle">Grid Drag</label>
+            <input class="grid_control" type="checkbox" id="grid_toggle">
+          </div>
 
           <div id="grid_snap_wrapper" class="grid_setting">
             <label for="grid_snap">Grid Snap</label>
@@ -263,10 +265,6 @@ $age = $incept_date->diff($today)->days;
             <div class="map_grid_type">
               <label for="h_hex_grid">Horizontal Hex</label>
               <input type="radio" id="h_hex_grid" name="map_grid_type" value="H_Hex">
-            </div>
-            <div class="map_grid_type">
-              <label for="v_hex_grid">Vertical Hex</label>
-              <input type="radio" id="v_hex_grid" name="map_grid_type" value="V_Hex">
             </div>
             <div class="map_grid_type">
               <label for="no_grid">None</label>
