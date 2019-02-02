@@ -809,16 +809,16 @@
           }
         }
       },
-      // 'mouseup': function() {
-      //   $('#map_wrapper').removeClass('notouchie');
-      //   clicked = false;
-      //   document.getElementById('grid_wrapper').style.pointerEvents = false;
-      //   window['map'].selection = true;
-      //   $('html').css('cursor', 'auto');
-      //   if ($('#error')) {
-      //     $('#error').fadeOut();
-      //   }
-      // }
+      'mouseup': function() {
+        $('#map_wrapper').removeClass('notouchie');
+        clicked = false;
+        document.getElementById('grid_wrapper').style.pointerEvents = false;
+        window['map'].selection = true;
+        $('html').css('cursor', 'auto');
+        if ($('#error')) {
+          $('#error').fadeOut();
+        }
+      }
   });
 
   /**
