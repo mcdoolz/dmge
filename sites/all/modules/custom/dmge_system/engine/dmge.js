@@ -730,7 +730,7 @@
     }
     let storage = {};
     storage.grid = {
-      size: parseInt(document.getElementById('map_grid_size').value),
+      size: document.getElementById('map_grid_size').value,
       type: $('input[name=map_grid_type]:checked').val(),
     }
     canvases.forEach(function(canvas) {
@@ -830,7 +830,7 @@
     if (!grid_snap.checked) {
       return;
     }
-    let grid = parseInt(document.getElementById('map_grid_size').value);
+    let grid = document.getElementById('map_grid_size').value;
     options.target.set({
       left: Math.round(options.target.left / grid) * grid,
       top: Math.round(options.target.top / grid) * grid
@@ -842,7 +842,7 @@
     if (!grid_snap.checked) {
       return;
     }
-    let grid = parseInt(document.getElementById('map_grid_size').value),
+    let grid = document.getElementById('map_grid_size').value,
     target = options.target,
     w = target.width * target.scaleX,
     h = target.height * target.scaleY,
@@ -998,7 +998,7 @@
       _e = eval(e + "_canvas");
       _e.zoomToPoint({ x: _x, y: _y }, zoom);
     });
-    let _size = parseInt($('#map_grid_size').val());
+    let _size = $('#map_grid_size').val();
     _size = _size * window['map'].getZoom();
     $('#map_grid_display_size').val(_size);
     update_canvases();
