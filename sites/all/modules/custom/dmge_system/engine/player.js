@@ -8,7 +8,7 @@
     console.log(window.opener);
   }
 
-  var updateScrollPos = function(e) {
+  const updateScrollPos = function(e) {
     $('html').css('cursor', 'nwse-resize');
     $(window).scrollTop($(window).scrollTop() + (clickY - e.pageY));
     $(window).scrollLeft($(window).scrollLeft() + (clickX - e.pageX));
