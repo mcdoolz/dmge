@@ -117,13 +117,21 @@
    * Helper to set dimensions on all canvases.
    * Defines the canvases to fabricjs.
    */
-  function set_canvas_dimensions(_screensize = window.screen) {
+  function set_canvas_dimensions(screensize = null) {
+    let _screensize = screensize;
+    if (!_screensize) {
+      _screensize = window.screen;
+    }
+    let width = _screensize.width;
+    let height = _screensize.height;
     canvases.forEach(function(e) {
-      window[e].setWidth(_screensize.width);
-      window[e].setHeight(_screensize.height);
+      window[e].setWidth(width);
+      window[e].setHeight(height);
       if (player_view) {
-        let width = player_view.screen.width;
-        let height = player_view.screen.height;
+        if (!screensize) {
+          width = player_view.screen.availWidth;
+          height = player_view.screen.availHeight;
+        }
         let _e = 'player_' + e;
         if (window[_e]) {
           window[_e].width = width;
@@ -144,8 +152,6 @@
       window[_canvas].renderAll();
       if (player_view) {
         let _e = 'player_' + e;
-        let width = player_view.width;
-        let height = player_view.height;
         let box = window[_e].getBoundingClientRect();
         if (window[_e]) {
           let ctx = window[_e].getContext('2d');
