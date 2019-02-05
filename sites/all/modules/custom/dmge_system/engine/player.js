@@ -3,9 +3,37 @@
  */
 (function ($, Drupal, window, document, undefined) {
 
-  if (window.opener) {
-    var main_window = window.opener;
-    console.log(window.opener);
+  if (!window['opener']) {
+    console.log('Where is the parent window?');
+  }
+
+  $('canvas').change(function() {
+    console.log('canvases');
+    if (this.width <= 0 || this.height <= 0) {
+      console.log('Something failed in the canvas size.  We are altering the canvas size for everyones safety.  Pray we do not alter it further.');
+      update_canvases();
+    }
+  });
+
+  $(window).change(function() {
+    console.log('window');
+    update_canvases();
+  });
+
+  // Just fixes sizing based on available data.
+  const update_canvases = function() {
+    let $parent = $(window['opener']),
+    $parent_body = $(window['opener'].document.body),
+    width = $parent_body.find('#map_width').val(),
+    height = $parent_body.find('#map_height').val();
+
+    if (!width || !height) {
+      width = window.screen.availWidth;
+      height = window.screen.availHeight;
+    }
+
+    this.width = width;
+    this.height = height;
   }
 
   const updateScrollPos = function(e) {
