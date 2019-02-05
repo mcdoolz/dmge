@@ -2420,30 +2420,33 @@
    * Calculate screen.
    * Shout out to screen-size.info for the javascript driving this feature.
    */
-  var _screen_x = $("#first").val(screen.width),
-    _screen_y = $("#second").val(screen.height);
 
   $('#screen_calculate').click(function() {
-  	_screen_x = $("#screen_x").val();
-  	_screen_y = $("#screen_y").val();
-  	let inch = $("#screen_inch").val(),
+  	let _screen_x = $("#screen_x").val(),
+    _screen_y = $("#screen_y").val(),
+    inch = $("#screen_inch").val(),
   	result = $("#screen_result"),
   	sqroot = +(_screen_x * _screen_x) + +(_screen_y * _screen_y);
 
-  	if (_screen_x == 0)
+  	if (_screen_x == 0) {
   		result.val("Missing horizontal resolution");
-  	else if (_screen_y == 0)
+  	} else if (_screen_y == 0) {
   		result.val("Missing vertical resolution");
-  	else if (inch == 0)
+  	} else if (inch == 0) {
   		result.val("Missing screen size")
-  	else
-      _result = (Math.sqrt(sqroot) / inch).toFixed(2);
+  	} else {
+      let _result = (Math.sqrt(sqroot) / inch).toFixed(2);
       if (!_result) {
         return;
       }
   		result.val(_result);
       $('#map_grid_size').val(_result);
+      let _type = $('input[name=map_grid_type]:checked').val();
+      if (_type == 'Quad') {
+        _result = _result*2
+      }
       set_grid(_result);
+    }
   });
 
   $('#player_view_open').click(function() {
