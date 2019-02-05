@@ -8,7 +8,6 @@
   }
 
   $('canvas').change(function() {
-    console.log('canvases');
     if (this.width <= 0 || this.height <= 0) {
       console.log('Something failed in the canvas size.  We are altering the canvas size for everyones safety.  Pray we do not alter it further.');
       update_canvases();
@@ -16,7 +15,6 @@
   });
 
   $(window).change(function() {
-    console.log('window');
     update_canvases();
   });
 
