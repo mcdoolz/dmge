@@ -182,6 +182,14 @@ $age = $incept_date->diff($today)->days;
             <label for="fow_enabler">Fog of War Hidden</label>
             <input type="checkbox" id="fow_enabler">
           </div>
+          <div class="sidebar_control">
+            <label for="fow_opacity">Main FoW Opacity</label>
+            <input type="range" id="fow_opacity" min="0.01" max="1" step="0.01" value="0.5">
+          </div>
+          <div class="sidebar_control">
+            <label for="player_fow_opacity">Player FoW Opacity</label>
+            <input type="range" id="player_fow_opacity" min="0.01" max="1" step="0.01" value="1">
+          </div>
           <div id="fow_storage" class="sidebar_control">
             <label for="fow_storage">FoW Storage / Recall</label>
             <input type="button" id="fow_store" value="Store FoW (Ctrl-Shift-F)">
@@ -189,10 +197,6 @@ $age = $incept_date->diff($today)->days;
             <input type="button" id="fow_reset" value="Reset FoW">
           </div>
           <div class="sidebar_control">
-            <div class="fow_brush_property">
-              <label for="fow_opacity">FoW Opacity %</label>
-              <input type="number" id="fow_opacity" value="100">
-            </div>
             <div class="fow_brush_property">
               <label for="fow_brush_size">FoW Brush Size</label>
               <input type="number" id="fow_brush_size" value="100">

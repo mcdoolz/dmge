@@ -802,6 +802,9 @@
         }
       },
       'mousedown': function(e) {
+        if ($(e.target).closest('#sidebar').length === 0) {
+          $('#sidebar').hide('slide', {direction:'right'});
+        }
         // If holding shift, scroll the screen.
         // TODO: This will be changed for viewport.
         if (e.shiftKey) {
@@ -1046,14 +1049,6 @@
   //   }
   // });
 
-
-  // General click event to close the sidebar.
-  $(document).on('click', function(e) {
-    if ($(e.target).closest('#sidebar').length === 0) {
-      $('#sidebar').hide('slide', {direction:'right'});
-    }
-  });
-
   /**
    * No right click in the Fog of war, it complicates matters.
    */
@@ -1065,6 +1060,7 @@
    * When we press a key, the world changes.
    */
   $(document).on('keydown', function(e) {
+    e.preventDefault();
 
     // If we're in an input, don't do shit.
     if ($('input').is(':focus')) {
@@ -1083,7 +1079,9 @@
     }
 
     switch (e.which) {
-      // Escape
+      // Tab.
+      case 9:
+      // Esc. Escape.
       case 27:
         $('#sidebar').toggle('slide', {direction:'right'});
         break;
@@ -1312,13 +1310,6 @@
     }
   });
 
-  $('#fow_opacity').on('input', function() {
-    $('#fow_wrapper').css('opacity', get_opacity($('#fow_opacity')) / 2);
-    if (player_view) {
-      window['player_fow_wrapper'].css('opacity', get_opacity($('#fow_opacity')));
-    }
-  });
-
   /**
    * Helper stores FoW content to window variable.
    */
@@ -1368,15 +1359,12 @@
     fow_ctx.fillStyle = 'rgba( 0, 0, 0, 1 )';
     fow_ctx.fillRect(0, 0, window['fow'].width, window['fow'].height);
     if (window['player_fow']) {
-      window['player_fow'].width = window['fow'].width;
-      window['player_fow'].height = window['fow'].height;
       render_fow_canvas();
     }
   }
   $('#fow_reset').click(function(e) {
     fow_reset();
   });
-  fow_reset();
 
   /**
    * Fog On!
@@ -1447,6 +1435,19 @@
       'height': $(fow_brush_feather_cursor)[0].attr('r') * 2,
     });
   }).trigger('input');
+
+  $('#fow_opacity').on('change, input', function() {
+    $('#fow_wrapper').css('opacity', this.value);
+  });
+
+  $('#player_fow_opacity').on('change, input', function() {
+    if (player_view) {
+      if (!window['player_fow_wrapper']) {
+        window['player_fow_wrapper'] = $(player_view.document).find('#player_fow_wrapper');
+      }
+      window['player_fow_wrapper'].css('opacity', this.value);
+    }
+  });
 
   /**
    * The function of cursor truth.  Now that we have a cursor.
@@ -1795,8 +1796,8 @@
 
   $('#fow').on('mouseup', function() {
     if (window['player_fow']) {
-      window['player_fow'].width = window['fow'].width;
-      window['player_fow'].height = window['fow'].height;
+      // window['player_fow'].width = window['fow'].width;
+      // window['player_fow'].height = window['fow'].height;
       render_fow_canvas();
     }
   });
