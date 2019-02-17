@@ -1060,7 +1060,6 @@
    * When we press a key, the world changes.
    */
   $(document).on('keydown', function(e) {
-    e.preventDefault();
 
     // If we're in an input, don't do shit.
     if ($('input').is(':focus')) {
@@ -1083,6 +1082,7 @@
       case 9:
       // Esc. Escape.
       case 27:
+        e.preventDefault();
         $('#sidebar').toggle('slide', {direction:'right'});
         break;
 
@@ -1090,6 +1090,7 @@
       case 112:
       // Qqqqqqquestions need answers
       case 81:
+        e.preventDefault();
         __toggle = Drupal.howto.dialog('isOpen') ? 'close' : 'open';
         Drupal.howto.dialog(__toggle);
         break;
@@ -1097,8 +1098,8 @@
       case 81:
         // Disable ctrl r refresh.
         if (e.ctrlKey) {
-          e.preventDefault();
           e.cancelBubble = true;
+          e.preventDefault();
         }
         break;
       // cccccatalogue
@@ -1190,16 +1191,16 @@
       case 8:
       // Delete
       case 46:
-        e.preventDefault();
         e.cancelBubble = true;
+        e.preventDefault();
         delete_objects();
         break;
 
       // F5
       case 116:
         // Prevent accidental refresh.
-        e.preventDefault();
         e.cancelBubble = true;
+        e.preventDefault();
         break;
 
       default:
