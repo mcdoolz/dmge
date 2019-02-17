@@ -1961,7 +1961,7 @@
   }
 
   /**
-   * Helper loads files from input or dialog.
+   * Helper loads files from input or dialog and passes them to processer.
    */
   function loadFiles(files) {
     if (typeof files.prop === "function") {
@@ -1972,25 +1972,35 @@
       console.error('No files selected?');
       return;
     }
-    $.each(files, function(key, _file) {
-      let _url = window.URL.createObjectURL(_file),
-      _id = make_file_id(_url),
-      _thumbnail = _url,
-      _type = 'Static',
-      ext = getExtension(_file.name);
-
-      if (ext == 'gif') {
-        _url = _file;
-      }
-
-      if (loaded = loadFile(_url, ext, _id)) {
-        if (!['gif', 'dmge'].includes(ext)) {
-          $('#files').jsGrid('insertItem', {'id': _id, 'Filename': _file.name, 'Blob': _url, 'Type': loaded.type, 'Thumbnail': _thumbnail });
-        }
-      }
+    $.each(files, function(file) {
+      process_file(file);
     });
   }
 
+  /**
+   * Helper handles the loading of the file, after some preliminary process.
+   */
+  function process_file(_file) {
+    let _url = window.URL.createObjectURL(_file),
+    _id = make_file_id(_url),
+    _thumbnail = _url,
+    _type = 'Static',
+    ext = getExtension(_file.name);
+
+    if (ext == 'gif') {
+      _url = _file;
+    }
+
+    if (loaded = loadFile(_url, ext, _id)) {
+      if (!['gif', 'dmge'].includes(ext)) {
+        $('#files').jsGrid('insertItem', {'id': _id, 'Filename': _file.name, 'Blob': _url, 'Type': loaded.type, 'Thumbnail': _thumbnail });
+      }
+    }
+  }
+
+  /**
+   * Helper for identifying and using correct load function per file type.
+   */
   function loadFile(_url, ext, _id = NULL) {
     let file = {
       type: 'Static',
@@ -2039,6 +2049,45 @@
      break;
     }
     return file;
+  }
+
+  /**
+   * Dropzone!
+   */
+  $(document.body).dropzone({
+    url: '/',
+    clickable: false,
+    uploadMultiple: true,
+    previewsContainer: false,
+    acceptedFiles: '.jpg, .png, .mp4, .mkv, .mpg',
+    accept: function(file, done) {
+      process_file(file);
+      done();
+    },
+    complete: function(file) {
+      if (!file.accepted)
+      show_message('Cannot accept this file.');
+    }
+  });
+
+  /**
+   * Create a message function for making alerts to the user.
+   */
+   function show_message(message, type = 'status') {
+    let msg = $('<div />', {
+      id: 'messages',
+      class: 'messages ' + type,
+    }).html(message);
+    $(document.body).append(msg[0]).hide().fadeIn(250);
+    msg.on('click', function() {
+      msg.fadeOut(function() {
+        msg.remove();
+      });
+    });
+    // setTimeout(function() {
+    //   msg.hide('slide', {direction:'right'}).remove();
+    // }, 5000);
+
   }
 
   /**
