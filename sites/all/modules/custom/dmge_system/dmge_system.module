@@ -214,6 +214,7 @@ function dmge_system_main() {
     $path . '/lib/fabric.min.js',
     $path . '/lib/js.cookie.js',
     $path . '/lib/svg.min.js',
+    $path . '/lib/dropzone.js',
   );
   foreach ($header_javascripts as $header_javascript) {
     drupal_add_js($header_javascript, array(
