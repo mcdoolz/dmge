@@ -1951,15 +1951,15 @@
       console.error('No files selected?');
       return;
     }
-    $.each(files, function(file) {
-      process_file(file);
+    $.each(files, function(key, file) {
+      processFile(file);
     });
   }
 
   /**
    * Helper handles the loading of the file, after some preliminary process.
    */
-  function process_file(_file) {
+  function processFile(_file) {
     let _url = window.URL.createObjectURL(_file),
     _id = make_file_id(_url),
     _thumbnail = _url,
@@ -2040,7 +2040,7 @@
     previewsContainer: false,
     acceptedFiles: '.jpg, .png, .mp4, .mkv, .mpg',
     accept: function(file, done) {
-      process_file(file);
+      processFile(file);
       done();
     },
     complete: function(file) {
