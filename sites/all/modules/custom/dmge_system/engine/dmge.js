@@ -13,7 +13,7 @@
   const FILTER_REMOVE_COLOR = 2;
 
   // We set these now for assignment later.
-  var player_view, map_scroll_synch,
+  var player_view, dragX = 0, dragY = 0,
   r1 = $('#fow_brush_size').val(),
   r2 = $('#fow_brush_feather_size').val(),
   dragging = false;
@@ -25,21 +25,6 @@
       top: object.top + this._offset.top
     };
   }
-
-  /**
-   * Hash code helper.
-   * https://stackoverflow.com/a/7616484/4942292
-   */
-  String.prototype.hashCode = function() {
-    var hash = 0, i, chr;
-    if (this.length === 0) return hash;
-    for (i = 0; i < this.length; i++) {
-      chr   = this.charCodeAt(i);
-      hash  = ((hash << 5) - hash) + chr;
-      hash |= 0; // Convert to 32bit integer
-    }
-    return hash;
-  };
 
   /**
    * Helper for screen size.
@@ -107,7 +92,6 @@
             toggle_canvas(e);
           });
       }
-      window['map'].selection = true;
       $(_wrapper).css('z-index', eval(_e.toUpperCase() + '_ZINDEX'));
     });
   }
@@ -784,46 +768,33 @@
     }
   });
 
-  function dragging_initialize() {
-    window['map'].selection = false;
-    $('#map_wrapper').addClass('notouchie');
-    map_scroll_synch = $('map_scroll_synch').val();
+  /**
+   * Align screen to mouse position.
+   */
+  function updateScrollPos(e, _window) {
+    $(_window).scrollTop($(_window).scrollTop() + (dragY - e.pageY));
+    $(_window).scrollLeft($(_window).scrollLeft() + (dragX - e.pageX));
   }
 
-  var clicked = false, clickY, clickX;
-
+  /**
+   * Document event listeners.
+   */
   $(document).on({
       'mousemove': function(e) {
-        if (clicked) {
+        window.mouseX = e.pageX;
+        window.mouseY = e.pageY;
+        // If holding shift, scroll the screen.
+        // TODO: This will be changed for viewport.
+        if (e.shiftKey) {
           updateScrollPos(e, window);
-          if ((player_view) && (map_scroll_synch)) {
-            updateScrollPos(e, player_view);
-          }
         }
       },
       'mousedown': function(e) {
         if ($(e.target).closest('#sidebar').length === 0) {
           $('#sidebar').hide('slide', {direction:'right'});
         }
-        // If holding shift, scroll the screen.
-        // TODO: This will be changed for viewport.
-        if (e.shiftKey) {
-          dragging_initialize();
-          clicked = true;
-          clickY = e.pageY;
-          clickX = e.pageX;
-          if (player_view) {
-            player_view.pageY = e.pageY;
-            player_view.pageX = e.pageX;
-          }
-        }
       },
       'mouseup': function() {
-        $('#map_wrapper').removeClass('notouchie');
-        clicked = false;
-        document.getElementById('grid_wrapper').style.pointerEvents = false;
-        window['map'].selection = true;
-        $('html').css('cursor', 'auto');
         if ($('#error')) {
           $('#error').fadeOut();
         }
@@ -991,12 +962,6 @@
     });
   }
 
-  var updateScrollPos = function(e, _window) {
-    $('html').css('cursor', 'move');
-    $(_window).scrollTop($(_window).scrollTop() + (clickY - e.pageY));
-    $(_window).scrollLeft($(_window).scrollLeft() + (clickX - e.pageX));
-  }
-
   /**
    * Helper to set zoom across all canvases.
    */
@@ -1056,6 +1021,18 @@
       return false;
   });
 
+  $(document).on('keyup', function(e) {
+    switch (e.which) {
+      // Shift!
+      case 16:
+        dragging = false;
+        dragX = window.mouseX;
+        dragY = window.mouseY;
+        $('html').css('cursor', 'auto');
+        break;
+    }
+  });
+
   /**
    * When we press a key, the world changes.
    */
@@ -1084,6 +1061,14 @@
       case 27:
         e.preventDefault();
         $('#sidebar').toggle('slide', {direction:'right'});
+        break;
+
+      // Shift!
+      case 16:
+        if (!dragging) {
+          dragging = true;
+          $('html').css('cursor', 'move');
+        }
         break;
 
       // f1
@@ -1954,12 +1939,6 @@
     loadFiles($(this));
   });
 
-  if (!Array.isArray) {
-    Array.isArray = function(arg) {
-      return Object.prototype.toString.call(arg) === '[object Array]';
-    };
-  }
-
   /**
    * Helper loads files from input or dialog and passes them to processer.
    */
@@ -2384,7 +2363,6 @@
     let data = $('#layering').jsGrid('option', 'data');
     let row = -1;
     if (e.target && e.target.id) {
-      // row = data[find_attr(data, 'id', e.target.id)];
       row = get_row(e.target.id, data);
       if (row) {
         $('#layering').jsGrid('deleteItem', row);
@@ -2554,7 +2532,6 @@
           $('.library.resources .resource-link-link a').each(function(e) {
             let url = this.href;
             if (!get_youtube_code(url)) {
-              // $(this).parent('.resource').remove();
               this.disabled = true;
               $(this).remove();
             }
@@ -2716,3 +2693,39 @@
   }
 
 }(jQuery, Drupal, this, this.document));
+
+/**
+ * Helper function for discerning external URLs in one go.
+ * https://stackoverflow.com/a/6238456
+ */
+function isExternal(url) {
+  var match = url.match(/^([^:\/?#]+:)?(?:\/\/([^\/?#]*))?([^?#]+)?(\?[^#]*)?(#.*)?/);
+  if (typeof match[1] === "string" && match[1].length > 0 && match[1].toLowerCase() !== location.protocol) return true;
+  if (typeof match[2] === "string" && match[2].length > 0 && match[2].replace(new RegExp(":("+{"http:":80,"https:":443}[location.protocol]+")?$"), "") !== location.host) return true;
+  return false;
+}
+
+/**
+ * Polyfill isArray function for Arrays.
+ * https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/isArray#Polyfill
+ */
+if (!Array.isArray) {
+  Array.isArray = function(arg) {
+    return Object.prototype.toString.call(arg) === '[object Array]';
+  };
+}
+
+/**
+ * Hash code helper.
+ * https://stackoverflow.com/a/7616484/4942292
+ */
+String.prototype.hashCode = function() {
+  var hash = 0, i, chr;
+  if (this.length === 0) return hash;
+  for (i = 0; i < this.length; i++) {
+    chr   = this.charCodeAt(i);
+    hash  = ((hash << 5) - hash) + chr;
+    hash |= 0; // Convert to 32bit integer
+  }
+  return hash;
+};
