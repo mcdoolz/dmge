@@ -1257,13 +1257,15 @@
   /**
    * Open sesame.
    */
-  $('#wrench').on('touchend click', function(event) {
+  $('#wrench').on('touchend mouseup', function(event) {
     event.stopPropagation();
     event.preventDefault();
     $('#sidebar').toggle('slide', {direction:'right'});
   }).one('click', function() {
     $('#wrench').removeClass('newbie');
   });
+
+  $('#grid_wrapper').draggable();
 
   /**
    * Grid drag a-go.
