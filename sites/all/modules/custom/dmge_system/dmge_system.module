@@ -481,6 +481,7 @@ function _dmge_system_get_youtube_url($id = '') {
 
   // $dt = file_get_contents($yt_url, false, $context);
   $dt = system_retrieve_file($yt_url, 'public://', FALSE);
+  watchdog('DMGE System', print_r($dt, TRUE));
 
   if (strpos($dt, 'status=fail') !== false) {
 
