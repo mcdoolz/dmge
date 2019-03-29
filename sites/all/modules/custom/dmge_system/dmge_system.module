@@ -477,7 +477,7 @@ function _dmge_system_get_youtube_url($id = '') {
   );
 
   $context = stream_context_create($opts);
-  $yt_url = 'https://www.youtube.com/get_video_info?video_id=' . $id . '&el=embedded&ps=default&eurl=&gl=US&hl=en';
+  $yt_url = 'https://www.youtube.com/get_video_info?video_id=' . $id;
   $dt = file_get_contents($yt_url, false, $context);
 
   if (strpos($dt, 'status=fail') !== false) {
