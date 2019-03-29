@@ -194,6 +194,10 @@
     if ((_selected_toggle).prop('checked')) {
       _selected_wrapper.removeClass('notouchie');
       _selected_link.addClass('selected');
+      window.selected_canvas = selected_canvas;
+    }
+    else {
+      window.selected_canvas = 'map';
     }
     $('#map_wrapper').removeClass('notouchie');
   }
@@ -704,7 +708,7 @@
       div.setAttribute('id', 'save_icon');
       $('#save_icon').hide().html('<i class="far fa-save"></i>');
     }
-    $('#save_icon').fadeIn();
+    $('#save_icon').fadeIn(500);
   }
 
   function save_show_error() {
@@ -1214,15 +1218,15 @@
           break;
         default:
           let _obj;
-          if (_obj = window[canvas].getActiveObject()) {
+          if (_obj = window[selected_canvas].getActiveObject()) {
             switch (canvas) {
               case 'map':
                 if (confirm('Are you sure?')) {
-                  window[canvas].remove(_obj);
+                  window[selected_canvas].remove(_obj).renderAll();
                 }
               break;
               default:
-                window[canvas].remove(_obj);
+                window[selected_canvas].remove(_obj).renderAll();
             }
           }
         }
@@ -1274,11 +1278,10 @@
     $('#wrench').removeClass('newbie');
   });
 
-  $('#grid_wrapper').draggable();
-
   /**
    * Grid drag a-go.
    */
+  $('#grid_wrapper').draggable();
   $('#grid_toggle').change(function() {
     toggle_canvas('grid');
   });
