@@ -2,6 +2,7 @@
  * Loaded by the player view.
  */
 (function ($, Drupal, window, document, undefined) {
+  $('#player_grid_wrapper').draggable();
 
   if (!window['opener']) {
     console.log('Where is the parent window?');
@@ -35,7 +36,6 @@
   }
 
   const updateScrollPos = function(e) {
-    $('html').css('cursor', 'nwse-resize');
     $(window).scrollTop($(window).scrollTop() + (clickY - e.pageY));
     $(window).scrollLeft($(window).scrollLeft() + (clickX - e.pageX));
   }
