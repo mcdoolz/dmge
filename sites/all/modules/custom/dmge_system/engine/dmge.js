@@ -18,6 +18,15 @@
   r2 = $('#fow_brush_feather_size').val(),
   dragging = false;
 
+  // https://stackoverflow.com/a/51439580
+  fabric.Image.prototype.toObject = (function(toObject) {
+    return function() {
+      return fabric.util.object.extend(toObject.call(this), {
+        src: this.toDataURL()
+      });
+    };
+  })(fabric.Image.prototype.toObject);
+
   fabric.Object.prototype.originX = fabric.Object.prototype.originY = 'center';
   fabric.Canvas.prototype.getAbsoluteCoords = function(object) {
     return {
