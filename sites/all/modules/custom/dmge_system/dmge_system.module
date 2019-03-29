@@ -468,20 +468,12 @@ function _dmge_system_get_youtube_url($id = '') {
   if (empty($id)) {
     return 'No id provided.';
   }
-  $opts = array(
-  'http' => array(
-    'method' => "GET",
-    'user_agent' => 'Dynamic Maps Game Engine',
-    'header' => "Accept-language: en\r\n"
-    )
-  );
 
-  // $context = stream_context_create($opts);
   $yt_url = 'https://www.youtube.com/get_video_info?video_id=' . $id . '&el=embedded&ps=default&eurl=&gl=US&hl=en';
 
-  // $dt = file_get_contents($yt_url, false, $context);
   $dt = system_retrieve_file($yt_url, 'public://', FALSE);
   watchdog('DMGE System', print_r($dt, TRUE));
+  $dt = file_get_contents($dt);
 
   if (strpos($dt, 'status=fail') !== false) {
 
