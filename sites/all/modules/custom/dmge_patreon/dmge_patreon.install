@@ -91,7 +91,7 @@ function dmge_patreon_create_user_fields() {
     // Create the field base.
     $field = array(
       'field_name' => 'dmge_patreon_pledge',
-      'type' => 'int',
+      'type' => 'number_integer',
       'size' => 'small',
       'locked' => TRUE,
     );
