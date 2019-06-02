@@ -235,10 +235,10 @@ function dmge_patreon_oauth_callback() {
           }
         }
       }
+      return;
     }
-    drupal_set_message(t('Clicking Deny denies Patreon from creating you an account.'));
-    drupal_goto('engine');
   }
+  drupal_goto('front');
 }
 
 /**
