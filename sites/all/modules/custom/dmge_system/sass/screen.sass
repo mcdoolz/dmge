@@ -79,6 +79,9 @@ video
   display: none
 
 #dmge
+  position: absolute
+  top: 0
+  left: 0
   #canvases_wrapper
     border: 1px solid white
     div[id*="_wrapper"]
@@ -133,6 +136,11 @@ video
 #map_file_settings, #fow_settings, #grid_settings
   padding: $g 0
   position: relative
+
+#map_export_options_layers
+  display: flex
+  justify-content: space-between
+  text-transform: capitalize
 
 input[type=range]
   width: auto

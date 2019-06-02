@@ -10,7 +10,8 @@ $aliases['live'] = array(
   'root' => '/home/dmge/public_html',
   'remote-host' => 'dmge.net',
   'remote-user' => 'dmge',
-  'ssh-options' => '-o PasswordAuthentication=no -i /home/mcdoolz/.ssh/authorized_keys/dmge_rsa',
+  // 'ssh-options' => '-o PasswordAuthentication=no -i /home/mcdoolz/.ssh/authorized_keys/dmge_rsa',
+  'ssh-options' => '-o PasswordAuthentication=no -i C:/Users/mcdoo/.ssh/authorized_keys/dmge_rsa',
   'path-aliases' => array(
     '%dump-dir' => '/tmp/.drush/drush-dumps',
     '%files' => 'sites/default/files',

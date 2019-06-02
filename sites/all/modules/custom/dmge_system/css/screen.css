@@ -169,87 +169,100 @@ video {
   display: none;
 }
 
-/* line 82, ../sass/screen.sass */
+/* line 81, ../sass/screen.sass */
+#dmge {
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+/* line 85, ../sass/screen.sass */
 #dmge #canvases_wrapper {
   border: 1px solid white;
 }
-/* line 84, ../sass/screen.sass */
+/* line 87, ../sass/screen.sass */
 #dmge #canvases_wrapper div[id*="_wrapper"] {
   position: absolute;
   left: 0px;
   top: 0px;
 }
-/* line 88, ../sass/screen.sass */
+/* line 91, ../sass/screen.sass */
 #dmge canvas {
   position: absolute;
   left: 0px;
   top: 0px;
   background: none;
 }
-/* line 100, ../sass/screen.sass */
+/* line 103, ../sass/screen.sass */
 #dmge canvas.fow_canvas {
   pointer-events: none;
   display: none;
 }
-/* line 104, ../sass/screen.sass */
+/* line 107, ../sass/screen.sass */
 #dmge canvas.fow_canvas.active {
   display: block;
 }
-/* line 106, ../sass/screen.sass */
+/* line 109, ../sass/screen.sass */
 #dmge canvas.fow_canvas.brush-active {
   pointer-events: all;
   cursor: none;
 }
 
-/* line 110, ../sass/screen.sass */
+/* line 113, ../sass/screen.sass */
 .hideBrush {
   opacity: 0;
 }
-/* line 112, ../sass/screen.sass */
+/* line 115, ../sass/screen.sass */
 .fow_canvas .hideBrush {
   cursor: pointer !important;
 }
 
-/* line 115, ../sass/screen.sass */
+/* line 118, ../sass/screen.sass */
 .active {
   display: block;
 }
 
-/* line 118, ../sass/screen.sass */
+/* line 121, ../sass/screen.sass */
 #fow_wrapper {
   opacity: 0.5;
 }
 
-/* line 121, ../sass/screen.sass */
+/* line 124, ../sass/screen.sass */
 #map_video_wrapper {
   display: none;
 }
 
-/* line 124, ../sass/screen.sass */
+/* line 127, ../sass/screen.sass */
 .map_grid_type, .map_grid_property, .fow_brush_property {
   position: relative;
   margin: 0 0 20px;
 }
 
-/* line 128, ../sass/screen.sass */
+/* line 131, ../sass/screen.sass */
 .map_grid_type {
   display: inline-block;
   white-space: nowrap;
   margin: 0 20px 20px 0;
 }
 
-/* line 133, ../sass/screen.sass */
+/* line 136, ../sass/screen.sass */
 #map_file_settings, #fow_settings, #grid_settings {
   padding: 20px 0;
   position: relative;
 }
 
-/* line 137, ../sass/screen.sass */
+/* line 140, ../sass/screen.sass */
+#map_export_options_layers {
+  display: flex;
+  justify-content: space-between;
+  text-transform: capitalize;
+}
+
+/* line 145, ../sass/screen.sass */
 input[type=range] {
   width: auto;
 }
 
-/* line 140, ../sass/screen.sass */
+/* line 148, ../sass/screen.sass */
 output {
   background: darkred;
   width: 40px;
@@ -263,7 +276,7 @@ output {
   pointer-events: none;
 }
 
-/* line 152, ../sass/screen.sass */
+/* line 160, ../sass/screen.sass */
 #wrench {
   position: fixed;
   top: 0;
@@ -276,16 +289,16 @@ output {
   background: white;
   cursor: pointer;
 }
-/* line 163, ../sass/screen.sass */
+/* line 171, ../sass/screen.sass */
 #wrench:hover {
   background: black;
   color: white;
 }
-/* line 167, ../sass/screen.sass */
+/* line 175, ../sass/screen.sass */
 #wrench.newbie #wrench_innerwrapper {
   animation: wrench 2.5s ease infinite;
 }
-/* line 169, ../sass/screen.sass */
+/* line 177, ../sass/screen.sass */
 #wrench.newbie:before {
   position: absolute;
   content: "";
@@ -302,7 +315,7 @@ output {
   animation: horizontal 2s ease-in-out infinite;
 }
 
-/* line 184, ../sass/screen.sass */
+/* line 192, ../sass/screen.sass */
 #menu {
   position: absolute;
   top: 0;
@@ -310,12 +323,12 @@ output {
   height: auto;
   display: block;
 }
-/* line 190, ../sass/screen.sass */
+/* line 198, ../sass/screen.sass */
 #menu ul, #menu li, #menu ul li {
   margin: 0;
   padding: 0;
 }
-/* line 193, ../sass/screen.sass */
+/* line 201, ../sass/screen.sass */
 #menu a {
   display: block;
   font-size: 32px;
@@ -323,13 +336,13 @@ output {
   text-align: center;
   width: 64px;
 }
-/* line 200, ../sass/screen.sass */
+/* line 208, ../sass/screen.sass */
 #menu a.selected {
   background: grey;
   color: white;
 }
 
-/* line 204, ../sass/screen.sass */
+/* line 212, ../sass/screen.sass */
 #sidebar {
   top: 0;
   right: 0;
@@ -343,45 +356,45 @@ output {
   z-index: 1000;
   height: 100%;
 }
-/* line 216, ../sass/screen.sass */
+/* line 224, ../sass/screen.sass */
 #sidebar.active {
   display: block;
 }
 
-/* line 219, ../sass/screen.sass */
+/* line 227, ../sass/screen.sass */
 #sidebar_innerwrapper {
   padding: 20px 20px 320px 80px;
   height: 100%;
 }
 
-/* line 223, ../sass/screen.sass */
+/* line 231, ../sass/screen.sass */
 #sidebar_tray {
   position: fixed;
   bottom: 0;
   text-align: center;
 }
-/* line 227, ../sass/screen.sass */
+/* line 235, ../sass/screen.sass */
 #sidebar_tray button, #sidebar_tray input[type="button"] {
   display: inline-block;
 }
-/* line 229, ../sass/screen.sass */
+/* line 237, ../sass/screen.sass */
 #sidebar_tray button, #sidebar_tray button:visited, #sidebar_tray input[type="button"], #sidebar_tray input[type="button"]:visited {
   background: white;
   border: none;
   padding: 20px;
 }
-/* line 233, ../sass/screen.sass */
+/* line 241, ../sass/screen.sass */
 #sidebar_tray button:hover, #sidebar_tray button:active, #sidebar_tray input[type="button"]:hover, #sidebar_tray input[type="button"]:active {
   background: black;
   color: white;
 }
 
-/* line 237, ../sass/screen.sass */
+/* line 245, ../sass/screen.sass */
 .highlight {
   background: lightblue;
 }
 
-/* line 240, ../sass/screen.sass */
+/* line 248, ../sass/screen.sass */
 .css-triangle {
   display: block;
   float: left;
@@ -393,24 +406,24 @@ output {
   border-color: transparent transparent #000000 transparent;
 }
 
-/* line 250, ../sass/screen.sass */
+/* line 258, ../sass/screen.sass */
 .dialog {
   z-index: 1080;
 }
 
-/* line 253, ../sass/screen.sass */
+/* line 261, ../sass/screen.sass */
 .grid_setting {
   display: inline-block;
   margin-right: 4em;
   text-align: center;
 }
 
-/* line 258, ../sass/screen.sass */
+/* line 266, ../sass/screen.sass */
 .jsgrid-cell {
   overflow: hidden;
 }
 
-/* line 261, ../sass/screen.sass */
+/* line 269, ../sass/screen.sass */
 .temp_text {
   z-index: 99999;
   position: absolute;
@@ -418,7 +431,7 @@ output {
   font-family: serif;
 }
 
-/* line 267, ../sass/screen.sass */
+/* line 275, ../sass/screen.sass */
 #token_settings_wrapper {
   position: absolute;
   z-index: 1500;
@@ -435,7 +448,7 @@ output {
   transition-property: top, left;
   text-align: center;
 }
-/* line 276, ../sass/screen.sass */
+/* line 284, ../sass/screen.sass */
 #token_settings_wrapper #token_settings_close {
   position: absolute;
   top: 0;
