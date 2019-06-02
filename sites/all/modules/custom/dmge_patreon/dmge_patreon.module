@@ -152,11 +152,11 @@ function dmge_patreon_oauth_callback() {
         'headers' => array('Authorization: OAuth' => $access_token),
       );
 
+      // The line that reaches out to touch Patreon.
       $response = drupal_http_request(url(DMGE_PATREON_URL . '/api/oauth2/v2/identity', array('query' => $query)), $data);
 
       if (!empty($response->data)) {
         $data = json_decode($response->data);
-        // dpm($data);
 
         if (user_is_logged_in()) {
           global $user;
@@ -236,6 +236,8 @@ function dmge_patreon_oauth_callback() {
         }
       }
     }
+    drupal_set_message(t('Clicking Deny denies Patreon from creating you an account.'));
+    drupal_goto('engine');
   }
 }
 
