@@ -238,7 +238,8 @@ function dmge_patreon_oauth_callback() {
       return;
     }
   }
-  drupal_goto('front');
+  drupal_set_message(t('You have to Allow Patreon to create an account.  An account is required to use the engine.'), 'warning');
+  drupal_goto('<front>');
 }
 
 /**
