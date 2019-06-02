@@ -1,3 +1,266 @@
 <?php
+define('DMGE_PATREON_OAUTH_CALLBACK_URL', 'engine/patreon/oauth');
+define('DMGE_PATREON_OAUTH_REDIRECT',  $GLOBALS['base_url'] . '/' . DMGE_PATREON_OAUTH_CALLBACK_URL);
+define('DMGE_PATREON_URL', 'https://www.patreon.com');
+define('DMGE_PATREON_REGISTER_OAUTH_URL', 'https://www.patreon.com/platform/documentation/clients');
+define('DMGE_PATREON_ADMIN_URL', 'admin/config/administration/dmge_patreon');
+// Hardcoded, but it could change..
+define('DMGE_PATREON_ID', '6ab9008b-3c9c-42e5-a9a8-af6953d73db7');
 
-include_once DRUPAL_ROOT . '/sites/all/libraries/patreon/src/patreon.php';
+/**
+ * Implements hook_permission().
+ */
+function dmge_patreon_permission() {
+  return array(
+    'administer patreon' => array(
+      'title' => t('Administer Patreon configuration'),
+    ),
+  );
+}
+
+
+/**
+ * Implements hook_menu().
+ */
+function dmge_patreon_menu() {
+  $items[DMGE_PATREON_OAUTH_CALLBACK_URL] = array(
+    'title' => 'Patreon OAuth',
+    // Allow all requests to this URL so that OAuth may work correctly.
+    'access callback' => TRUE,
+    'page callback' => 'dmge_patreon_oauth_callback',
+    'type' => MENU_CALLBACK,
+  );
+
+  $items[DMGE_PATREON_ADMIN_URL] = array(
+    'title' => 'Patreon',
+    'description' => 'Patreon Oauth key and secret.',
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('dmge_patreon_admin_form'),
+    'access arguments' => array('administer patreon'),
+  );
+
+  return $items;
+}
+
+/**
+ * Implements hook_form().
+ */
+function dmge_patreon_admin_form($form, &$form_state) {
+  $form['oauth'] = array(
+    '#type' => 'fieldset',
+    '#title' => t('OAuth2 Settings'),
+    '#description' => t('To enable OAuth2 based access for Patreon, you must <a href="@url" target="_blank">register this site</a> with Patreon and add the provided keys here.', array('@url' => DMGE_PATREON_REGISTER_OAUTH_URL)),
+  );
+  $form['oauth']['endpoint'] = array(
+    '#markup' => t('<p>When registering with Patreon, you must add @url as your application endpoint.</p>', array('@url' => DMGE_PATREON_OAUTH_CALLBACK_URL)),
+  );
+  $form['oauth']['dmge_patreon_client_id'] = array(
+    '#type' => 'textfield',
+    '#title' => t('Client ID'),
+    '#default_value' => variable_get('dmge_patreon_client_id', NULL),
+    '#required' => TRUE,
+  );
+  $form['oauth']['dmge_patreon_client_secret'] = array(
+    '#type' => 'textfield',
+    '#title' => t('Client secret'),
+    '#default_value' => variable_get('dmge_patreon_client_secret', NULL),
+    '#required' => TRUE,
+  );
+  $form['oauth']['description'] = array(
+    '#markup' => t('<p>When you submit this form, you will be redirected to the Patreon website to authorise your account.</p>'),
+  );
+
+  $form = system_settings_form($form);
+  $form['#submit'][] = 'dmge_patreon_admin_form_submit';
+
+  return $form;
+}
+
+/**
+ * Form submit handler for adding a Patreon account.
+ */
+function dmge_patreon_admin_form_submit($form, &$form_state) {
+  drupal_goto(dmge_patreon_authorise_account());
+}
+
+/**
+ * Authorize an account via Patreon.
+ */
+function dmge_patreon_authorise_account($client_id = NULL) {
+  $codes = dmge_patreon_get_codes();
+  $query = array(
+    'response_type' => 'code',
+    'client_id' => $codes['client_id'],
+    'redirect_uri' => DMGE_PATREON_OAUTH_REDIRECT,
+    'scope' => 'identity identity[email]',
+  );
+  $href = url(DMGE_PATREON_URL . '/oauth2/authorize', array('query' => $query));
+  return $href;
+}
+
+/**
+ * Helper returns client codes from variables as array.
+ */
+function dmge_patreon_get_codes() {
+  return array(
+    'client_id' => variable_get('dmge_patreon_client_id', ''),
+    'client_secret' => variable_get('dmge_patreon_client_secret', ''),
+  );
+}
+
+/**
+ * Callback to obtain a valid Oauth token.
+ */
+function dmge_patreon_oauth_callback() {
+  if ($_GET['code']) {
+    $codes = dmge_patreon_get_codes();
+    $query = array(
+      'code' => $_GET['code'],
+      'grant_type' => 'authorization_code',
+      'client_id' => $codes['client_id'],
+      'client_secret' => $codes['client_secret'],
+      'redirect_uri' => DMGE_PATREON_OAUTH_REDIRECT,
+    );
+
+    $data = array(
+      'method' => 'POST',
+      'headers' => array('Content-Type' => 'application/x-www-form-urlencoded'),
+      'data' => http_build_query($query),
+    );
+
+    $response = drupal_http_request(DMGE_PATREON_URL . '/api/oauth2/token', $data);
+
+    if (!empty($response->data)) {
+      $data = json_decode($response->data);
+      if (empty($data->access_token)) {
+        drupal_set_message('Failed to connect to Patreon');
+        if ($user->uid == 1) {
+          drupal_goto(DMGE_PATREON_ADMIN_URL);
+        }
+        drupal_exit();
+      }
+      $access_token = $data->access_token;
+      $refresh_token = $data->refresh_token;
+
+      $query = array(
+        'include' => 'memberships',
+        'fields[user]' => 'about,created,email,first_name,full_name,image_url,last_name,social_connections,thumb_url,url,vanity',
+        'fields[member]' => 'currently_entitled_amount_cents,lifetime_support_cents,last_charge_status,patron_status,last_charge_date,pledge_relationship_start',
+      );
+
+      $data = array(
+        'headers' => array('Authorization: OAuth' => $access_token),
+      );
+
+      $response = drupal_http_request(url(DMGE_PATREON_URL . '/api/oauth2/v2/identity', array('query' => $query)), $data);
+
+      if (!empty($response->data)) {
+        $data = json_decode($response->data);
+        // dpm($data);
+
+        if (user_is_logged_in()) {
+          global $user;
+          if ($user->uid == 1) {
+            drupal_set_message('Patreon connects successfully');
+            drupal_goto(DMGE_PATREON_ADMIN_URL);
+            drupal_exit();
+            return;
+          }
+        }
+
+        $account = new EntityFieldQuery();
+        $account = $account->entityCondition('entity_type', 'user')
+          ->addMetaData('account', user_load(1))
+          ->fieldCondition('dmge_patreon_id', 'value', $data->data->id, '=')
+          ->execute();
+
+        if (!empty($account)) {
+          $account = array_shift(array_shift($account))->uid;
+          $account = user_load($account);
+
+          if (!empty($account)) {
+            dmge_patreon_finalize_login($account);
+          }
+        }
+
+        // This searches for users by email and sets their new dmge patreon settings.
+        if (empty($account)) {
+          $account = user_load_by_mail($data->data->attributes->email);
+          if (!empty($account)) {
+            $account->dmge_patreon_id[LANGUAGE_NONE][0]['value'] = $data->data->id;
+            $account->dmge_patreon_access_token[LANGUAGE_NONE][0]['value'] = $access_token;
+            $account->dmge_patreon_refresh_token[LANGUAGE_NONE][0]['value'] = $refresh_token;
+
+            dmge_patreon_finalize_login($account);
+          }
+        }
+
+        if (empty($account)) {
+          $attr = $data->data->attributes;
+          $account = array(
+            'name' => $attr->full_name,
+            'mail' => $attr->email,
+            'signature_format' => 'full_html',
+            'status' => 1,
+            'language' => 'en',
+            'init' => 'Email',
+            'roles' => array(
+              DRUPAL_AUTHENTICATED_RID => 'authenticated user',
+            ),
+            'dmge_patreon_id' => array(
+              LANGUAGE_NONE => array(
+                0 => array(
+                  'value' => $data->data->id,
+                ),
+              ),
+            ),
+            'dmge_patreon_access_token' => array(
+              LANGUAGE_NONE => array(
+                0 => array(
+                  'value' => $access_token,
+                ),
+              ),
+            ),
+            'dmge_patreon_refresh_token' => array(
+              LANGUAGE_NONE => array(
+                0 => array(
+                  'value' => $refresh_token,
+                ),
+              ),
+            ),
+          );
+          $account = user_save($account);
+          if ($account) {
+            dmge_patreon_finalize_login($account);
+          }
+        }
+      }
+    }
+  }
+}
+
+/**
+ * If we have an account (or uid) make with the finalization and goto profile.
+ */
+function dmge_patreon_finalize_login($account) {
+  if (is_integer($account)) {
+    $account = user_load($account);
+  }
+  if (empty($account)) {
+    drupal_set_message(t('Something went wrong.'), 'error');
+  }
+  global $user;
+  $user = $account;
+  user_login_finalize();
+  drupal_goto('user');
+  drupal_exit();
+}
+
+/**
+ * Alter user profile menu to remove patreon fields.
+ */
+function dmge_patreon_form_user_profile_form_alter(&$form, $form_state) {
+  $form['dmge_patreon_id']['#access'] = FALSE;
+  $form['dmge_patreon_access_token']['#access'] = FALSE;
+  $form['dmge_patreon_refresh_token']['#access'] = FALSE;
+}

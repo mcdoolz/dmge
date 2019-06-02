@@ -1,0 +1,5 @@
+name = DMGE Patreon
+description = "Provides the DMGE Patreon functions."
+package = DMGE
+core = 7.x
+configure = admin/config/administration/dmge/patreon

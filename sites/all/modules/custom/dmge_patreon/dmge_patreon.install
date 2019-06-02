@@ -13,7 +13,7 @@ function dmge_patreon_install() {
     dmge_patreon_create_user_fields();
   }
   catch (\Exception $e) {
-    $message = t('The site has reported an error trying to create the fields required by the Patreon User module: :error.', array(
+    $message = t('The site has reported an error trying to create the fields required by the DMGE Patreon module: :error.', array(
       ':error' => $e->getMessage(),
     ));
 
@@ -21,10 +21,9 @@ function dmge_patreon_install() {
     watchdog('patreon', $message, array(), WATCHDOG_ERROR);
   }
 
-  dmge_patreon_create_role();
   drupal_set_message(t('<p>You must now update your Patreon application settings at <a href="@oauth">the Patreon website</a> to add @endpoint as a valid endpoint. If you do not, users will not be able to log in via Patreon.</p>', array(
-    '@oauth' => PATREON_REGISTER_OAUTH_URL,
-    '@endpoint' => dmge_patreon_get_callback_url(),
+    '@oauth' => DMGE_PATREON_OAUTH_REDIRECT,
+    '@endpoint' => DMGE_PATREON_OAUTH_REDIRECT,
   )));
 }
 
@@ -32,14 +31,17 @@ function dmge_patreon_install() {
  * Implements hook_uninstall().
  */
 function dmge_patreon_uninstall() {
-  if (field_info_field('field_user_patreon_id')) {
-    field_delete_field('field_user_patreon_id');
+  if (field_info_field('dmge_patreon_id')) {
+    field_delete_field('dmge_patreon_id');
   }
-  if (field_info_field('field_user_patreon_access_token')) {
-    field_delete_field('field_user_patreon_access_token');
+  if (field_info_field('dmge_patreon_pledge')) {
+    field_delete_field('dmge_patreon_pledge');
   }
-  if (field_info_field('field_user_patreon_refresh_token')) {
-    field_delete_field('field_user_patreon_refresh_token');
+  if (field_info_field('dmge_patreon_access_token')) {
+    field_delete_field('dmge_patreon_access_token');
+  }
+  if (field_info_field('dmge_patreon_refresh_token')) {
+    field_delete_field('dmge_patreon_refresh_token');
   }
 
   foreach (variable_get('dmge_patreon_roles', array()) as $name => $rid) {
@@ -55,15 +57,15 @@ function dmge_patreon_uninstall() {
 }
 
 /**
- * Creates the field_user_patreon_id field on the user bundle.
+ * Creates the dmge_patreon_id field on the user bundle.
  *
  * @throws \FieldException
  */
 function dmge_patreon_create_user_fields() {
-  if (!field_info_field('field_user_patreon_id')) {
+  if (!field_info_field('dmge_patreon_id')) {
     // Create the field base.
     $field = array(
-      'field_name' => 'field_user_patreon_id',
+      'field_name' => 'dmge_patreon_id',
       'type' => 'text',
       'locked' => TRUE,
     );
@@ -71,7 +73,7 @@ function dmge_patreon_create_user_fields() {
 
     // Create the field instance on the bundle.
     $instance = array(
-      'field_name' => 'field_user_patreon_id',
+      'field_name' => 'dmge_patreon_id',
       'entity_type' => 'user',
       'label' => 'Patreon ID',
       'bundle' => 'user',
@@ -85,10 +87,35 @@ function dmge_patreon_create_user_fields() {
     );
     field_create_instance($instance);
   }
-  if (!field_info_field('field_user_patreon_access_token')) {
+  if (!field_info_field('dmge_patreon_pledge')) {
     // Create the field base.
     $field = array(
-      'field_name' => 'field_user_patreon_access_token',
+      'field_name' => 'dmge_patreon_pledge',
+      'type' => 'integer',
+      'locked' => TRUE,
+    );
+    field_create_field($field);
+
+    // Create the field instance on the bundle.
+    $instance = array(
+      'field_name' => 'dmge_patreon_pledge',
+      'entity_type' => 'user',
+      'label' => 'Patreon Pledge',
+      'bundle' => 'user',
+      'required' => FALSE,
+      'settings' => array(
+        'user_register_form' => 0,
+      ),
+      'widget' => array(
+        'type' => 'textfield',
+      ),
+    );
+    field_create_instance($instance);
+  }
+  if (!field_info_field('dmge_patreon_access_token')) {
+    // Create the field base.
+    $field = array(
+      'field_name' => 'dmge_patreon_access_token',
       'type' => 'text',
       'locked' => TRUE,
     );
@@ -96,7 +123,7 @@ function dmge_patreon_create_user_fields() {
 
     // Create the field instance on the bundle.
     $instance = array(
-      'field_name' => 'field_user_patreon_access_token',
+      'field_name' => 'dmge_patreon_access_token',
       'entity_type' => 'user',
       'label' => 'Patreon Token',
       'bundle' => 'user',
@@ -110,10 +137,10 @@ function dmge_patreon_create_user_fields() {
     );
     field_create_instance($instance);
   }
-  if (!field_info_field('field_user_patreon_refresh_token')) {
+  if (!field_info_field('dmge_patreon_refresh_token')) {
     // Create the field base.
     $field = array(
-      'field_name' => 'field_user_patreon_refresh_token',
+      'field_name' => 'dmge_patreon_refresh_token',
       'type' => 'text',
       'locked' => TRUE,
     );
@@ -121,7 +148,7 @@ function dmge_patreon_create_user_fields() {
 
     // Create the field instance on the bundle.
     $instance = array(
-      'field_name' => 'field_user_patreon_refresh_token',
+      'field_name' => 'dmge_patreon_refresh_token',
       'entity_type' => 'user',
       'label' => 'Patreon Refresh Token',
       'bundle' => 'user',
@@ -135,3 +162,4 @@ function dmge_patreon_create_user_fields() {
     );
     field_create_instance($instance);
   }
+}
