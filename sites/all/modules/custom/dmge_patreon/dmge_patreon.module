@@ -267,3 +267,11 @@ function dmge_patreon_form_user_profile_form_alter(&$form, $form_state) {
   $form['dmge_patreon_access_token']['#access'] = FALSE;
   $form['dmge_patreon_refresh_token']['#access'] = FALSE;
 }
+
+/**
+ * Implementation of hook_user_view_alter().
+ */
+function dmge_patreon_user_view_alter(&$build) {
+  unset($build['dmge_patreon_refresh_token']);
+  unset($build['dmge_patreon_access_token']);
+}
