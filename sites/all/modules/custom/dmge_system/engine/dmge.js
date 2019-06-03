@@ -1225,8 +1225,6 @@
                   window[selected_canvas].remove(_obj).renderAll();
                 }
               break;
-              default:
-                window[selected_canvas].remove(_obj).renderAll();
             }
           }
         }
