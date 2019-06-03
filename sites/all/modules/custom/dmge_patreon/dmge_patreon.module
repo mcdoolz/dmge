@@ -229,7 +229,7 @@ function dmge_patreon_oauth_callback() {
               ),
             ),
           );
-          $account = user_save($account);
+          $account = user_save('', $account);
           if ($account) {
             dmge_patreon_finalize_login($account);
           }
