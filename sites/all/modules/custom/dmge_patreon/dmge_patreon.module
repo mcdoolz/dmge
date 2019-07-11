@@ -175,7 +175,8 @@ function dmge_patreon_oauth_callback() {
           ->execute();
 
         if (!empty($account)) {
-          $account = array_shift(array_shift($account))->uid;
+          $account = array_shift($account);
+          $account = array_shift($account)->uid;
           $account = user_load($account);
 
           if (!empty($account)) {
