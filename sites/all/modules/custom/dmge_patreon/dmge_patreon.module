@@ -199,7 +199,7 @@ function dmge_patreon_oauth_callback() {
         if (empty($account)) {
           $attr = $data->data->attributes;
           $account = array(
-            'name' => $attr->full_name,
+            'name' => $attr->full_name . '_' . $data->data->id,
             'mail' => $attr->email,
             'signature_format' => 'full_html',
             'status' => 1,
