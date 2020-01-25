@@ -513,11 +513,17 @@ function _dmge_system_get_youtube_url($id = '') {
   }
 
   parse_str(file_get_contents('https://www.youtube.com/get_video_info?video_id=' . $id), $info);
-  watchdog('DMGE System', print_r($info, TRUE));
   $info = json_decode($info['player_response']);
   $video['thumbnail'] = $info->videoDetails->thumbnail->thumbnails[0]->url;
   $video['title'] = $info->videoDetails->title;
-  $video['url'] = $info->streamingData->formats[0]->url;
+  $best = 0;
+  // Get the largest resolution of the bunch.
+  foreach($info->streamingData->formats as $key => $format) {
+    if ($format->width > $best) {
+      $best = $format->width;
+      $video['url'] = $format->url;
+    }
+  }
   drupal_json_output($video);
 }
 
