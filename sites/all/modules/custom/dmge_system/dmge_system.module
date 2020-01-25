@@ -504,77 +504,26 @@ function _dmge_system_get_youtube_url($id = '') {
   $id = filter_xss($id);
   $id = check_plain($id);
   if (!empty($_GET)) {
-    if (empty($_GET['v'])) {
-      return 'This URL is used to process YouTube URLs<br>Raw access does not garner any benefits.';
+    if (!empty($_GET['v'])){
+      $id = $_GET['v'];
     }
-    $id = $_GET['v'];
   }
   if (empty($id)) {
     return 'No id provided.';
   }
 
-  $yt_url = 'https://www.youtube.com/get_video_info?video_id=' . $id . '&el=embedded&ps=default&eurl=&gl=US&hl=en';
-
-  $dt = system_retrieve_file($yt_url, 'public://', FALSE);
-  watchdog('DMGE System', print_r($dt, TRUE));
-  $dt = file_get_contents($dt);
-
-  if (strpos($dt, 'status=fail') !== false) {
-
-    $x = explode("&", $dt);
-    $t = array(); $g = array(); $h = array();
-
-    foreach($x as $r){
-      $c = explode("=", $r);
-      $n = $c[0]; $v = $c[1];
-      $y = urldecode($v);
-      $t[$n] = $v;
-    }
-
-    $x = explode("&", $dt);
-    foreach($x as $r) {
-      $c = explode("=", $r);
-      $n = $c[0]; $v = $c[1];
-      $h[$n] = urldecode($v);
-    }
-    $g[] = $h;
-    $g[0]['error'] = true;
-    $g[0]['instagram'] = "mcdoolz";
-    drupal_json_output($g);
-
-  } else {
-
-    $x = explode("&", $dt);
-    $t = array(); $g = array(); $h = array();
-
-    foreach($x as $r) {
-        $c = explode("=", $r);
-        $n = $c[0]; $v = $c[1];
-        $y = urldecode($v);
-        $t[$n] = $v;
-    }
-    $title = urldecode($t['title']);
-    $thumbnail = urldecode($t['thumbnail_url']);
-    $streams = explode(',', urldecode($t['url_encoded_fmt_stream_map']));
-    foreach($streams as $dt) {
-      $x = explode("&", $dt);
-      foreach($x as $r){
-        $c = explode("=", $r);
-        $n = $c[0]; $v = $c[1];
-        $h[$n] = urldecode($v);
-      }
-      $g[] = $h;
-    }
-    $g['title'] = $title;
-    $g['thumbnail'] = $thumbnail;
-    drupal_json_output($g);
-  }
+  parse_str(file_get_contents('https://www.youtube.com/get_video_info?video_id=' . $id), $info);
+  watchdog('DMGE System', print_r($info, TRUE));
+  $info = json_decode($info['player_response']);
+  $video['thumbnail'] = $info->videoDetails->thumbnail->thumbnails[0]->url;
+  $video['title'] = $info->videoDetails->title;
+  $video['url'] = $info->streamingData->formats[0]->url;
+  drupal_json_output($video);
 }
 
 /**
  * Invokes hook_form_FORMID_alter().
  */
-
 function dmge_system_form_patreon_admin_form_alter(&$form, &$form_state) {
   if (!empty($form_state['values'])) {
     $roles = $form_state['values']['dmge_system_patreon_roles'];
@@ -822,4 +771,15 @@ function dmge_system_cloudinary_config_alter($config) {
     }
   }
   return $config;
+}
+
+function test_yt($id = NULL) {
+    if (empty($id)) {
+      $id = 'T5mVe46KMRA';
+    }
+    parse_str(file_get_contents('https://www.youtube.com/get_video_info?video_id=' . $id), $info);
+    $info = json_decode($info['player_response']);
+    $video['thumbnail'] = $info->videoDetails->thumbnail->thumbnails[0]->url;
+    $video['url'] = $info->streamingData->formats[0]->url;
+    return $url;
 }

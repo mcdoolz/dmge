@@ -1615,8 +1615,8 @@
       type: 'get',
       dataType: 'json',
       success: function(response) {
-        if (response[0] && response[0].url) {
-          let _url = response[0].url;
+        if (response && response.url) {
+          let _url = response.url;
           let _id = make_file_id(_url);
           do_video(_id, _url, 'mp4');
           $('#files').jsGrid('insertItem', {'id': _id, 'Filename': response['title'], 'Blob': _url, 'Type': 'YouTube', 'Thumbnail': response['thumbnail'] });
@@ -1631,6 +1631,7 @@
       },
       error: function(response) {
         console.error(response);
+        console.log(response.responseText);
         $('#file_status').html('<div id="file_remote_load_progress"><i class="fas fa-exclamation-triangle"></i> Something has tragically failed.</div>');
       },
       complete: function() {
