@@ -227,7 +227,7 @@ video {
 }
 
 /* line 124, ../sass/screen.sass */
-#map_video_wrapper {
+#map_video_wrapper, .map_video {
   display: none;
 }
 
