@@ -1631,7 +1631,6 @@
       },
       error: function(response) {
         console.error(response);
-        console.log(response.responseText);
         $('#file_status').html('<div id="file_remote_load_progress"><i class="fas fa-exclamation-triangle"></i> Something has tragically failed.</div>');
       },
       complete: function() {
@@ -2140,8 +2139,8 @@
             from_id: item.id,
             originX: 'left',
             originY: 'top',
-            height: tag.videoHeight,
-            width: tag.videoWidth,
+            height: Math.round(tag.videoHeight),
+            width: Math.round(tag.videoWidth),
             video: true,
             left: 0,
             top: 0
