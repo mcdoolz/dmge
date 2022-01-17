@@ -2068,7 +2068,7 @@ li.attached-block {
   font-size: 20px;
   top: 0;
   left: 0;
-  font-family: "FontAwesome";
+  font-family: "Font Awesome 5 Free";
   content: "\f007";
 }
 /* line 205, ../sass/_theme.sass */
@@ -2086,7 +2086,7 @@ li.attached-block {
   font-size: 20px;
   top: 0;
   left: 0;
-  font-family: "FontAwesome";
+  font-family: "Font Awesome 5 Free";
 }
 /* line 219, ../sass/_theme.sass */
 .library .resource .resource-type.animated:before, .node-type-resource .resource-type.animated:before {
@@ -2135,7 +2135,7 @@ li.attached-block {
   font-size: 20px;
   top: 0;
   left: 0;
-  font-family: "FontAwesome";
+  font-family: "Font Awesome 5 Free";
   content: "\f02c";
 }
 /* line 255, ../sass/_theme.sass */
@@ -2265,7 +2265,7 @@ li.attached-block {
   font-size: 20px;
   top: 0;
   left: 0;
-  font-family: "FontAwesome";
+  font-family: "Font Awesome 5 Free";
   content: "\f02c";
 }
 /* line 327, ../sass/_theme.sass */
@@ -2429,7 +2429,7 @@ li.attached-block {
   font-size: 20px;
   top: 0;
   left: 0;
-  font-family: "FontAwesome";
+  font-family: "Font Awesome 5 Free";
   content: "\f005";
 }
 /* line 431, ../sass/_theme.sass */
@@ -2513,13 +2513,13 @@ li.attached-block {
   font-size: 20px;
   top: 0;
   left: 0;
-  font-family: "FontAwesome";
+  font-family: "Font Awesome 5 Free";
   content: "\f024";
 }
 
 /* line 493, ../sass/_theme.sass */
 .edit-submit-library {
-  font-family: "FontAwesome";
+  font-family: "Font Awesome 5 Free";
 }
 
 /* these apply to auto-completing form fields */
