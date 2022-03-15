@@ -1525,7 +1525,9 @@
       loop: true,
       id: _id
     });
-    vtag.prop('volume', $('#map_master_volume').val());
+    vtag.attr('playsinline', '');
+    vtag.attr('muted', '');
+    // vtag.prop('volume', $('#map_master_volume').val());
     $('#map_video_wrapper').append(vtag[0]);
     return vtag;
   }
