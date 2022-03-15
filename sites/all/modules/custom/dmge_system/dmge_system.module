@@ -512,18 +512,30 @@ function _dmge_system_get_youtube_url($id = '') {
     return 'No id provided.';
   }
 
-  parse_str(file_get_contents('https://www.youtube.com/get_video_info?video_id=' . $id), $info);
-  $info = json_decode($info['player_response']);
-  $video['thumbnail'] = $info->videoDetails->thumbnail->thumbnails[0]->url;
-  $video['title'] = $info->videoDetails->title;
-  $best = 0;
-  // Get the largest resolution of the bunch.
-  foreach($info->streamingData->formats as $key => $format) {
-    if ($format->width > $best) {
-      $best = $format->width;
-      $video['url'] = $format->url;
-    }
+  $contents = file_get_contents($url);
+  $pos = stripos($contents, 'var ytInitialPlayerResponse = ');
+  if ($pos !== FALSE) {
+    $contents = substr($contents, $pos, strlen($contents));
+    $endpos = stripos($contents, '</script>');
+    $contents = substr($contents, 0, $endpos);
+    $contents = trim($contents, ';</script>, var ytInitialPlayerResponse = ');
   }
+  $data = json_decode($contents);
+  $thumbnails = $data->videoDetails->thumbnail->thumbnails;
+  $video['thumbnail'] = $thumbnails[array_key_last($thumbnails)]->url;
+  $formats = $data->streamingData->formats;
+  $video['url'] = $formats[array_key_last($formats)]->url;
+  $video['title'] = $data->videoDetails->title;
+
+  // $best = 0;
+  // Get the largest resolution of the bunch.
+  // foreach($info->streamingData->formats as $key => $format) {
+  //   if ($format->width > $best) {
+  //     $best = $format->width;
+  //     $video['url'] = $format->url;
+  //   }
+  // }
+
   drupal_json_output($video);
 }
 
@@ -783,9 +795,21 @@ function test_yt($id = NULL) {
     if (empty($id)) {
       $id = 'T5mVe46KMRA';
     }
-    parse_str(file_get_contents('https://www.youtube.com/get_video_info?video_id=' . $id), $info);
-    $info = json_decode($info['player_response']);
-    $video['thumbnail'] = $info->videoDetails->thumbnail->thumbnails[0]->url;
-    $video['url'] = $info->streamingData->formats[0]->url;
+    // $url = 'https://www.youtube.com/get_video_info?video_id=' . $id . '&eurl=https%3A%2F%2Fyoutube.googleapis.com%2Fv%2Fonz2k4zoLjQ&html5=1&c=TVHTML5&cver=6.20180913';
+    $url = 'https://www.youtube.com/watch?v=' . $id;
+    $contents = file_get_contents($url);
+    $pos = stripos($contents, 'var ytInitialPlayerResponse = ');
+    if ($pos !== FALSE) {
+      $contents = substr($contents, $pos, strlen($contents));
+      $endpos = stripos($contents, '</script>');
+      $contents = substr($contents, 0, $endpos);
+      $contents = trim($contents, ';</script>, var ytInitialPlayerResponse = ');
+    }
+    $data = json_decode($contents);
+    dpm($data);
+    $thumbnails = $data->videoDetails->thumbnail->thumbnails;
+    $video['thumbnail'] = $thumbnails[array_key_last($thumbnails)]->url;
+    $formats = $data->streamingData->formats;
+    $video['url'] = $formats[array_key_last($formats)]->url;
     return $url;
 }
