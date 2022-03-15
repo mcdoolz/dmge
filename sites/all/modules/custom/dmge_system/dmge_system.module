@@ -512,6 +512,7 @@ function _dmge_system_get_youtube_url($id = '') {
     return 'No id provided.';
   }
 
+  $url = 'https://www.youtube.com/watch?v=' . $id;
   $contents = file_get_contents($url);
   $pos = stripos($contents, 'var ytInitialPlayerResponse = ');
   if ($pos !== FALSE) {
