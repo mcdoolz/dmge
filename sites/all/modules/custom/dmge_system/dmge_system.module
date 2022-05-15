@@ -528,15 +528,6 @@ function _dmge_system_get_youtube_url($id = '') {
   $video['url'] = $formats[array_key_last($formats)]->url;
   $video['title'] = $data->videoDetails->title;
 
-  // $best = 0;
-  // Get the largest resolution of the bunch.
-  // foreach($info->streamingData->formats as $key => $format) {
-  //   if ($format->width > $best) {
-  //     $best = $format->width;
-  //     $video['url'] = $format->url;
-  //   }
-  // }
-
   drupal_json_output($video);
 }
 
