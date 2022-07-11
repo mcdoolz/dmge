@@ -504,7 +504,7 @@ function _dmge_system_get_youtube_url($id = '') {
   $id = filter_xss($id);
   $id = check_plain($id);
   if (!empty($_GET)) {
-    if (!empty($_GET['v'])){
+    if (!empty($_GET['v'])) {
       $id = $_GET['v'];
     }
   }
