@@ -1,1 +1,0 @@
-[21-May-2017 14:33:21 America/Vancouver] PHP Fatal error:  Allowed memory size of 33554432 bytes exhausted (tried to allocate 81 bytes) in /home/weedster/public_html/includes/cache.inc on line 434
